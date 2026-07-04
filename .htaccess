@@ -6,11 +6,28 @@ Options +FollowSymlinks
 RewriteEngine On
 RewriteBase /
 
-# 3. If someone explicitly types /HTML/products.php, redirect them to /products
+# ==========================================
+# RULES FOR HOME (Directly in Root)
+# ==========================================
+
+# Route your root domain (yoursite.com) and /home to home.php
+RewriteRule ^$ home.php [L]
+RewriteRule ^home$ home.php [L]
+
+# Redirect explicit requests for /home.php to the clean domain root
+RewriteCond %{THE_REQUEST} \s/home\.php [NC]
+RewriteRule ^home\.php$ / [R=301,L]
+
+
+# ==========================================
+# RULES FOR PRODUCTS / OTHERS (In /HTML/ Folder)
+# ==========================================
+
+# Redirect explicit /HTML/xyz.php requests to /xyz
 RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
 RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
 
-# 4. If they type /products, secretly fetch the file from /HTML/products.php
+# Secretly fetch all other clean URLs from the /HTML/ folder
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
