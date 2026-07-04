@@ -7,6 +7,14 @@ RewriteEngine On
 RewriteBase /
 
 # ==========================================
+# AUTHENTICATION & FORM SUBMISSION BYPASS
+# ==========================================
+# Rule: If a user is sending form data (POST), do not rewrite or redirect anything.
+RewriteCond %{REQUEST_METHOD} POST
+RewriteRule ^ - [L]
+
+
+# ==========================================
 # RULES FOR HOME (Directly in Root)
 # ==========================================
 
@@ -23,7 +31,8 @@ RewriteRule ^home\.php$ / [R=301,L]
 # RULES FOR PRODUCTS / OTHERS (In /HTML/ Folder)
 # ==========================================
 
-# Redirect explicit /HTML/xyz.php requests to /xyz
+# Redirect explicit /HTML/xyz.php requests to /xyz (Only for clean GET views)
+RewriteCond %{REQUEST_METHOD} !=POST
 RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
 RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
 
