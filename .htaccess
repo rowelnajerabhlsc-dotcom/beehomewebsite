@@ -9,3 +9,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}/folder/$1.php -f
 RewriteRule ^([^/]+)$ folder/$1.php [L]
+
+Options -Indexes
