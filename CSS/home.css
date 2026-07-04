@@ -940,8 +940,8 @@ body.loading {
     display: block;
     width: calc(100% / var(--fragment-columns));
     height: calc(100% / var(--fragment-rows));
-    background: #ffffff;
-    box-shadow: 0 0 0 1px #ffffff;
+    background: #6e6c6c;
+    box-shadow: 0 0 0 1px #6e6c6c;
     will-change: transform, opacity;
 }
 
