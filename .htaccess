@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# 1. Map clean URLs to the actual .php files
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# 2. Redirect existing .php URLs to clean URLs (Good for SEO)
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
+RewriteRule ^([^\ ]+)\.php$ /$1 [R=301,L]
