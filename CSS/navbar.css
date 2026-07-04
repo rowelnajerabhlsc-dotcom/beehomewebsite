@@ -1,0 +1,244 @@
+/* ================= NAVBAR ================= */
+
+nav{
+    background:#096D2B;
+    padding:10px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:9999;
+    box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+
+/* ================= LOGO ================= */
+
+.logo img{
+    height:50px;
+    display:block;
+}
+
+/* ================= NAV LINKS ================= */
+
+.nav-links{
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:25px;
+    margin:0;
+    padding:0;
+}
+
+.nav-links li{
+    position:relative;
+}
+
+.nav-links a{
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#FFF82E;
+}
+
+/* ================= ABOUT DROPDOWN ================= */
+
+.dropdown-menu{
+    position:absolute;
+    top:100%;
+    left:0;
+
+    display:none;
+
+    min-width:230px;
+
+    background:#0c8a36;
+
+    border-radius:8px;
+
+    padding:8px 0;
+
+    box-shadow:0 10px 20px rgba(0,0,0,.25);
+
+    z-index:999;
+}
+
+.dropdown:hover .dropdown-menu{
+    display:block;
+}
+
+.dropdown-menu li{
+    width:100%;
+}
+
+.dropdown-menu a{
+    display:block;
+    padding:12px 18px;
+    font-size:15px;
+}
+
+.dropdown-menu a:hover{
+    background:#096D2B;
+}
+
+/* ================= ACCOUNT ================= */
+
+.account-area{
+    display:flex;
+    align-items:center;
+}
+
+.account-dropdown{
+    position:relative;
+}
+
+.account-link{
+    background:#fff;
+    color:#096D2B;
+    padding:8px 16px;
+    border-radius:20px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.account-link:hover{
+    background:#f3f3f3;
+}
+
+.account-menu{
+    position:absolute;
+    top:110%;
+    right:0;
+
+    display:none;
+
+    min-width:200px;
+
+    background:#fff;
+
+    border-radius:8px;
+
+    box-shadow:0 10px 20px rgba(0,0,0,.25);
+
+    overflow:hidden;
+}
+
+.account-menu.show{
+    display:block;
+}
+
+.account-menu a{
+    display:block;
+    padding:12px 15px;
+    color:#096D2B;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.account-menu a:hover{
+    background:#f2f2f2;
+}
+
+/* ================= HAMBURGER ================= */
+
+.menu-toggle{
+    display:none;
+    flex-direction:column;
+    cursor:pointer;
+}
+
+.menu-toggle span{
+    width:28px;
+    height:3px;
+    background:white;
+    margin:3px 0;
+    border-radius:5px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    nav{
+        flex-wrap:wrap;
+        padding:12px 20px;
+    }
+
+    .menu-toggle{
+        display:flex;
+        order:3;
+    }
+
+    .nav-links{
+
+        display:none;
+
+        flex-direction:column;
+
+        width:100%;
+
+        background:#096D2B;
+
+        margin-top:15px;
+
+        padding:20px 0;
+
+        gap:0;
+    }
+
+    .nav-links.active{
+        display:flex;
+    }
+
+    .nav-links li{
+        width:100%;
+    }
+
+    .nav-links a{
+        display:block;
+        padding:15px 25px;
+        width:100%;
+    }
+
+    .dropdown-menu{
+
+        position:static;
+
+        display:none;
+
+        background:#12853a;
+
+        box-shadow:none;
+
+        border-radius:0;
+
+        padding:0;
+    }
+
+    .dropdown:hover .dropdown-menu{
+        display:block;
+    }
+
+    .dropdown-menu a{
+        padding-left:45px;
+    }
+
+    .account-area{
+        margin-left:auto;
+        margin-right:15px;
+    }
+
+    .account-link{
+        padding:7px 14px;
+        font-size:14px;
+    }
+
+    .account-menu{
+        right:0;
+    }
+}

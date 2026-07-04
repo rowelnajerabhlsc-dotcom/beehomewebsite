@@ -1,0 +1,421 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+
+
+/* DROPDOWN ITEMS */
+.dropdown-menu li {
+    margin: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+}
+
+.dropdown-menu a:hover {
+    background-color: #0c8a36;
+    color: #FFF82E;
+}
+
+/* SHOW ON HOVER */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* SMOOTH SCROLL */
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    scroll-margin-top: 120px; /* adjust depending on navbar height */
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+
+    .nav-links {
+        position: absolute;
+        right: 0;
+        top: 70px;
+        background-color: #096D2B;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        display: none;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        position: static;
+        display: none;
+        background: #0c8a36;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+}
+
+
+
+/* ------------------------------------------------------ */
+
+/* BILLS AND PAYMENTS PAGE STYLE STARTS HERE */
+
+
+/* BILLS HERO */
+.bills-hero {
+    width: 100%;
+    height: 200px; /* thin cropped banner */
+    background: url('../IMAGES/home-img3.png') no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+}
+
+/* Green overlay */
+.bills-hero::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 109, 42, 0);
+    top: 0;
+    left: 0;
+}
+
+.bills-hero h1 {
+    position: relative;
+    color: #096D2B;
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bills-hero {
+        height: 180px;
+    }
+
+    .bills-hero h1 {
+        font-size: 28px;
+    }
+}
+
+/* ------------------------------------------------------ */
+
+
+.bills-video-section {
+    padding: 10px 10%;
+    display: flex;
+    justify-content: center;
+}
+
+.video-container {
+    width: 900px;  
+    max-width: 100%;    
+}
+
+.video-container video {
+    width: 100%;
+    height: 500px; 
+    max-height: 100%;
+    object-fit: cover;
+}
+
+/* ------------------------------------------------------ */
+
+
+/* PAGE BUTTONS WRAPPER */
+.page-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/* BUTTON STYLE */
+.page-buttons a {
+    padding: 12px 60px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+    text-align: center;
+}
+
+/* APPLY BUTTON */
+.btn-apply {
+    background-color: #096D2B;
+    color: white;
+}
+
+.btn-apply:hover {
+    background-color: #075021;
+}
+
+/* BACK BUTTON */
+.btn-back {
+    background-color: #ffffff;
+    color: #096D2B;
+    border: 2px solid #096D2B;
+}
+
+.btn-back:hover {
+    background-color: #f0f0f0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page-buttons {
+        justify-content: center;
+    }
+
+    .page-buttons a {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* ------------------------------------------------------ */
+
+.contact-cta-section {
+    padding: 15px 5%;
+    background: #ffffff; 
+}
+
+.contact-cta {
+    background-color: #096D2B;
+    color: white;
+    padding: 8px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.contact-cta p {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.cta-btn {
+    text-decoration: none;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #096D2B;
+    font-weight: bold;
+    padding: 8px 25px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.cta-btn:hover {
+    background-color: #dddddd;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .contact-cta {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .cta-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+
+/* ------------------------------------------------------ */
+
+
+/* SOON SECTION */
+.soon-section {
+    padding: 50px 10%;
+    text-align: center;
+}
+
+.soon-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.soon-section h2 {
+    font-size: 32px;
+    color: #096D2B;
+    margin-bottom: 20px;
+}
+
+.soon-section p {
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .soon-section {
+        padding: 60px 5%;
+    }
+
+    .soon-section h2 {
+        font-size: 24px;
+    }
+
+    .soon-section p {
+        font-size: 16px;
+    }
+}
+
+
+
+/* ------------------------------------------------------ */
+
+
+/* FOOTER */
+.footer {
+    background-color: #096D2B;
+    color: white;
+    padding: 60px 10%;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+/* LEFT */
+.footer-left {
+    flex: 1 1 300px;
+}
+
+.footer-left h3 {
+    margin-top: 15px;
+    font-size: 18px;
+}
+
+.footer-left p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+.footer-logo {
+    width: 80px;
+}
+
+/* MIDDLE */
+.footer-middle {
+    flex: 1 1 200px;
+}
+
+.footer-middle h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.footer-middle ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-middle ul li {
+    margin-bottom: 10px;
+}
+
+.footer-middle ul li a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.footer-middle ul li a:hover {
+    text-decoration: underline;
+}
+
+/* RIGHT */
+.footer-right {
+    flex: 1 1 250px;
+}
+
+.footer-right h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.footer-right p {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.footer-right a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.footer-right a:hover {
+    text-decoration: underline;
+}
+
+.footer-icon {
+    width: 20px;
+    margin-right: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .footer-left, .footer-middle, .footer-right {
+        flex: 1 1 100%;
+        margin-bottom: 30px;
+    }
+
+    .footer-left h3, .footer-middle h3, .footer-right h3 {
+        font-size: 16px;
+    }
+}
+

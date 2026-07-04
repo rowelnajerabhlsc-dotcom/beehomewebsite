@@ -1,0 +1,88 @@
+<?php 
+session_start();
+include "auth_check.php"; 
+?>  
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit - Bee Home Labor Multipurpose Cooperative</title>
+    <link rel="stylesheet" href="../CSS/credit.css">
+    <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+</head>
+<body>
+
+<?php include "navbar.php"; ?>
+
+<section class="credit-hero">
+    <h1>CREDIT OPERATION</h1>
+</section>
+
+<section class="credit-operations">
+    <div class="credit-header">
+        <h2>Credit Operations</h2>
+        <p>Our cooperative offers various credit forms to assist members with their financial needs. Download the forms below to apply for loans and other services.</p>
+    </div>
+
+    <div class="credit-forms">
+
+    <?php
+    $result = mysqli_query($conn, "SELECT * FROM credit_forms");
+
+    while ($row = mysqli_fetch_assoc($result)) {
+    ?>
+
+        <div class="form-card">
+            <div class="form-image">
+                <img src="../IMAGES/credit-img1.png" alt="Form Image">
+            </div>
+
+            <div class="form-content">
+                <h3><?php echo $row['title']; ?></h3>
+                <p><?php echo $row['description']; ?></p>
+
+                <!-- DYNAMIC LINK -->
+                <a href="<?php echo $row['link']; ?>" target="_blank" class="download-btn">
+                    Click here to apply &#8594;
+                </a>
+
+                <!-- ✅ EDIT BUTTON (ONLY ACCOUNTING + MANAGER) -->
+                <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 1 || $_SESSION['role'] == 4)) { ?>
+                    <br><br>
+                    <a href="edit_form.php?id=<?php echo $row['id']; ?>" class="edit-btn">
+                        Edit Link
+                    </a> 
+                <?php } ?>
+
+            </div>
+        </div>
+
+    <?php } ?>
+
+    </div>
+</section>
+
+<div class="page-buttons">
+    <a href="javascript:history.back()" class="btn-back">Back to Services</a>
+</div>
+
+<section class="contact-cta-section">
+    <div class="contact-cta">
+        <p>For more questions, please contact us</p>
+        <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
+    </div>
+</section>
+
+<?php include "footer.php"; ?>
+
+<script>
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>

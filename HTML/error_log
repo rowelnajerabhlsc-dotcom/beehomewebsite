@@ -1,0 +1,57 @@
+[27-Jun-2026 05:20:26 UTC] PHP Parse error:  syntax error, unexpected token "..." in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 54
+[27-Jun-2026 05:45:59 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.office365.com:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:50:58 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.secureserver.net:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:51:11 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.secureserver.net:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:51:17 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.secureserver.net:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:51:27 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.secureserver.net:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:53:28 UTC] PHP Parse error:  Unmatched '}' in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 75
+[27-Jun-2026 05:53:28 UTC] PHP Warning:  fsockopen(): Unable to connect to smtp.secureserver.net:587 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/test_socket.php on line 3
+[27-Jun-2026 05:53:49 UTC] PHP Parse error:  Unmatched '}' in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 75
+[27-Jun-2026 05:53:54 UTC] PHP Parse error:  Unmatched '}' in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 75
+[27-Jun-2026 05:57:37 UTC] PHP Warning:  fsockopen(): Unable to connect to smtpout.secureserver.net:465 (Connection timed out) in /home/kwchy8j4554l/public_html/HTML/smtp_test.php on line 2
+[27-Jun-2026 05:58:09 UTC] PHP Parse error:  Unmatched '}' in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 75
+[27-Jun-2026 05:59:08 UTC] PHP Parse error:  Unmatched '}' in /home/kwchy8j4554l/public_html/HTML/register_process.php on line 75
+[27-Jun-2026 06:52:07 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:52:07 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:00 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:00 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:07 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:07 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:09 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:09 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:11 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:11 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:23 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:23 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:33 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:33 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:56 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:56 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:58 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:58 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:59 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:53:59 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:16 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:16 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:17 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:17 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:33 UTC] PHP Warning:  include(HTML/navbar.php): Failed to open stream: No such file or directory in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 06:54:33 UTC] PHP Warning:  include(): Failed opening 'HTML/navbar.php' for inclusion (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/kwchy8j4554l/public_html/HTML/home.php on line 13
+[27-Jun-2026 07:48:10 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 07:56:04 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 07:56:09 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 07:56:15 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 07:58:20 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 08:01:03 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 08:01:05 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[27-Jun-2026 08:01:32 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home/kwchy8j4554l/public_html/HTML/labor.php on line 2
+[02-Jul-2026 06:31:35 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/kwchy8j4554l/public_html/HTML/delete-manpower.php:7
+Stack trace:
+#0 /home/kwchy8j4554l/public_html/HTML/delete-manpower.php(7): mysqli->__construct()
+#1 {main}
+  thrown in /home/kwchy8j4554l/public_html/HTML/delete-manpower.php on line 7
+[02-Jul-2026 06:31:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/kwchy8j4554l/public_html/HTML/delete-manpower.php:7
+Stack trace:
+#0 /home/kwchy8j4554l/public_html/HTML/delete-manpower.php(7): mysqli->__construct()
+#1 {main}
+  thrown in /home/kwchy8j4554l/public_html/HTML/delete-manpower.php on line 7
