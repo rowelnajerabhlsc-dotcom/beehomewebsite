@@ -908,3 +908,97 @@ section {
         padding: 15px 35px;
     }
 }
+
+/* HOME LOADING SCREEN */
+body.loading {
+    overflow: hidden;
+}
+
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    overflow: hidden;
+    will-change: transform;
+}
+
+.loader-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    transform: scale(clamp(0.55, 18vw, 1));
+}
+
+.loader-wordmark {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.loader-wordmark--measure {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 16px;
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.loader-wordmark--measure .loader-piece {
+    position: static;
+    opacity: 1;
+}
+
+.loader-wordmark--ready .loader-piece {
+    position: absolute;
+    will-change: left, opacity, transform;
+}
+
+.loader-emblem {
+    z-index: 4;
+    width: clamp(96px, 22vw, 138px);
+    height: clamp(96px, 22vw, 138px);
+    opacity: 0;
+}
+
+.loader-emblem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+}
+
+.loader-c,
+.loader-o,
+.loader-p {
+    z-index: 2;
+    opacity: 0;
+    font-family: "Fredoka", "Trebuchet MS", sans-serif;
+    font-size: clamp(96px, 22vw, 200px);
+    font-weight: 700;
+    line-height: 0.85;
+    color: #2cab4a;
+    user-select: none;
+    pointer-events: none;
+}
+
+.loader-p {
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-loader {
+        display: none;
+    }
+
+    body.loading {
+        overflow-x: hidden;
+    }
+}
