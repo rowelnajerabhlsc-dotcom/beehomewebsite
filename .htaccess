@@ -1,13 +1,17 @@
+# 1. Security: Block public directory browsing
+Options -Indexes
+Options +FollowSymlinks
+
+# 2. Enable the rewriting engine
 RewriteEngine On
+RewriteBase /
 
-# 1. Externally redirect direct requests for /folder/file to /file
-RewriteCond %{THE_REQUEST} \s/folder/([^\s?]*) [NC]
-RewriteRule ^folder/(.*)$ /$1 [R=301,L]
+# 3. If someone explicitly types /HTML/products.php, redirect them to /products
+RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
+RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
 
-# 2. Internally rewrite /file to look into /folder/ and add .php
+# 4. If they type /products, secretly fetch the file from /HTML/products.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/folder/$1.php -f
-RewriteRule ^([^/]+)$ folder/$1.php [L]
-
-Options -Indexes
+RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
+RewriteRule ^([^/]+)$ HTML/$1.php [L]
