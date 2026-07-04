@@ -32,7 +32,7 @@ if (isset($_SESSION['must_login'])) {
             </div>
         <?php endif; ?>
 
-        <form action="login_process.php" method="POST">
+        <form action="/HTML/login_process.php" method="POST">
 
             <label>Email:</label>
             <input type="email" name="email" required>

@@ -1,43 +1,37 @@
-# 1. Security: Block public directory browsing
+# 1. Server Settings
 Options -Indexes
 Options +FollowSymlinks
+Options -MultiViews
 
-# 2. Enable the rewriting engine
+# 2. Enable Rewrite Engine
 RewriteEngine On
 RewriteBase /
 
 # ==========================================
-# AUTHENTICATION & FORM SUBMISSION BYPASS
+# 3. CRITICAL: Stop Rewriting Real Files
 # ==========================================
-# Rule: If a user is sending form data (POST), do not rewrite or redirect anything.
-RewriteCond %{REQUEST_METHOD} POST
+# If the requested path is a real file or real folder, do NOT touch it!
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-
 # ==========================================
-# RULES FOR HOME (Directly in Root)
+# 4. RULES FOR HOME (Directly in Root Folder)
 # ==========================================
-
-# Route your root domain (yoursite.com) and /home to home.php
 RewriteRule ^$ home.php [L]
-RewriteRule ^home$ home.php [L]
+RewriteRule ^home/?$ home.php [L]
 
-# Redirect explicit requests for /home.php to the clean domain root
+# Redirect explicit requests for root home.php to clean root domain
 RewriteCond %{THE_REQUEST} \s/home\.php [NC]
 RewriteRule ^home\.php$ / [R=301,L]
 
-
 # ==========================================
-# RULES FOR PRODUCTS / OTHERS (In /HTML/ Folder)
+# 5. RULES FOR /HTML/ SUBFOLDER PAGES
 # ==========================================
-
-# Redirect explicit /HTML/xyz.php requests to /xyz (Only for clean GET views)
-RewriteCond %{REQUEST_METHOD} !=POST
+# Redirect any direct browser entry of /HTML/xyz.php to just /xyz
 RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
 RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
 
-# Secretly fetch all other clean URLs from the /HTML/ folder
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Secretly match extensionless URLs to their file inside the HTML folder
 RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
-RewriteRule ^([^/]+)$ HTML/$1.php [L]
+RewriteRule ^([^/]+)/?$ HTML/$1.php [L]
