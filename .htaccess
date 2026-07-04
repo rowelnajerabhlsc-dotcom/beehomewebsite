@@ -8,15 +8,27 @@ RewriteEngine On
 RewriteBase /
 
 # ==========================================
-# 3. CRITICAL: Stop Rewriting Real Files
+# 3. SPECIFIC FIX: Force /HTML/login.php to look like /login
 # ==========================================
-# If the requested path is a real file or real folder, do NOT touch it!
+# Visible Redirect: If they try to load the ugly URL, visibly redirect them to /login
+RewriteCond %{THE_REQUEST} \s/HTML/login\.php [NC]
+RewriteRule ^HTML/login\.php$ /login [R=301,L]
+
+# Hidden Rewrite: Behind the scenes, point /login to the real file location
+RewriteRule ^login/?$ HTML/login.php [L]
+
+
+# ==========================================
+# 4. EXEMPT REAL ASSETS (CSS, JS, Images)
+# ==========================================
+# If a path points to a real existing file, do not touch it
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+
 # ==========================================
-# 4. RULES FOR HOME (Directly in Root Folder)
+# 5. RULES FOR HOME (Directly in Root Folder)
 # ==========================================
 RewriteRule ^$ home.php [L]
 RewriteRule ^home/?$ home.php [L]
@@ -25,13 +37,14 @@ RewriteRule ^home/?$ home.php [L]
 RewriteCond %{THE_REQUEST} \s/home\.php [NC]
 RewriteRule ^home\.php$ / [R=301,L]
 
+
 # ==========================================
-# 5. RULES FOR /HTML/ SUBFOLDER PAGES
+# 6. GENERAL RULES FOR OTHER /HTML/ SUBFOLDER PAGES
 # ==========================================
 # Redirect any direct browser entry of /HTML/xyz.php to just /xyz
 RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
 RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
 
-# Secretly match extensionless URLs to their file inside the HTML folder
+# Secretly match all other extensionless URLs to their file inside the HTML folder
 RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
 RewriteRule ^([^/]+)/?$ HTML/$1.php [L]
