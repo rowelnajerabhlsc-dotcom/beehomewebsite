@@ -930,17 +930,16 @@ body.loading {
     position: absolute;
     inset: 0;
     z-index: 0;
-    display: grid;
-    grid-template-columns: repeat(var(--fragment-columns), 1fr);
-    grid-template-rows: repeat(var(--fragment-rows), 1fr);
+    display: flex;
+    flex-wrap: wrap;
     overflow: hidden;
     pointer-events: none;
 }
 
 .loader-fragment {
     display: block;
-    width: calc(100% + 1px);
-    height: calc(100% + 1px);
+    width: calc(100% / var(--fragment-columns));
+    height: calc(100% / var(--fragment-rows));
     background: #ffffff;
     box-shadow: 0 0 0 1px #ffffff;
     will-change: transform, opacity;
