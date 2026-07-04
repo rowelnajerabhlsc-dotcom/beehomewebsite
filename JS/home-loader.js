@@ -19,6 +19,34 @@
         return;
     }
 
+    function buildFragments() {
+        var columns = window.innerWidth < 700 ? 32 : 40;
+        var rows = Math.ceil(window.innerHeight / (window.innerWidth / columns)) + 2;
+        var layer = document.createElement("div");
+        var fragmentCount = columns * rows;
+
+        layer.className = "loader-fragments";
+        layer.style.setProperty("--fragment-columns", columns);
+        layer.style.setProperty("--fragment-rows", rows);
+        layer.setAttribute("aria-hidden", "true");
+
+        for (var i = 0; i < fragmentCount; i++) {
+            var fragment = document.createElement("span");
+            fragment.className = "loader-fragment";
+            layer.appendChild(fragment);
+        }
+
+        loader.insertBefore(layer, loader.firstChild);
+
+        return {
+            columns: columns,
+            rows: rows,
+            layer: layer,
+            pieces: layer.querySelectorAll(".loader-fragment")
+        };
+    }
+
+    var fragments = buildFragments();
     var GAP = 16;
     var EMBLEM_LIFT = 14;
     var keys = ["c", "emblem", "o", "p"];
@@ -76,16 +104,53 @@
     var timeline = anime.timeline({
         autoplay: true,
         complete: function () {
-            anime({
-                targets: loader,
-                translateY: ["0%", "-100%"],
-                duration: 900,
-                easing: "easeInOutCubic",
+            var exitTimeline = anime.timeline({
                 complete: function () {
                     loader.remove();
                     document.body.classList.remove("loading");
                 }
             });
+
+            exitTimeline
+                .add({
+                    targets: wordmark,
+                    opacity: [1, 0],
+                    translateY: [0, -54],
+                    scale: [1, 0.94],
+                    duration: 700,
+                    easing: "easeInCubic"
+                })
+                .add({
+                    targets: fragments.pieces,
+                    scale: [
+                        { value: 0.88, duration: 150, easing: "easeOutQuad" },
+                        { value: 0.66, duration: 650, easing: "easeInOutCubic" }
+                    ],
+                    translateY: function () {
+                        return -(window.innerHeight + window.innerHeight * 0.25 + anime.random(80, 210));
+                    },
+                    translateX: function () {
+                        return anime.random(-18, 18);
+                    },
+                    rotate: function () {
+                        return anime.random(-16, 16);
+                    },
+                    delay: anime.stagger(10, {
+                        grid: [fragments.columns, fragments.rows],
+                        from: "center"
+                    }),
+                    duration: 1030,
+                    easing: "easeInOutCubic"
+                }, 0)
+                .add({
+                    targets: loader,
+                    opacity: [1, 0],
+                    duration: 120,
+                    easing: "linear",
+                    begin: function () {
+                        loader.style.pointerEvents = "none";
+                    }
+                }, "-=120");
         }
     });
 

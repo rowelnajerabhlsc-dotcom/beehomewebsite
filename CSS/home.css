@@ -921,12 +921,34 @@ body.loading {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ffffff;
+    background: transparent;
     overflow: hidden;
     will-change: transform;
 }
 
+.loader-fragments {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(var(--fragment-columns), 1fr);
+    grid-template-rows: repeat(var(--fragment-rows), 1fr);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.loader-fragment {
+    display: block;
+    width: calc(100% + 1px);
+    height: calc(100% + 1px);
+    background: #ffffff;
+    box-shadow: 0 0 0 1px #ffffff;
+    will-change: transform, opacity;
+}
+
 .loader-stage {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
