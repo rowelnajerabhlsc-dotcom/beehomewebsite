@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
-    <link rel="stylesheet" href="CSS/home.css">
+    <link rel="stylesheet" href="CSS/home.css?v=loader-fragments-2">
 <link rel="stylesheet" href="CSS/navbar.css">
 <link rel="icon" href="IMAGES/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -304,7 +304,7 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
-<script src="JS/home-loader.js"></script>
+<script src="JS/home-loader.js?v=loader-fragments-2"></script>
 
 </body>
 </html>
