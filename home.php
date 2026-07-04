@@ -7,8 +7,24 @@
     <link rel="stylesheet" href="CSS/home.css">
 <link rel="stylesheet" href="CSS/navbar.css">
 <link rel="icon" href="IMAGES/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="loading">
+
+<div id="page-loader" class="page-loader" aria-hidden="true">
+    <div class="loader-stage">
+        <div class="loader-wordmark">
+            <span class="loader-piece loader-c" aria-hidden="true">C</span>
+            <div class="loader-piece loader-emblem">
+                <img src="IMAGES/emblem.png" alt="Bee Home Cooperative emblem">
+            </div>
+            <span class="loader-piece loader-o" aria-hidden="true">O</span>
+            <span class="loader-piece loader-p" aria-hidden="true">P</span>
+        </div>
+    </div>
+</div>
 
 <?php include "HTML/navbar.php"; ?>
 
@@ -286,6 +302,9 @@
     }
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="JS/home-loader.js"></script>
 
 </body>
 </html>
