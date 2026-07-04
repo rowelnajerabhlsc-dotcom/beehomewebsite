@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['login_error'] =
             "Too many failed attempts. Please try again in {$minutes} minute(s).";
 
-        header("Location: login.php");
+        header("Location: /login");
         exit();
     }
 
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Force password change
             if (!empty($row['temp_password'])) {
                 $_SESSION['force_password_change'] = true;
-                header("Location: change_password.php");
+                header("Location: /change_password");
                 exit();
             }
 
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 unset($_SESSION['redirect_to']);
                 header("Location: $redirect");
             } else {
-                header("Location:/");
+                header("Location: /");
             }
 
             exit();
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             "Invalid email or password. {$remainingAttempts} attempt(s) remaining.";
     }
 
-    header("Location: login.php");
+    header("Location: /login");
     exit();
 }
 ?>

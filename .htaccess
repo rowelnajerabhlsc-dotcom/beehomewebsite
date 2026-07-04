@@ -8,22 +8,18 @@ RewriteEngine On
 RewriteBase /
 
 # ==========================================
-# 3. CRITICAL: Stop Rewriting Real Files
+# 3. CANONICAL CLEAN URL REDIRECTS
 # ==========================================
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+# These must run before the real-file stop below, because /HTML/*.php
+# exists on disk. Keep them GET/HEAD only so form POST handlers are not
+# turned into browser redirects.
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$ [NC]
+RewriteCond %{THE_REQUEST} \s/+home\.php[?\s] [NC]
+RewriteRule ^home\.php$ / [R=301,L]
 
-# Login.php
-RewriteCond %{THE_REQUEST} \s/HTML/login\.php [NC]
-RewriteRule ^HTML/login\.php$ /login [R=301,L]
-RewriteRule ^login/?$ HTML/login.php [L]
-
-# Contact.php
-RewriteCond %{THE_REQUEST} \s/HTML/contact\.php [NC]
-RewriteRule ^HTML/contact\.php$ /contact [R=301,L]
-RewriteRule ^contact/?$ HTML/contact.php [L]
-
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$ [NC]
+RewriteCond %{THE_REQUEST} \s/+HTML/([^?\s]+)\.php[?\s] [NC]
+RewriteRule ^HTML/(.+)\.php$ /$1 [R=301,L]
 
 # ==========================================
 # 4. RULES FOR HOME (Directly in Root Folder)
@@ -31,17 +27,16 @@ RewriteRule ^contact/?$ HTML/contact.php [L]
 RewriteRule ^$ home.php [L]
 RewriteRule ^home/?$ home.php [L]
 
-# Redirect explicit requests for root home.php to clean root domain
-RewriteCond %{THE_REQUEST} \s/home\.php [NC]
-RewriteRule ^home\.php$ / [R=301,L]
+# ==========================================
+# 5. CRITICAL: Stop Rewriting Real Files
+# ==========================================
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
 # ==========================================
-# 5. RULES FOR /HTML/ SUBFOLDER PAGES
+# 6. RULES FOR /HTML/ SUBFOLDER PAGES
 # ==========================================
-# Redirect any direct browser entry of /HTML/xyz.php to just /xyz
-RewriteCond %{THE_REQUEST} \s/HTML/([^\s?]+)\.php [NC]
-RewriteRule ^HTML/(.*)\.php$ /$1 [R=301,L]
-
 # Secretly match extensionless URLs to their file inside the HTML folder
 RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
 RewriteRule ^([^/]+)/?$ HTML/$1.php [L]

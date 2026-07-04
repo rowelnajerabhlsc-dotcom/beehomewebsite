@@ -32,7 +32,7 @@ if (isset($_SESSION['must_login'])) {
             </div>
         <?php endif; ?>
 
-        <form action="/HTML/login_process.php" method="POST">
+        <form action="/login_process" method="POST">
 
             <label>Email:</label>
             <input type="email" name="email" required>
@@ -47,7 +47,7 @@ if (isset($_SESSION['must_login'])) {
         </form>
 
         <div class="auth-link">
-            <p>Don't have an account? <a href="register.php">Register</a></p>
+            <p>Don't have an account? <a href="/register">Register</a></p>
         </div>
     </div>
 </div>

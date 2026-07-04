@@ -3,7 +3,7 @@ session_start();
 include "config.php";
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login");
     exit();
 }
 
@@ -110,16 +110,16 @@ $stmt->close();
 </div>
 
 <div class="button-group">
-    <button onclick="window.location.href='edit_profile.php'" class="save-btn">
+    <button onclick="window.location.href='/edit_Profile'" class="save-btn">
         Edit Profile
     </button>
 
-    <button onclick="window.location.href='change_password.php'" class="cancel-btn">
+    <button onclick="window.location.href='/change_password'" class="cancel-btn">
         Change Password
     </button>
 </div>
 
-<button onclick="window.location.href='logout.php'" class="logout-btn">
+<button onclick="window.location.href='/logout'" class="logout-btn">
     Logout
 </button>
 

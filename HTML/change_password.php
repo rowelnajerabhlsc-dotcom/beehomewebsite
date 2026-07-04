@@ -3,7 +3,7 @@ include "config.php";
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login");
     exit();
 }
 
@@ -47,7 +47,7 @@ $stmt->close();
             </p>
         <?php endif; ?>
 
-        <form action="update_password.php" method="POST" class="password-form">
+        <form action="/update_password" method="POST" class="password-form">
 
     <?php if ($temp_password == 1): ?>
         <div class="warning-box">
@@ -92,7 +92,7 @@ $stmt->close();
 </form>
 
         <div class="auth-link">
-            <a href="profile.php">← Back to Profile</a>
+            <a href="/profile">← Back to Profile</a>
         </div>
 
     </div>

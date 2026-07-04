@@ -9,7 +9,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // Check if form was submitted
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
-    header("Location: register.php");
+    header("Location: /register");
     exit();
 }
 
@@ -20,7 +20,7 @@ $email = trim($_POST['email']);
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['message'] = "Invalid email format.";
     $_SESSION['msg_type'] = "error";
-    header("Location: register.php");
+    header("Location: /register");
     exit();
 }
 
@@ -29,7 +29,7 @@ $domain = substr(strrchr($email, "@"), 1);
 if (!checkdnsrr($domain, "MX")) {
     $_SESSION['message'] = "Email domain is not valid.";
     $_SESSION['msg_type'] = "error";
-    header("Location: register.php");
+    header("Location: /register");
     exit();
 }
 
@@ -42,7 +42,7 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $_SESSION['message'] = "Email already registered.";
     $_SESSION['msg_type'] = "error";
-    header("Location: register.php");
+    header("Location: /register");
     exit();
 }
 
@@ -97,7 +97,7 @@ $mail->Port = 587;
         <p>Please login and change your password immediately.</p>
 
         <p>
-            <a href='https://beehome.ph/HTML/login.php'>
+            <a href='https://beehome.ph/login'>
                 Click here to Login
             </a>
         </p>
@@ -131,5 +131,5 @@ $mail->Port = 587;
     $_SESSION['msg_type'] = "error";
 }
 
-header("Location: register.php");
+header("Location: /register");
 exit();

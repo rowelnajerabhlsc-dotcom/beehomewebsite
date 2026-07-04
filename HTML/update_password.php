@@ -4,7 +4,7 @@ include("config.php");
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login");
     exit();
 }
 
@@ -19,13 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 1. Check if empty
     if (empty($new_password) || empty($confirm_password)) {
-        header("Location: change_password.php?error=Please fill in all fields");
+        header("Location: /change_password?error=Please fill in all fields");
         exit();
     }
 
     // 2. Check if passwords match
     if ($new_password !== $confirm_password) {
-        header("Location: change_password.php?error=Passwords do not match");
+        header("Location: /change_password?error=Passwords do not match");
         exit();
     }
 
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         !preg_match("/[A-Za-z]/", $new_password) ||
         !preg_match("/[0-9]/", $new_password)
     ) {
-        header("Location: change_password.php?error=Password must be at least 8 characters and contain both letters and numbers");
+        header("Location: /change_password?error=Password must be at least 8 characters and contain both letters and numbers");
         exit();
     }
 
@@ -55,22 +55,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Redirect to home/dashboard
-            header("Location: /home.php?success=Password%20updated%20successfully");
+            header("Location: /?success=Password%20updated%20successfully");
 exit();
         } else {
-            header("Location: change_password.php?error=Failed to update password");
+            header("Location: /change_password?error=Failed to update password");
             exit();
         }
 
         $stmt->close();
     } else {
-        header("Location: change_password.php?error=Database error");
+        header("Location: /change_password?error=Database error");
         exit();
     }
 
 } else {
     // If accessed directly
-    header("Location: change_password.php");
+    header("Location: /change_password");
     exit();
 }
 ?>

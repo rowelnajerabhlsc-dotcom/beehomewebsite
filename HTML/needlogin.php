@@ -79,7 +79,7 @@
 
     <div class="button-group">
         <a href="javascript:history.back()" class="btn btn-back">Go Back</a>
-        <a href="login.php" class="btn btn-login">Login</a>
+        <a href="/login" class="btn btn-login">Login</a>
     </div>
 </div>
 

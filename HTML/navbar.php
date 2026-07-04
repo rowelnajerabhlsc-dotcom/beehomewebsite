@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <!-- LOGO -->
     <div class="logo">
-        <a href="/home.php">
+        <a href="/">
             <img src="/IMAGES/logo.png" alt="Bee Home Logo">
         </a>
     </div>
@@ -16,29 +16,29 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- NAV LINKS -->
     <ul class="nav-links" id="navLinks">
 
-        <li><a href="/home.php">Home</a></li>
+        <li><a href="/">Home</a></li>
 
         <li class="dropdown">
-            <a href="/HTML/about.php">About Us ▾</a>
+            <a href="/about">About Us ▾</a>
 
             <ul class="dropdown-menu">
-                <li><a href="/HTML/about.php#history">History</a></li>
-                <li><a href="/HTML/about.php#mission">Mission, Vision & Core Values</a></li>
-                <li><a href="/HTML/about.php#awards">Awards & Recognition</a></li>
-                <li><a href="/HTML/about.php#officers">Officers & Committees</a></li>
-                <li><a href="/HTML/about.php#community">Community</a></li>
+                <li><a href="/about#history">History</a></li>
+                <li><a href="/about#mission">Mission, Vision & Core Values</a></li>
+                <li><a href="/about#awards">Awards & Recognition</a></li>
+                <li><a href="/about#officers">Officers & Committees</a></li>
+                <li><a href="/about#community">Community</a></li>
             </ul>
         </li>
 
-        <li><a href="/HTML/products.php">Products & Services</a></li>
+        <li><a href="/products">Products & Services</a></li>
 
-        <li><a href="/HTML/manpower_request.php">Manpower Request</a></li>
+        <li><a href="/manpower_request">Manpower Request</a></li>
 
         <!-- Membership -->
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
-                ? '/HTML/membership.php'
-                : '/HTML/needlogin.php'; ?>">
+                ? '/membership'
+                : '/needlogin'; ?>">
                 Membership
             </a>
         </li>
@@ -46,13 +46,13 @@ if (session_status() === PHP_SESSION_NONE) {
         <!-- Bee Home Cares -->
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
-                ? '/HTML/bee-home-cares.php'
-                : '/HTML/needlogin.php'; ?>">
+                ? '/bee-home-cares'
+                : '/needlogin'; ?>">
                 Bee Home Cares
             </a>
         </li>
 
-        <li><a href="/HTML/contact.php">Contact Us</a></li>
+        <li><a href="/contact">Contact Us</a></li>
 
     </ul>
 
@@ -69,19 +69,19 @@ if (session_status() === PHP_SESSION_NONE) {
 
                 <div class="account-menu" id="accountMenu">
 
-                    <a href="/HTML/profile.php">Profile</a>
+                    <a href="/profile">Profile</a>
 
-                    <a href="/HTML/change_password.php">Change Password</a>
+                    <a href="/change_password">Change Password</a>
 
                     <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 3 || $_SESSION['role'] == 4)): ?>
 
-                        <a href="/HTML/records.php">Records</a>
+                        <a href="/records">Records</a>
 
-                        <a href="/HTML/manpower-request-logs.php">Manpower Request Logs</a>
+                        <a href="/manpower-request-logs">Manpower Request Logs</a>
 
                     <?php endif; ?>
 
-                    <a href="/HTML/logout.php">Logout</a>
+                    <a href="/logout">Logout</a>
 
                 </div>
 
@@ -89,7 +89,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
         <?php else: ?>
 
-            <a href="/HTML/login.php" class="account-link">Login</a>
+            <a href="/login" class="account-link">Login</a>
 
         <?php endif; ?>
 

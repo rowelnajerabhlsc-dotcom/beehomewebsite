@@ -43,7 +43,7 @@
         }
         ?>
 
-        <form action="register_process.php" method="POST">
+        <form action="/register_process" method="POST">
 
             <label>Username</label>
             <input type="text" name="username" required>
@@ -55,7 +55,7 @@
         </form>
 
         <div class="auth-link">
-            <p>Already have an account? <a href="login.php">Login</a></p>
+            <p>Already have an account? <a href="/login">Login</a></p>
         </div>
     </div>
 </div>

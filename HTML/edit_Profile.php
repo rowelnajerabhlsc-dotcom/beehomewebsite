@@ -3,7 +3,7 @@ session_start();
 include "config.php";
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login");
     exit();
 }
 
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: profile.php?updated=1");
+    header("Location: /profile?updated=1");
     exit();
 }
 
@@ -212,7 +212,7 @@ $stmt->close();
 
     <div class="button-group">
         <button type="submit" class="save-btn">Save Changes</button>
-        <button type="button" class="cancel-btn" onclick="window.location.href='profile.php'">
+        <button type="button" class="cancel-btn" onclick="window.location.href='/profile'">
             Cancel
         </button>
     </div>
