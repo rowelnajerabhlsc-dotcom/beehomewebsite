@@ -160,7 +160,7 @@ agree with our
             <!-- LEFT -->
             <div class="footer-left">
                 <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="footer-logo">
-                <h3>BEE HOME</h3>
+                <h3>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h3>
                 <p>UNIT 203, 2ND FLOOR, MGC VERANDA BUILDING, 31, GOV. PASCUAL AVENUE, MALABON, METRO MANILA</p>
                 
             </div>
@@ -179,7 +179,7 @@ agree with our
 
             <!-- RIGHT -->
             <div class="footer-right">
-                <h3>CONNECT</h3>
+                <h3>CONNECT WITH US</h3>
                 <p>
                     <a href="https://www.facebook.com/kabeehome/" target="_blank">
                         <img src="../IMAGES/logo-fb.png" alt="FB" class="footer-icon"> 
@@ -193,6 +193,8 @@ agree with our
 
         </div>
     </footer>
+
+
     
 <!-- ================= SCRIPT ================= -->
 <script>
