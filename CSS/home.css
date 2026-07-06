@@ -409,6 +409,101 @@ section,
 /* ------------------------------------------------------ */
 
 /* SERVICES SECTION */
+.services-intro {
+    display: flex;
+    justify-content: space-evenly;
+
+}
+
+#service-intro-text {
+    width: 50%;
+    padding: 20px;
+    text-align: center;
+}
+
+#service-intro-text h2 {
+    font-size: 60px;
+    margin-bottom: 15px;
+    color: rgba(9,109,43,0.85);
+}
+/*Rotating Graphics*/
+#dial {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.dial__track {
+  position: absolute;
+  inset: 0;
+  border: 12px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  transition: transform 0.2s ease-out;
+}
+
+.dial__segment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  margin: -25px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  font-size: 20px;
+}
+
+.sample {
+    width: 10px;
+    height: 10px;
+}
+
+/* spread them evenly at 60° intervals */
+.dial__segment:nth-child(1) { transform: rotate(0deg)    translate(0,-120px) rotate(0deg); }
+.dial__segment:nth-child(2) { transform: rotate(60deg)   translate(0,-120px) rotate(-60deg); }
+.dial__segment:nth-child(3) { transform: rotate(120deg)  translate(0,-120px) rotate(-120deg); }
+.dial__segment:nth-child(4) { transform: rotate(180deg)  translate(0,-120px) rotate(-180deg); }
+.dial__segment:nth-child(5) { transform: rotate(240deg)  translate(0,-120px) rotate(-240deg); }
+.dial__segment:nth-child(6) { transform: rotate(300deg)  translate(0,-120px) rotate(-300deg); }
+
+/* central knob */
+.dial__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px;
+  background: #222;
+  border: 6px solid #333;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  cursor: grab;
+  z-index: 2;
+}
+
+.dial__segment i {
+  /* ensure transform applies cleanly */
+  display: block;
+  transition: transform 0.2s ease-out;
+}
+
+.dial__btn,
+.dial__knob {
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* hover on the central knob */
+.dial__knob:hover {
+  background: #2a2a2a;
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+}
+
+/*Services*/
 .services {
     width: 100%;
     padding: 80px 10%;

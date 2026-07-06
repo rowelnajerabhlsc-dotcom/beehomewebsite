@@ -43,6 +43,24 @@
     </section>
 
      <!-- CONTENT 2 - SERVICES -->
+    <section class="services-intro">
+            <div id="service-intro-text">
+                <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
+            </div>
+            
+            <div id="dial">
+                <div class="dial__track">
+                    <div class="dial__segment"><i class="fa-solid fa-user sample"></i></div>
+                    <div class="dial__segment"><i class="fa-solid fa-cog"></i></div>
+                    <div class="dial__segment"><i class="fa-solid fa-tasks"></i></div>
+                    <div class="dial__segment"><i class="fa-solid fa-file-lines"></i></div>
+                    <div class="dial__segment"><i class="fa-solid fa-comments"></i></div>
+                    <div class="dial__segment"><i class="fa-solid fa-globe"></i></div>
+                </div>
+            <div class="dial__knob"></div>
+            </div>
+    </section>
+
     <section class="services">
         <div class="services-container">
 
@@ -314,6 +332,78 @@
         hero.style.opacity = opacity;
     }, { passive: true });
 
+    // Grab all the elements
+    const track     = document.querySelector('.dial__track');
+    const knob      = document.querySelector('.dial__knob');
+    const btnUp     = document.querySelector('.dial__up');
+    const btnDown   = document.querySelector('.dial__down');
+    const resetBtn  = document.querySelector('.reset');
+    const icons     = document.querySelectorAll('.dial__segment i');
+
+    // State
+    let dragging    = false;
+    let startAngle  = 0;
+    let currentRot  = 0;
+    const STEP_DEG  = 60;
+
+    // Helper to compute pointer angle around the dial center
+    function getAngle(e) {
+    const rect = track.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+    const x    = e.clientX ?? e.touches[0].clientX;
+    const y    = e.clientY ?? e.touches[0].clientY;
+    return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
+    }
+
+    // Apply rotation to the track and counter-rotate each icon
+    function applyRotation() {
+    track.style.transform = `rotate(${currentRot}deg)`;
+    icons.forEach(icon => {
+        icon.style.transform = `rotate(${-currentRot}deg)`;
+    });
+    }
+
+    // ----- Drag to rotate -----
+
+    knob.addEventListener('mousedown', e => {
+    e.preventDefault();
+    dragging   = true;
+    startAngle = getAngle(e);
+    knob.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const angleDelta = getAngle(e) - startAngle;
+    currentRot  += angleDelta;
+    startAngle   = getAngle(e);
+    applyRotation();
+    });
+
+    document.addEventListener('mouseup', () => {
+    dragging = false;
+    knob.style.cursor = 'grab';
+    });
+
+    // Touch support
+    knob.addEventListener('touchstart', e => {
+    e.preventDefault();
+    dragging   = true;
+    startAngle = getAngle(e.touches[0]);
+    });
+
+    document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const angleDelta = getAngle(e.touches[0]) - startAngle;
+    currentRot  += angleDelta;
+    startAngle   = getAngle(e.touches[0]);
+    applyRotation();
+    });
+
+    document.addEventListener('touchend', () => {
+    dragging = false;
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
