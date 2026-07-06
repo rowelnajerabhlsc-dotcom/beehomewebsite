@@ -108,7 +108,9 @@
 
         <!-- LEFT SIDE -->
         <div class="community-left">
-            <h2>ARE YOU LOOKING FOR LABOR EMPLOYMENT?</h2>
+            <h2 style = "font-size: 26px; text-align: justify;">
+                ARE YOU LOOKING FOR LABOR EMPLOYMENT?
+            </h2>
             <p>
                 Join a trusted cooperative that connects skilled workers with
                 meaningful opportunities across different industries.
