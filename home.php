@@ -104,7 +104,7 @@
 
         <!-- RIGHT SIDE -->
         <div class="community-content">
-            <h2 style = "font-size: 30px; text-align: right;">
+            <h2 style = "font-size: 30px; text-align: center;">
                 BEE ONE OF US!</h2>
             <p>
                 Secure opportunities, grow with a trusted cooperative,
