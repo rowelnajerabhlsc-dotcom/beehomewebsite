@@ -414,7 +414,7 @@ section,
     justify-content: space-evenly;
     align-items: center;
     height: 90vh;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 #service-intro-text {
@@ -474,11 +474,6 @@ section,
   background: rgba(255,255,255,0.25);
 }
 
-.sample {
-    width: 10px;
-    height: 10px;
-}
-
 /* spread them evenly at 60° intervals */
 .dial__segment:nth-child(1) { transform: rotate(0deg)    translate(0,-120px) rotate(0deg); }
 .dial__segment:nth-child(2) { transform: rotate(60deg)   translate(0,-120px) rotate(-60deg); }
@@ -507,6 +502,7 @@ section,
   /* ensure transform applies cleanly */
   display: block;
   transition: transform 0.2s ease-out;
+  font-size: 50px;
 }
 
 .dial__btn,
