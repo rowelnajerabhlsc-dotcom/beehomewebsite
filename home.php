@@ -42,22 +42,37 @@
         </div>
     </section>
 
-     <!-- CONTENT 2 - SERVICES -->
+        <!-- CONTENT 2 - SERVICES -->
     <section class="services-intro">
-            <div id="service-intro-text">
-                <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
+            <div id="service-intro-left" class="scroll-element left dial">
+                <h2>EXPLORE OUR PRODUCTS</h2>
+                <div class="dial__wrapper">
+                    <div class="dial__track">
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
+                    </div>
+                    <div class="dial__knob"></div>
+                </div>
             </div>
 
-            <div id="dial">
-                <div class="dial__track">
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
-                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
+            <div id="service-intro-right" class="scroll-element right dial">
+                <h2>AND OUR SERVICES</h2>
+                <div class="dial__wrapper">
+                    <div class="dial__track">
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
+                    </div>
+                    <div class="dial__knob"></div>
                 </div>
-                <div class="dial__knob"></div>
+
             </div>
     </section>
 
@@ -335,108 +350,130 @@
     }, { passive: true });
 
 //Services Dial Menu 
-// Grab all the elements
-const track    = document.querySelector('.dial__track');
-const knob     = document.querySelector('.dial__knob');
-const segments = document.querySelectorAll('.dial__segment');
-const icons    = document.querySelectorAll('.dial__segment i');
+function initDial(container) {
+  const track    = container.querySelector('.dial__track');
+  const knob     = container.querySelector('.dial__knob');
+  const segments = container.querySelectorAll('.dial__segment');
+  const icons    = container.querySelectorAll('.dial__segment i');
 
-let dragging      = false;
-let startAngle    = 0;
-let currentRot    = 0;
-const STEP_DEG    = 360 / segments.length;
-const AUTO_SPEED  = 0.15; // degrees per frame — tweak to taste
+  let dragging      = false;
+  let startAngle    = 0;
+  let currentRot    = 0;
+  const STEP_DEG    = 360 / segments.length;
+  const AUTO_SPEED  = 0.15;
 
-const baseAngles = Array.from(segments).map((_, i) => i * STEP_DEG);
+  const baseAngles = Array.from(segments).map((_, i) => i * STEP_DEG);
 
-function getAngle(e) {
-  const rect = track.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const x = e.clientX ?? e.touches[0].clientX;
-  const y = e.clientY ?? e.touches[0].clientY;
-  return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
-}
+  function getAngle(e) {
+    const rect = track.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const x = e.clientX ?? e.touches[0].clientX;
+    const y = e.clientY ?? e.touches[0].clientY;
+    return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
+  }
 
-function normalize(angle) {
-  return ((angle % 360) + 360) % 360;
-}
+  function normalize(angle) {
+    return ((angle % 360) + 360) % 360;
+  }
 
-function angleDiff(a, b) {
-  const diff = Math.abs(normalize(a) - normalize(b));
-  return Math.min(diff, 360 - diff);
-}
+  function angleDiff(a, b) {
+    const diff = Math.abs(normalize(a) - normalize(b));
+    return Math.min(diff, 360 - diff);
+  }
 
-function applyRotation() {
-  track.style.transform = `rotate(${currentRot}deg)`;
+  function applyRotation() {
+    track.style.transform = `rotate(${currentRot}deg)`;
 
-  let closestIndex = -1;
-  let closestDist = Infinity;
+    let closestIndex = -1;
+    let closestDist = Infinity;
 
-  baseAngles.forEach((base, i) => {
-    const absoluteAngle = normalize(base + currentRot);
-    const dist = angleDiff(absoluteAngle, 270); // left side, given rotate(0)=top layout
-    if (dist < closestDist) {
-      closestDist = dist;
-      closestIndex = i;
+    baseAngles.forEach((base, i) => {
+      const absoluteAngle = normalize(base + currentRot);
+      const dist = angleDiff(absoluteAngle, 0); // top highlight
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestIndex = i;
+      }
+    });
+
+    segments.forEach((seg, i) => {
+      icons[i].style.transform = `rotate(${-currentRot}deg)`;
+      seg.classList.toggle('is-active', i === closestIndex);
+    });
+  }
+
+  function autoRotate() {
+    if (!dragging) {
+      currentRot += AUTO_SPEED;
+      applyRotation();
     }
-  });
-
-  segments.forEach((seg, i) => {
-    icons[i].style.transform = `rotate(${-currentRot}deg)`;
-    seg.classList.toggle('is-active', i === closestIndex);
-  });
-}
-
-// ----- Continuous auto-rotation -----
-function autoRotate() {
-  if (!dragging) {
-    currentRot += AUTO_SPEED;
-    applyRotation();
+    requestAnimationFrame(autoRotate);
   }
   requestAnimationFrame(autoRotate);
+
+  knob.addEventListener('mousedown', e => {
+    e.preventDefault();
+    dragging = true;
+    startAngle = getAngle(e);
+    knob.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const angleDelta = getAngle(e) - startAngle;
+    currentRot += angleDelta;
+    startAngle = getAngle(e);
+    applyRotation();
+  });
+
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    knob.style.cursor = 'grab';
+  });
+
+  knob.addEventListener('touchstart', e => {
+    e.preventDefault();
+    dragging = true;
+    startAngle = getAngle(e.touches[0]);
+  });
+
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const angleDelta = getAngle(e.touches[0]) - startAngle;
+    currentRot += angleDelta;
+    startAngle = getAngle(e.touches[0]);
+    applyRotation();
+  });
+
+  document.addEventListener('touchend', () => {
+    dragging = false;
+  });
 }
-requestAnimationFrame(autoRotate);
 
-// ----- Drag to rotate (overrides auto-rotation while active) -----
+// Initialize every dial on the page
+document.querySelectorAll('.dial').forEach(initDial);
 
-knob.addEventListener('mousedown', e => {
-  e.preventDefault();
-  dragging = true;
-  startAngle = getAngle(e);
-  knob.style.cursor = 'grabbing';
+
+
+//scroll animation for elements
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // Adds class when scrolling DOWN into view
+      entry.target.classList.add('visible');
+    } else {
+      // Removes class when scrolling UP out of view
+      entry.target.classList.remove('visible');
+    }
+  });
+}, {
+  threshold: 0.1 // Triggers when 10% of the element is visible
 });
 
-document.addEventListener('mousemove', e => {
-  if (!dragging) return;
-  const angleDelta = getAngle(e) - startAngle;
-  currentRot += angleDelta;
-  startAngle = getAngle(e);
-  applyRotation();
-});
+// Target all elements you want to animate
+document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
 
-document.addEventListener('mouseup', () => {
-  dragging = false;
-  knob.style.cursor = 'grab';
-});
-
-knob.addEventListener('touchstart', e => {
-  e.preventDefault();
-  dragging = true;
-  startAngle = getAngle(e.touches[0]);
-});
-
-document.addEventListener('touchmove', e => {
-  if (!dragging) return;
-  const angleDelta = getAngle(e.touches[0]) - startAngle;
-  currentRot += angleDelta;
-  startAngle = getAngle(e.touches[0]);
-  applyRotation();
-});
-
-document.addEventListener('touchend', () => {
-  dragging = false;
-});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>

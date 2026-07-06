@@ -412,28 +412,56 @@ section,
 .services-intro {
     display: flex;
     justify-content: space-evenly;
-    align-items: center;
     height: 90vh;
     overflow: hidden;
 }
 
-#service-intro-text {
-    width: 50%;
-    padding: 20px;
-    text-align: center;
-}
-
-#service-intro-text h2 {
-    font-size: 60px;
+.services-intro h2 {
+    font-size: 70px;
     margin-bottom: 15px;
     color: rgba(9,109,43,0.85);
 }
-/*Rotating Graphics*/
-#dial {
-    position: relative;
+
+#service-intro-left {
     width: 50%;
-    height: 300px;
+    padding: 20px;
+    text-align: left;
 }
+
+/* Initial hidden state (e.g., shifted to the left) */
+.scroll-element.left {
+  opacity: 0;
+  transform: translateX(-100px);
+  transition: opacity 0.6s ease-out, transform 1s ease-out;
+}
+
+.scroll-element.right {
+  opacity: 0;
+  transform: translateX(100px);
+  transition: opacity 0.6s ease-out, transform 1s ease-out;
+}
+
+/* Active state when visible on screen */
+.scroll-element.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/*Rotating Graphics*/
+#service-intro-right {
+    width: 50%;
+    padding: 20px;
+    text-align: right;
+}
+
+.dial__wrapper {
+  position: relative;
+  width: 300px;   /* match roughly to your track's diameter + segment size */
+  height: 300px;
+  margin: 40px auto 0; /* pushes it below the heading, centers it */    
+}
+
 .dial__track {
   position: absolute;
   inset: 0;
