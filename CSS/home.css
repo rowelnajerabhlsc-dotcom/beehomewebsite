@@ -420,12 +420,14 @@ section,
     font-size: 70px;
     margin-bottom: 15px;
     color: rgba(9,109,43,0.85);
+    flex:1;
 }
 
 #service-intro-left {
     width: 50%;
     padding: 20px;
     text-align: left;
+    flex:1;
 }
 
 /* Initial hidden state (e.g., shifted to the left) */
@@ -453,13 +455,14 @@ section,
     width: 50%;
     padding: 20px;
     text-align: right;
+    flex:1;
 }
 
 .dial__wrapper {
   position: relative;
   width: 300px;   /* match roughly to your track's diameter + segment size */
   height: 300px;
-  margin: 40px auto 0; /* pushes it below the heading, centers it */    
+  margin: 40px auto 0; /* pushes it below the heading, centers it */
 }
 
 .dial__track {
@@ -554,7 +557,7 @@ section,
 /*Services*/
 .services {
     width: 100%;
-    padding: 80px 10%;
+    padding: 30px 10%;
     text-align: center;
     position: relative;
     background: url('../IMAGES/home-community1.png') no-repeat center center/cover;
@@ -652,6 +655,16 @@ section,
 @media (max-width: 768px) {
     .services-grid {
         grid-template-columns: 1fr;
+    }
+
+    .services-intro {
+    flex-direction: column;
+    align-items: center;
+    height:auto
+    }
+
+    .services-intro h2 {
+    flex: none;
     }
 }
 

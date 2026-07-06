@@ -48,7 +48,7 @@
                 <h2>EXPLORE OUR PRODUCTS</h2>
                 <div class="dial__wrapper">
                     <div class="dial__track">
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user"></i></span></div>
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
@@ -78,8 +78,6 @@
 
     <section class="services">
         <div class="services-container">
-
-            <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
             <p class="services-desc">
                 Bee Home Labor Multipurpose Cooperative is dedicated to assisting its members in increasing their financial prosperity
                 by supplying worthwhile goods and services.
