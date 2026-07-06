@@ -47,17 +47,17 @@
             <div id="service-intro-text">
                 <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
             </div>
-            
+
             <div id="dial">
                 <div class="dial__track">
-                    <div class="dial__segment"><i class="fa-solid fa-user sample"></i></div>
-                    <div class="dial__segment"><i class="fa-solid fa-cog"></i></div>
-                    <div class="dial__segment"><i class="fa-solid fa-tasks"></i></div>
-                    <div class="dial__segment"><i class="fa-solid fa-file-lines"></i></div>
-                    <div class="dial__segment"><i class="fa-solid fa-comments"></i></div>
-                    <div class="dial__segment"><i class="fa-solid fa-globe"></i></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
+                    <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
                 </div>
-            <div class="dial__knob"></div>
+                <div class="dial__knob"></div>
             </div>
     </section>
 
@@ -328,82 +328,103 @@
     const fadeDistance = window.innerHeight; // fades out over 1 viewport of scroll
 
     scrollContainer.addEventListener('scroll', () => {
-        const opacity = 1 - Math.min(scrollContainer.scrollTop / fadeDistance, 1);
+        // Fade out the hero section to fully transparent when scrolled 60% of the viewport height
+        const fadeFactor = 0.6; // 60% of viewport
+        const opacity = 1 - Math.min(scrollContainer.scrollTop / (fadeDistance * fadeFactor), 1);
         hero.style.opacity = opacity;
     }, { passive: true });
+//Services Dial Menu 
+// Grab all the elements
+const track    = document.querySelector('.dial__track');
+const knob     = document.querySelector('.dial__knob');
+const segments = document.querySelectorAll('.dial__segment');
+const icons    = document.querySelectorAll('.dial__segment i');
 
-    // Grab all the elements
-    const track     = document.querySelector('.dial__track');
-    const knob      = document.querySelector('.dial__knob');
-    const btnUp     = document.querySelector('.dial__up');
-    const btnDown   = document.querySelector('.dial__down');
-    const resetBtn  = document.querySelector('.reset');
-    const icons     = document.querySelectorAll('.dial__segment i');
+let dragging   = false;
+let startAngle = 0;
+let currentRot = 0;
+const STEP_DEG = 360 / segments.length; // 60 for 6 segments
 
-    // State
-    let dragging    = false;
-    let startAngle  = 0;
-    let currentRot  = 0;
-    const STEP_DEG  = 60;
+const baseAngles = Array.from(segments).map((_, i) => i * STEP_DEG);
 
-    // Helper to compute pointer angle around the dial center
-    function getAngle(e) {
-    const rect = track.getBoundingClientRect();
-    const cx   = rect.left + rect.width  / 2;
-    const cy   = rect.top  + rect.height / 2;
-    const x    = e.clientX ?? e.touches[0].clientX;
-    const y    = e.clientY ?? e.touches[0].clientY;
-    return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
+function getAngle(e) {
+  const rect = track.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const x = e.clientX ?? e.touches[0].clientX;
+  const y = e.clientY ?? e.touches[0].clientY;
+  return Math.atan2(y - cy, x - cx) * (180 / Math.PI);
+}
+
+function normalize(angle) {
+  return ((angle % 360) + 360) % 360;
+}
+
+function angleDiff(a, b) {
+  const diff = Math.abs(normalize(a) - normalize(b));
+  return Math.min(diff, 360 - diff);
+}
+
+function applyRotation() {
+  track.style.transform = `rotate(${currentRot}deg)`;
+
+  let closestIndex = -1;
+  let closestDist = Infinity;
+
+  baseAngles.forEach((base, i) => {
+    const absoluteAngle = normalize(base + currentRot);
+    const dist = angleDiff(absoluteAngle, 180); // left side of the circle
+    if (dist < closestDist) {
+      closestDist = dist;
+      closestIndex = i;
     }
+  });
 
-    // Apply rotation to the track and counter-rotate each icon
-    function applyRotation() {
-    track.style.transform = `rotate(${currentRot}deg)`;
-    icons.forEach(icon => {
-        icon.style.transform = `rotate(${-currentRot}deg)`;
-    });
-    }
+  segments.forEach((seg, i) => {
+    icons[i].style.transform = `rotate(${-currentRot}deg)`;
+    seg.classList.toggle('is-active', i === closestIndex);
+  });
+}
 
-    // ----- Drag to rotate -----
+knob.addEventListener('mousedown', e => {
+  e.preventDefault();
+  dragging = true;
+  startAngle = getAngle(e);
+  knob.style.cursor = 'grabbing';
+});
 
-    knob.addEventListener('mousedown', e => {
-    e.preventDefault();
-    dragging   = true;
-    startAngle = getAngle(e);
-    knob.style.cursor = 'grabbing';
-    });
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const angleDelta = getAngle(e) - startAngle;
+  currentRot += angleDelta;
+  startAngle = getAngle(e);
+  applyRotation();
+});
 
-    document.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    const angleDelta = getAngle(e) - startAngle;
-    currentRot  += angleDelta;
-    startAngle   = getAngle(e);
-    applyRotation();
-    });
+document.addEventListener('mouseup', () => {
+  dragging = false;
+  knob.style.cursor = 'grab';
+});
 
-    document.addEventListener('mouseup', () => {
-    dragging = false;
-    knob.style.cursor = 'grab';
-    });
+knob.addEventListener('touchstart', e => {
+  e.preventDefault();
+  dragging = true;
+  startAngle = getAngle(e.touches[0]);
+});
 
-    // Touch support
-    knob.addEventListener('touchstart', e => {
-    e.preventDefault();
-    dragging   = true;
-    startAngle = getAngle(e.touches[0]);
-    });
+document.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  const angleDelta = getAngle(e.touches[0]) - startAngle;
+  currentRot += angleDelta;
+  startAngle = getAngle(e.touches[0]);
+  applyRotation();
+});
 
-    document.addEventListener('touchmove', e => {
-    if (!dragging) return;
-    const angleDelta = getAngle(e.touches[0]) - startAngle;
-    currentRot  += angleDelta;
-    startAngle   = getAngle(e.touches[0]);
-    applyRotation();
-    });
+document.addEventListener('touchend', () => {
+  dragging = false;
+});
 
-    document.addEventListener('touchend', () => {
-    dragging = false;
-    });
+applyRotation(); // highlight correct segment on load
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
