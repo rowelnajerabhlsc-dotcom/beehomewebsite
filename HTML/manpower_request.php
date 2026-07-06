@@ -153,7 +153,7 @@ agree with our
 
 </div>
 
-     <!-- FOOTER -->
+         <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-container">
 
