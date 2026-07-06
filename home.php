@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
-    <link rel="stylesheet" href="CSS/home.css?v=loader-fragments-2">
+    <link rel="stylesheet" href="CSS/home.css?v=scroll-snap-mandatory-2">
 <link rel="stylesheet" href="CSS/navbar.css">
 <link rel="icon" href="IMAGES/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +31,7 @@
 
  <!-- HOME PAGE CONTENTS START HERE -->
      <!-- CONTENT 1 - WELCOME -->
+    <div class="scroll-container">    
     <section class="hero">
         <div class="hero-text">
         
@@ -224,9 +225,6 @@
 
         </div>
     </section>
-
-
-
      <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-container">
@@ -267,6 +265,7 @@
 
         </div>
     </footer>
+    </div>
 
 
 
@@ -304,12 +303,13 @@
         showSlides();
     }
 
+    const scrollContainer = document.querySelector('.scroll-container');
     const hero = document.querySelector('.hero');
     const fadeDistance = window.innerHeight; // fades out over 1 viewport of scroll
 
-    window.addEventListener('scroll', () => {
-    const opacity = 1 - Math.min(window.scrollY / fadeDistance, 1);
-    hero.style.opacity = opacity;
+    scrollContainer.addEventListener('scroll', () => {
+        const opacity = 1 - Math.min(scrollContainer.scrollTop / fadeDistance, 1);
+        hero.style.opacity = opacity;
     }, { passive: true });
 
 </script>
