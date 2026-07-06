@@ -152,118 +152,48 @@ agree with our
     </div>
 
 </div>
-/* FOOTER */
-.footer {
-    background-color: #096D2B;
-    color: white;
-    padding: 60px 10%;
-}
 
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
-}
+     <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
 
-/* LEFT */
-.footer-left {
-    flex: 1 1 300px;
-}
+            <!-- LEFT -->
+            <div class="footer-left">
+                <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="footer-logo">
+                <h3>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h3>
+                <p>UNIT 203, 2ND FLOOR, MGC VERANDA BUILDING, 31, GOV. PASCUAL AVENUE, MALABON, METRO MANILA</p>
+                
+            </div>
 
-.footer-left h3 {
-    margin-top: 15px;
-    font-size: 18px;
-}
+            <!-- MIDDLE -->
+            <div class="footer-middle">
+                <ul>
+                    <li><a href="../HTML/home.php">Home</a></li>
+                    <li><a href="../HTML/about.php">About Us</a></li>
+                    <li><a href="../HTML/products.php">Products & Services</a></li>
+                    <li><a href="../HTML/membership.php">Membership</a></li>
+                    <li><a href="../HTML/bee-home-cares.php">Bee Home Cares</a></li>
+                    <li><a href="../HTML/contact.php">Contact Us</a></li>
+                </ul>
+            </div>
 
-.footer-left p {
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 5px 0;
-}
+            <!-- RIGHT -->
+            <div class="footer-right">
+                <h3>CONNECT WITH US</h3>
+                <p>
+                    <a href="https://www.facebook.com/kabeehome/" target="_blank">
+                        <img src="../IMAGES/logo-fb.png" alt="FB" class="footer-icon"> 
+                        Bee Home Labor Multipurpose Cooperative
+                    </a>
+                </p>
+                <p><img src="../IMAGES/logo-email.png" alt="Gmail" class="footer-icon"> infoadmin@beehome.ph</p>
+                <p><img src="../IMAGES/logo-phone.png" alt="Phone" class="footer-icon"> 0917 588 1203</p>
+                <p><img src="../IMAGES/logo-phone.png" alt="Phone" class="footer-icon"> (02) 8442 7296</p>
+            </div>
 
-.footer-logo {
-    width: 80px;
-}
-
-/* MIDDLE */
-.footer-middle {
-    flex: 1 1 200px;
-}
-
-.footer-middle h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.footer-middle ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-middle ul li {
-    margin-bottom: 10px;
-}
-
-.footer-middle ul li a {
-    color: white;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-.footer-middle ul li a:hover {
-    text-decoration: underline;
-}
-
-/* RIGHT */
-.footer-right {
-    flex: 1 1 250px;
-}
-
-.footer-right h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.footer-right p {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.footer-right a {
-    color: white;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-}
-
-.footer-right a:hover {
-    text-decoration: underline;
-}
-
-.footer-icon {
-    width: 20px;
-    margin-right: 10px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .footer-left, .footer-middle, .footer-right {
-        flex: 1 1 100%;
-        margin-bottom: 30px;
-    }
-
-    .footer-left h3, .footer-middle h3, .footer-right h3 {
-        font-size: 16px;
-    }
-}
+        </div>
+    </footer>
+    
 <!-- ================= SCRIPT ================= -->
 <script>
 function openPrivacyModal() {
