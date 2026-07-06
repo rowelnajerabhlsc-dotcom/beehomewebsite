@@ -48,12 +48,9 @@
                 <h2>EXPLORE OUR PRODUCTS</h2>
                 <div class="dial__wrapper">
                     <div class="dial__track">
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-bowl-rice"></i></span></div>
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
                     </div>
                     <div class="dial__knob"></div>
                 </div>
@@ -359,6 +356,12 @@ function initDial(container) {
   let currentRot    = 0;
   const STEP_DEG    = 360 / segments.length;
   const AUTO_SPEED  = 0.15;
+  const RADIUS   = 120;
+
+  segments.forEach((seg, i) => {
+    const angle = i * STEP_DEG;
+    seg.style.transform = `rotate(${angle}deg) translate(0, -${RADIUS}px) rotate(${-angle}deg)`;
+  });
 
   const baseAngles = Array.from(segments).map((_, i) => i * STEP_DEG);
 
