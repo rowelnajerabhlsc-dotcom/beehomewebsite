@@ -92,7 +92,7 @@
 
         <!-- LEFT SIDE -->
         <div class="community-left">
-            <h2 style = "font-size: 26px; text-align: justify;">
+            <h2 style = "font-size: 30px; text-align: justify;">
                 ARE YOU LOOKING FOR LABOR EMPLOYMENT?
             </h2>
             <p>
@@ -104,7 +104,8 @@
 
         <!-- RIGHT SIDE -->
         <div class="community-content">
-            <h2>BEE ONE OF US!</h2>
+            <h2 style = "font-size: 30px; text-align: justify;">
+                BEE ONE OF US!</h2>
             <p>
                 Secure opportunities, grow with a trusted cooperative,
                 and build a better future together, we thrive.
