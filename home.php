@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
     <link rel="stylesheet" href="CSS/home.css?v=scroll-snap-mandatory-2">
-<link rel="stylesheet" href="CSS/navbar.css">
-<link rel="icon" href="IMAGES/logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/navbar.css">
+    <link rel="icon" href="IMAGES/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body class="loading">
 
@@ -40,6 +41,48 @@
             <h2>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h2>
         </div>
     </section>
+
+     <!-- CONTENT 2 - SERVICES -->
+    <section class="services">
+        <div class="services-container">
+
+            <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
+            <p class="services-desc">
+                Bee Home Labor Multipurpose Cooperative is dedicated to assisting its members in increasing their financial prosperity
+                by supplying worthwhile goods and services.
+            </p>
+
+            <div class="services-grid">
+
+                <a href="HTML/labor.php" class="service-box link-box">
+                    <img src="../IMAGES/home-logo1.png" alt="Service 1">
+                    <h3>Labor Operation</h3>
+                    <p>Providing skilled, well-trained, and disciplined manpower solutions across diverse industries.</p>
+                </a>
+
+                <a href="HTML/credit.php" class="service-box link-box">
+                    <img src="../IMAGES/home-logo2.png" alt="Service 2">
+                    <h3>Credit Operation</h3>
+                    <p>Delivering accessible loan programs and financial support to help members achieve their goals. (MEMBERS ONLY)</p>
+                </a>
+
+                <a href="HTML/transport.php" class="service-box link-box">
+                    <img src="../IMAGES/home-logo3.png" alt="Service 3">
+                    <h3>Transport Operation</h3>
+                    <p>Providing safe, reliable, and efficient transportation services for passengers.</p>
+                </a>
+
+                <a href="HTML/products.php" class="service-box link-box">
+                    <img src="../IMAGES/home-logo4.png" alt="Service 4">
+                    <h3>More Services</h3>
+                    <p>Discover more services offered by Bee Home.</p>
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
 
      <!-- CONTENT 2 - ABOUT US -->
     <section class="about">
@@ -134,61 +177,20 @@
     <!-- MANPOWER REQUEST -->
      <section class="manpower-section">
 
-    <div class="manpower-container">
-        <h2>Manpower Request</h2>
+        <div class="manpower-container">
+            <h2>Manpower Request</h2>
 
-        <p>
-            We are happy to assist you with the manpower you need.
-            Click the manpower request button below and we will be proud
-            to provide the best and qualified Member workers for your company.
-        </p>
-
-        <a href="HTML/manpower_request.php" class="manpower-btn">
-            MANPOWER REQUEST
-        </a>
-    </div>
-
-</section>
-
-     <!-- CONTENT 4 - SERVICES -->
-    <section class="services">
-        <div class="services-container">
-
-            <h2>EXPLORE OUR PRODUCTS & SERVICES</h2>
-            <p class="services-desc">
-                Bee Home Labor Multipurpose Cooperative is dedicated to assisting its members in increasing their financial prosperity
-                by supplying worthwhile goods and services.
+            <p>
+                We are happy to assist you with the manpower you need.
+                Click the manpower request button below and we will be proud
+                to provide the best and qualified Member workers for your company.
             </p>
 
-            <div class="services-grid">
-
-                <a href="HTML/labor.php" class="service-box link-box">
-                    <img src="../IMAGES/home-logo1.png" alt="Service 1">
-                    <h3>Labor Operation</h3>
-                    <p>Providing skilled, well-trained, and disciplined manpower solutions across diverse industries.</p>
-                </a>
-
-                <a href="HTML/credit.php" class="service-box link-box">
-                    <img src="../IMAGES/home-logo2.png" alt="Service 2">
-                    <h3>Credit Operation</h3>
-                    <p>Delivering accessible loan programs and financial support to help members achieve their goals. (MEMBERS ONLY)</p>
-                </a>
-
-                <a href="HTML/transport.php" class="service-box link-box">
-                    <img src="../IMAGES/home-logo3.png" alt="Service 3">
-                    <h3>Transport Operation</h3>
-                    <p>Providing safe, reliable, and efficient transportation services for passengers.</p>
-                </a>
-
-                <a href="HTML/products.php" class="service-box link-box">
-                    <img src="../IMAGES/home-logo4.png" alt="Service 4">
-                    <h3>More Services</h3>
-                    <p>Discover more services offered by Bee Home.</p>
-                </a>
-
-            </div>
-
+            <a href="HTML/manpower_request.php" class="manpower-btn">
+                MANPOWER REQUEST
+            </a>
         </div>
+
     </section>
 
      <!-- CONTENT 6 - AFFILIATIORS -->
