@@ -304,6 +304,14 @@
         showSlides();
     }
 
+    const hero = document.querySelector('.hero');
+    const fadeDistance = window.innerHeight; // fades out over 1 viewport of scroll
+
+    window.addEventListener('scroll', () => {
+    const opacity = 1 - Math.min(window.scrollY / fadeDistance, 1);
+    hero.style.opacity = opacity;
+    }, { passive: true });
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>

@@ -90,13 +90,16 @@ section {
 /* HERO SECTION */
 .hero {
     width: 100%;
-    height: 85vh;
+    height: 100vh;
     background: url('../IMAGES/home-img1.png') no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    position: relative;
+
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 /* Dark overlay for better text visibility */
@@ -127,8 +130,6 @@ section {
     margin-top: 10px;
     font-weight: bold;
 }
-
-
 
 /* RESPONSIVE TEXT */
 @media (max-width: 768px) {
