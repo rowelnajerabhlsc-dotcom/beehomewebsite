@@ -108,7 +108,7 @@
 
         <!-- LEFT SIDE -->
         <div class="community-left">
-            <h2 style = "font-size: 30px; text-align: left;">
+            <h2 style = "font-size: 30px; text-align: center;">
                 ARE YOU LOOKING FOR LABOR EMPLOYMENT?
             </h2>
             <p>
