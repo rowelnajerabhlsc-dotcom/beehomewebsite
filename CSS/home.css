@@ -1,4 +1,4 @@
-* {
+ * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -7,6 +7,8 @@
 
 body {
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
 }
 
 
@@ -891,6 +893,122 @@ section {
 
 /* MOBILE */
 @media (max-width: 768px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    img,
+    svg,
+    video {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .hero,
+    .about,
+    .hero-two,
+    .community,
+    .services,
+    .affiliation,
+    .footer,
+    .manpower-section {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
+    }
+
+    .hero {
+        height: 60vh;
+    }
+
+    .hero-text,
+    .hero-two-content,
+    .about-container,
+    .services-container,
+    .community-left,
+    .community-content,
+    .affiliation-container,
+    .footer-container,
+    .manpower-container {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .hero-text {
+        padding: 0 10px;
+    }
+
+    .about,
+    .community,
+    .affiliation,
+    .footer,
+    .manpower-section {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .community {
+        gap: 40px;
+    }
+
+    .service-box {
+        padding: 30px 20px;
+    }
+
+    .service-box img {
+        height: 160px;
+    }
+
+    .affiliation-logos img,
+    .proud-logos img {
+        width: min(140px, 100%);
+    }
+
+    .hero-btn,
+    .community-btn-left,
+    .community-btn,
+    .manpower-btn {
+        display: inline-block;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding-left: 20px;
+        padding-right: 20px;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .hero-text h1,
+    .hero-text h2,
+    .about h2,
+    .about p,
+    .hero-two h1,
+    .hero-two h2,
+    .hero-two p,
+    .community-left h2,
+    .community-left p,
+    .community-content h2,
+    .community-content p,
+    .services h2,
+    .services-desc,
+    .service-box p,
+    .affiliation h2,
+    .footer-left h3,
+    .footer-left p,
+    .footer-middle ul li a,
+    .footer-right p,
+    .manpower-container h2,
+    .manpower-container p {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
 
     .manpower-container {
         padding: 50px 25px;
