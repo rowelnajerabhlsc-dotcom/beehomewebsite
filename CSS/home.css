@@ -412,7 +412,9 @@ section,
 .services-intro {
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
     height: 90vh;
+    overflow-x: hidden;
 }
 
 #service-intro-text {

@@ -333,6 +333,7 @@
         const opacity = 1 - Math.min(scrollContainer.scrollTop / (fadeDistance * fadeFactor), 1);
         hero.style.opacity = opacity;
     }, { passive: true });
+
 //Services Dial Menu 
 // Grab all the elements
 const track    = document.querySelector('.dial__track');
@@ -340,10 +341,11 @@ const knob     = document.querySelector('.dial__knob');
 const segments = document.querySelectorAll('.dial__segment');
 const icons    = document.querySelectorAll('.dial__segment i');
 
-let dragging   = false;
-let startAngle = 0;
-let currentRot = 0;
-const STEP_DEG = 360 / segments.length; // 60 for 6 segments
+let dragging      = false;
+let startAngle    = 0;
+let currentRot    = 0;
+const STEP_DEG    = 360 / segments.length;
+const AUTO_SPEED  = 0.15; // degrees per frame — tweak to taste
 
 const baseAngles = Array.from(segments).map((_, i) => i * STEP_DEG);
 
@@ -373,7 +375,7 @@ function applyRotation() {
 
   baseAngles.forEach((base, i) => {
     const absoluteAngle = normalize(base + currentRot);
-    const dist = angleDiff(absoluteAngle, 180); // left side of the circle
+    const dist = angleDiff(absoluteAngle, 270); // left side, given rotate(0)=top layout
     if (dist < closestDist) {
       closestDist = dist;
       closestIndex = i;
@@ -385,6 +387,18 @@ function applyRotation() {
     seg.classList.toggle('is-active', i === closestIndex);
   });
 }
+
+// ----- Continuous auto-rotation -----
+function autoRotate() {
+  if (!dragging) {
+    currentRot += AUTO_SPEED;
+    applyRotation();
+  }
+  requestAnimationFrame(autoRotate);
+}
+requestAnimationFrame(autoRotate);
+
+// ----- Drag to rotate (overrides auto-rotation while active) -----
 
 knob.addEventListener('mousedown', e => {
   e.preventDefault();
@@ -423,8 +437,6 @@ document.addEventListener('touchmove', e => {
 document.addEventListener('touchend', () => {
   dragging = false;
 });
-
-applyRotation(); // highlight correct segment on load
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
