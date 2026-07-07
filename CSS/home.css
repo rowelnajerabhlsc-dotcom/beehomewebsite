@@ -6,7 +6,9 @@
 }
 
 body {
+    height: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
     width: 100%;
     max-width: 100%;
 }
@@ -36,11 +38,13 @@ body {
 
 /* SMOOTH SCROLL */
 html {
-    scroll-behavior: smooth;
+    height: 100%;
+    timeline-scope: --section, --main, --site-header;
 }
 
-section {
-    scroll-margin-top: 120px; /* adjust depending on navbar height */
+section,
+.footer {
+    scroll-snap-align: start;
 }
 
 
@@ -87,16 +91,29 @@ section {
 /* ------------------------------------------------------ */
 
 /* HOME PAGE STYLE STARTS HERE */
+
+.scroll-container {
+    height: calc(100dvh - 70px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+    scroll-padding-top: 0;
+    width: 100%;
+}
 /* HERO SECTION */
 .hero {
     width: 100%;
-    height: 85vh;
+    height: 100%;
+    min-height: 100%;
     background: url('../IMAGES/home-img1.png') no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    position: relative;
+
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 /* Dark overlay for better text visibility */
@@ -127,8 +144,6 @@ section {
     margin-top: 10px;
     font-weight: bold;
 }
-
-
 
 /* RESPONSIVE TEXT */
 @media (max-width: 768px) {
@@ -273,7 +288,6 @@ section {
     display: flex;
     align-items: center;
     padding: 0 10%;
-    overflow: hidden;
 }
 
 /* slideshow images */
@@ -395,9 +409,155 @@ section {
 /* ------------------------------------------------------ */
 
 /* SERVICES SECTION */
+.services-intro {
+    display: flex;
+    justify-content: space-evenly;
+    height: 90vh;
+    overflow: hidden;
+}
+
+.services-intro h2 {
+    font-size: 70px;
+    margin-bottom: 15px;
+    color: rgba(9,109,43,0.85);
+    flex:1;
+}
+
+#service-intro-left {
+    width: 50%;
+    padding: 20px;
+    text-align: left;
+    flex:1;
+}
+
+/* Initial hidden state (e.g., shifted to the left) */
+.scroll-element.left {
+  opacity: 0;
+  transform: translateX(-100px);
+  transition: opacity 0.6s ease-out, transform 1s ease-out;
+}
+
+.scroll-element.right {
+  opacity: 0;
+  transform: translateX(100px);
+  transition: opacity 0.6s ease-out, transform 1s ease-out;
+}
+
+/* Active state when visible on screen */
+.scroll-element.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/*Rotating Graphics*/
+#service-intro-right {
+    width: 50%;
+    padding: 20px;
+    text-align: right;
+    flex:1;
+}
+
+.dial__wrapper {
+  position: relative;
+  width: 300px;   /* match roughly to your track's diameter + segment size */
+  height: 300px;
+  margin: 40px auto 0; /* pushes it below the heading, centers it */
+}
+
+.dial__track {
+  position: absolute;
+  inset: 0;
+  border: 12px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  transition: transform 0.2s ease-out;
+}
+
+.dial__segment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  margin: -25px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  font-size: 20px;
+
+}
+
+.dial__inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.dial__segment i {
+  /* ensure transform applies cleanly */
+  display: block;
+  transition: transform 0.2s ease-out;
+  font-size: 50px;
+  opacity: 0.6;
+}
+.dial__segment.is-active i {
+  transform: scale(1.5);
+  opacity: 1;
+}
+
+.dial__segment.is-active .dial__inner {
+  transform: scale(1.5);
+  background: rgba(255,255,255,0.25);
+}
+
+
+
+/* spread them evenly at 60° intervals */
+.dial__segment:nth-child(1) { transform: rotate(0deg)    translate(0,-120px) rotate(0deg); }
+.dial__segment:nth-child(2) { transform: rotate(60deg)   translate(0,-120px) rotate(-60deg); }
+.dial__segment:nth-child(3) { transform: rotate(120deg)  translate(0,-120px) rotate(-120deg); }
+.dial__segment:nth-child(4) { transform: rotate(180deg)  translate(0,-120px) rotate(-180deg); }
+.dial__segment:nth-child(5) { transform: rotate(240deg)  translate(0,-120px) rotate(-240deg); }
+.dial__segment:nth-child(6) { transform: rotate(300deg)  translate(0,-120px) rotate(-300deg); }
+
+/* central knob */
+.dial__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px;
+  background: #222;
+  border: 6px solid #333;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  cursor: grab;
+  z-index: 2;
+}
+
+.dial__btn,
+.dial__knob {
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* hover on the central knob */
+.dial__knob:hover {
+  background: #2a2a2a;
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+}
+
+/*Services*/
 .services {
     width: 100%;
-    padding: 80px 10%;
+    padding: 30px 10%;
     text-align: center;
     position: relative;
     background: url('../IMAGES/home-community1.png') no-repeat center center/cover;
@@ -495,6 +655,16 @@ section {
 @media (max-width: 768px) {
     .services-grid {
         grid-template-columns: 1fr;
+    }
+
+    .services-intro {
+    flex-direction: column;
+    align-items: center;
+    height:auto
+    }
+
+    .services-intro h2 {
+    flex: none;
     }
 }
 
