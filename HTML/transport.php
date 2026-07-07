@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Labor - Bee Home Labor Multipurpose Cooperative</title>
-    <link rel="stylesheet" href="../CSS/transport.css" />
-    <link rel="stylesheet" href="../CSS/navbar.css">
-    <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
-  </head>
-  <body>
-    <!-- NAVIGATION CONTENTS HERE / Dont change the contents under this section -->
 
-<?php include "navbar.php"; ?>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labor - Bee Home Labor Multipurpose Cooperative</title>
+  <link rel="stylesheet" href="../CSS/transport.css" />
+  <link rel="stylesheet" href="../CSS/navbar.css">
+  <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
+</head>
 
-      <!-- ABOUT US PAGE CONTENTS START HERE -->
+<body>
+  <!-- NAVIGATION CONTENTS HERE / Dont change the contents under this section -->
 
-      <section class="contact-hero">
-        <h1>TRANSPORT OPERATION</h1>
-      </section>
+  <?php include "navbar.php"; ?>
 
-    <section class="transport-section">
-      <div class="transport-container">
-        <h2 class="transport-title">
-          Ma-<span class="bee-word">Bee</span>-lis at Ligtas na
-          <span class="bee-word">Bee</span>-yahe
-        </h2>
-      </div>
+  <!-- ABOUT US PAGE CONTENTS START HERE -->
 
+
+
+  <main class="transport-section scroll-container">
+
+    <section class="contact-hero">
+      <h1>TRANSPORT OPERATION</h1>
+    </section>
     <?php
     $videoPath = "../VIDEO/transportManagement.mp4";
     include "video_section.php";
     ?>
 
-    <section class="transport-info">
+    <section class="animation">
+      <div class="mountain-left-wrap scroll-element left">
+        <div class="mountain-left"></div>
+      </div>
+      <div class="mountain-right-wrap scroll-element right">
+        <div class="mountain-right"></div>
+      </div>
+    </section>
+    
+    <section class="transport-info snap-section">
       <div class="transport-info-container">
-        
+
         <!-- IMAGE -->
         <div class="transport-info-image">
           <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
@@ -64,22 +70,22 @@
 
     </section>
 
-    <div class="page-buttons">
-        <a href="javascript:history.back()" class="btn-back">Back to Services</a>
-         <a href="for_rent.php" class="btn-rent">For Rent</a>
+    <div class="page-buttons snap-section">
+      <a href="javascript:history.back()" class="btn-back">Back to Services</a>
+      <a href="for_rent.php" class="btn-rent">For Rent</a>
     </div>
 
 
 
 
-    <section class="contact-cta-section">
-        <div class="contact-cta">
-            <p>For more questions, please contact us</p>
-            <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
-        </div>
+    <section class="contact-cta-section snap-section">
+      <div class="contact-cta">
+        <p>For more questions, please contact us</p>
+        <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
+      </div>
     </section>
 
-    
+
 
     <?php include "footer.php"; ?>
 
@@ -87,6 +93,25 @@
       function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("active");
       }
+      //scroll animaion
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            console.log(entry.target.className, entry.isIntersecting); // keep temporarily to confirm it fires
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            } else {
+              entry.target.classList.remove('visible');
+            }
+          });
+        }, {
+          threshold: 0.1
+        });
+
+        document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
+      });
     </script>
-  </body>
+  </main>
+</body>
+
 </html>

@@ -489,8 +489,6 @@
         // Initialize every dial on the page
         document.querySelectorAll('.dial').forEach(initDial);
 
-
-
         //scroll animation for elements
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
