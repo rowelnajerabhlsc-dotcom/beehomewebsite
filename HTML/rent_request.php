@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="stylesheet" href="../CSS/home.css">
-    <link rel="stylesheet" href="../CSS/rentformodernjeep.css">
+    <link rel="stylesheet" href="../CSS/rent_request.css">
                                     <!--CSS STILL NOT MADE-->
 
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
