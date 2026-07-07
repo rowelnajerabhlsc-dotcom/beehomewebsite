@@ -1,0 +1,207 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent a Bee Home Modern Jeepney</title>
+
+    <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="stylesheet" href="../CSS/home.css">
+    <link rel="stylesheet" href="../CSS/rent_request.css">
+                                    <!--CSS STILL NOT MADE-->
+
+    <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+</head>
+
+<!-- THIS IS A DRAFT ONLY! -->
+ <!-- THIS IS A DRAFT ONLY! -->
+  <!-- THIS IS A DRAFT ONLY! -->
+   <!-- THIS IS A DRAFT ONLY! -->
+    <!-- THIS IS A DRAFT ONLY! -->
+     <!-- THIS IS A DRAFT ONLY! -->
+      <!-- THIS IS A DRAFT ONLY! -->
+
+<body>
+
+<?php include "navbar.php"; ?>
+
+<!-- RENTFORMODERNJEEP HERO -->
+<section class="rentformodernjeep-section">
+
+    <div class="rentformodernjeep-container">
+
+        <h2>Rent a Bee Home Modern Jeepney</h2>
+
+        <p>
+            The modern jeepney of Bee Home Labor Multi-Purpose Cooperative offers a safe, 
+            comfortable, and efficient transportation solution for your group travels, events, 
+            or private trips. Equipped with full air-conditioning, modern safety systems, and eco-friendly technology, 
+            our units ensure a smooth and premium commuting experience.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- FORM -->
+<div class="business-form-wrapper">
+
+    <h2>Rent a Bee Home Modern Jeepney Request Form</h2>
+
+    <form action="submit-rentformodernjeep.php" method="POST">
+
+        <div class="form-grid">
+
+            <!-- LEFT SIDE -->
+            <div class="form-left">
+
+                <h3>For Rent</h3>
+
+                <label>Full Name</label>
+                <input type="text" name="full_name" required>
+
+                <label>Email Address</label>
+                <input type="email" name="email_address" required>
+
+                <label>Contact Number</label>
+                <input type="number" name="contact_number" required>
+
+                <label>Numbers Unit Request</label> <!-- DROP DOWN TO 1 TO 2 LANG-->
+                <input type="number" name="number_units" required>
+
+                <label>Pickup Location</label>
+                <input type="text" name="pickup_location">
+
+                <label>Drop-off Location</label>
+                <input type="text" name="dropoff_location">
+
+                <label>Date of Rental</label>
+                <input type="date" name="date_of_rental">
+
+                <label>Date of Return</label>
+                <input type="date" name="date_of_return">
+
+                <!-- PRIVACY CHECKBOX -->
+                <label>
+                    <input type="checkbox" name="privacy_agree" required> agree with our
+                    <span class="privacy-link" onclick="openPrivacyModal()">
+                    Confidentiality and Data Privacy Clause
+                    </span>
+                </label>
+
+            </div>
+
+    
+
+        </div>
+
+        <button type="submit">Submit Request</button>
+
+    </form>
+
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="privacyModal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <h2>Confidentiality and Data Privacy Clause for Website Information Collection</h2>
+
+        <div class="modal-content">
+
+            <p><strong>Confidentiality and Data Privacy</strong></p>
+
+            <p>
+                We are committed to protecting the confidentiality, integrity, and security of the information collected through this website. Any Company information provided by users shall be treated as confidential and shall be collected, processed, stored, and used only for legitimate business purposes and in accordance with applicable data privacy and data protection laws.
+            </p>
+
+            <p>
+                By submitting information through this website, users consent to the collection and processing of their personal data for purposes including, but not limited to, responding to inquiries, providing requested services, improving website functionality, communicating relevant updates, and complying with legal and regulatory requirements.
+            </p>
+
+            <p>
+                We implement reasonable safeguards to protect personal data against unauthorized access, alteration, or misuse.
+            </p>
+
+            <p>
+                Personal information will not be sold or shared except when required by law or with user consent.
+            </p>
+
+            <p>
+                Data is retained only as long as necessary and securely deleted afterward.
+            </p>
+
+            <p>
+                Users may request access, correction, or deletion of their data subject to applicable laws.
+            </p>
+
+            <p>
+                By using this website, users agree to this policy.
+            </p>
+
+        </div>
+
+        <button class="close-btn" onclick="closePrivacyModal()">Close</button>
+
+    </div>
+
+</div>
+
+         <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <!-- LEFT -->
+            <div class="footer-left">
+                <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="footer-logo">
+                <h3>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h3>
+                <p>UNIT 203, 2ND FLOOR, MGC VERANDA BUILDING, 31, GOV. PASCUAL AVENUE, MALABON, METRO MANILA</p>
+                
+            </div>
+
+            <!-- MIDDLE -->
+            <div class="footer-middle">
+                <ul>
+                    <li><a href="../HTML/home.php">Home</a></li>
+                    <li><a href="../HTML/about.php">About Us</a></li>
+                    <li><a href="../HTML/products.php">Products & Services</a></li>
+                    <li><a href="../HTML/membership.php">Membership</a></li>
+                    <li><a href="../HTML/bee-home-cares.php">Bee Home Cares</a></li>
+                    <li><a href="../HTML/contact.php">Contact Us</a></li>
+                </ul>
+            </div>
+ 
+            <!-- RIGHT -->
+            <div class="footer-right">
+                <h3>CONNECT WITH US</h3>
+                <p>
+                    <a href="https://www.facebook.com/kabeehome/" target="_blank">
+                        <img src="../IMAGES/logo-fb.png" alt="FB" class="footer-icon"> 
+                        Bee Home Labor Multipurpose Cooperative
+                    </a>
+                </p>
+                <p><img src="../IMAGES/logo-email.png" alt="Gmail" class="footer-icon"> infoadmin@beehome.ph</p>
+                <p><img src="../IMAGES/logo-phone.png" alt="Phone" class="footer-icon"> 0917 588 1203</p>
+                <p><img src="../IMAGES/logo-phone.png" alt="Phone" class="footer-icon"> (02) 8442 7296</p>
+            </div>
+
+        </div>
+    </footer>
+
+
+    
+<!-- ================= SCRIPT ================= -->
+<script>
+function openPrivacyModal() {
+    document.getElementById("privacyModal").style.display = "flex";
+}
+
+function closePrivacyModal() {
+    document.getElementById("privacyModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
