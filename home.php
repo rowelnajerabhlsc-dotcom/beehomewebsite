@@ -28,7 +28,6 @@
             </div>
         </div>
     </div>
-
     <?php include "HTML/navbar.php"; ?>
 
 
@@ -359,6 +358,7 @@
         const hero = document.querySelector('.hero');
         const servIntro = document.querySelector('.services-intro');
         const fadeDistance = window.innerHeight;
+        const nextSection = document.querySelector('.services'); // the section right after services-intro
 
         scrollContainer.addEventListener('scroll', () => {
             const fadeFactor = 0.6;
@@ -366,12 +366,12 @@
             // Hero fade
             hero.style.opacity = 1 - Math.min(scrollContainer.scrollTop / (fadeDistance * fadeFactor), 1);
 
-            // Services-intro fade out as its own bottom edge approaches top of container
+            // Services-intro fades out as .services approaches/covers it
             const containerRect = scrollContainer.getBoundingClientRect();
-            const introRect = servIntro.getBoundingClientRect();
-            const bottomRelativeToContainer = introRect.bottom - containerRect.top;
+            const nextRect = nextSection.getBoundingClientRect();
+            const nextTopRelativeToContainer = nextRect.top - containerRect.top;
 
-            const introOpacity = Math.max(0, Math.min(bottomRelativeToContainer / (fadeDistance * fadeFactor), 1));
+            const introOpacity = Math.max(0, Math.min(1, nextTopRelativeToContainer / (fadeDistance * fadeFactor)));
             servIntro.style.opacity = introOpacity;
 
         }, { passive: true });
