@@ -46,7 +46,8 @@
         <!-- CONTENT 2 - SERVICES -->
         <section class="services-intro">
             <div id="service-intro-left" class="scroll-element left dial">
-                <h2>EXPLORE OUR PRODUCTS</h2>
+                <h2>EXPLORE</h2>
+                <h2>OUR PRODUCTS</h2>
                 <div class="dial__wrapper">
                     <div class="dial__track">
                         <div class="dial__segment"><span class="dial__inner"><i
@@ -63,7 +64,8 @@
             </div>
 
             <div id="service-intro-right" class="scroll-element right dial">
-                <h2>AND OUR SERVICES</h2>
+                <h2>AND</h2>
+                <h2>OUR SERVICES</h2>
                 <div class="dial__wrapper">
                     <div class="dial__track">
                         <div class="dial__segment"><span class="dial__inner"><i
