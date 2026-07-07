@@ -1,12 +1,17 @@
 /* MAIN WRAPPER */
 .business-form-wrapper {
     max-width: 1100px;
-    margin: 60px auto;
+    margin: 60px auto 80px;
     padding: 40px;
     background: #fff;
     border: 2px solid #096D2B;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: visible;
+}
+
+.business-form-wrapper form {
+    overflow: visible;
 }
 
 /* TITLE */
@@ -21,12 +26,16 @@
 .form-grid {
     display: flex;
     gap: 40px;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 /* COLUMNS */
 .form-left,
 .form-right {
-    flex: 1;
+    flex: 1 1 280px;
+    min-width: 0;
+    overflow: visible;
 }
 
 /* SECTION TITLES */
@@ -97,7 +106,7 @@ button:hover {
     }
 
     .business-form-wrapper {
-        margin: 30px 10px;
+        margin: 30px 10px 60px;
         padding: 25px;
     }
 }
