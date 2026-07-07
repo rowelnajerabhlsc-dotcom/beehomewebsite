@@ -426,7 +426,7 @@ section,
 #service-intro-left {
     width: 50%;
     padding: 20px;
-    text-align: left;
+    text-align: center;
     flex:1;
 }
 
@@ -454,7 +454,7 @@ section,
 #service-intro-right {
     width: 50%;
     padding: 20px;
-    text-align: right;
+    text-align: center;
     flex:1;
 }
 

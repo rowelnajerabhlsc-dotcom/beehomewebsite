@@ -49,8 +49,9 @@
                 <div class="dial__wrapper">
                     <div class="dial__track">
                         <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-bowl-rice"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-jar"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-bowl-food"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cart-shopping"></i></span></div>
                     </div>
                     <div class="dial__knob"></div>
                 </div>
@@ -60,12 +61,12 @@
                 <h2>AND OUR SERVICES</h2>
                 <div class="dial__wrapper">
                     <div class="dial__track">
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-user sample"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-cog"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-tasks"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-file-lines"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-comments"></i></span></div>
-                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-globe"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-hand-holding"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-bus"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-house-user"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-map-location-dot"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-credit-card"></i></span></div>
+                        <div class="dial__segment"><span class="dial__inner"><i class="fa-solid fa-money-bill-1-wave"></i></span></div>
                     </div>
                     <div class="dial__knob"></div>
                 </div>
