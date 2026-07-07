@@ -414,6 +414,10 @@ section,
     justify-content: space-evenly;
     height: 90vh;
     overflow: hidden;
+
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .services-intro h2 {
