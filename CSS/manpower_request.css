@@ -1,3 +1,8 @@
+/*Override*/
+
+.body {
+    overflow-y: none;
+}
 /* MAIN WRAPPER */
 .business-form-wrapper {
     max-width: 1100px;
