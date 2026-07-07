@@ -42,7 +42,7 @@
         </div>
     </section>
 
-        <!-- CONTENT 2 - SERVICES -->
+    <!-- CONTENT 2 - SERVICES -->
     <section class="services-intro">
             <div id="service-intro-left" class="scroll-element left dial">
                 <h2>EXPLORE OUR PRODUCTS</h2>
@@ -112,8 +112,53 @@
         </div>
     </section>
 
+    <!-- CONTENT 3 - BEE A MEMBER -->
+    <section class="community">
 
-     <!-- CONTENT 2 - ABOUT US -->
+        <!-- LEFT SIDE -->
+        <div class="community-left">
+            <h2 style = "font-size: 30px; text-align: center;">
+                ARE YOU LOOKING FOR LABOR EMPLOYMENT?
+            </h2>
+            <p>
+                Join a trusted cooperative that connects skilled workers with
+                meaningful opportunities across different industries.
+            </p>
+            <a href="HTML/labor.php" class="community-btn-left">APPLY FOR WORK</a>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="community-content">
+            <h2 style = "font-size: 30px; text-align: center;">
+                BEE ONE OF US!</h2>
+            <p>
+                Secure opportunities, grow with a trusted cooperative,
+                and build a better future together, we thrive.
+            </p>
+            <a href="HTML/membership.php" class="community-btn">BEE A MEMBER</a>
+        </div>
+
+    </section>
+    <!-- MANPOWER REQUEST -->
+     <section class="manpower-section">
+
+        <div class="manpower-container">
+            <h2>Manpower Request</h2>
+
+            <p>
+                We are happy to assist you with the manpower you need.
+                Click the manpower request button below and we will be proud
+                to provide the best and qualified Member workers for your company.
+            </p>
+
+            <a href="HTML/manpower_request.php" class="manpower-btn">
+                MANPOWER REQUEST
+            </a>
+        </div>
+
+    </section>
+
+     <!-- CONTENT 4 - ABOUT US -->
     <section class="about">
         <div class="about-container">
             <h2>ABOUT US</h2>
@@ -159,7 +204,7 @@
         </div>
     </section>
 
-     <!-- CONTENT 3 - GROWING COMMUNITY -->
+     <!-- CONTENT 5 - GROWING COMMUNITY -->
     <section class="hero-two">
         <div class="hero-two-content">
             <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo">
@@ -176,51 +221,6 @@
         </div>
     </section>
 
-    <!-- CONTENT 5 - BEE A MEMBER -->
-    <section class="community">
-
-        <!-- LEFT SIDE -->
-        <div class="community-left">
-            <h2 style = "font-size: 30px; text-align: center;">
-                ARE YOU LOOKING FOR LABOR EMPLOYMENT?
-            </h2>
-            <p>
-                Join a trusted cooperative that connects skilled workers with
-                meaningful opportunities across different industries.
-            </p>
-            <a href="HTML/labor.php" class="community-btn-left">APPLY FOR WORK</a>
-        </div>
-
-        <!-- RIGHT SIDE -->
-        <div class="community-content">
-            <h2 style = "font-size: 30px; text-align: center;">
-                BEE ONE OF US!</h2>
-            <p>
-                Secure opportunities, grow with a trusted cooperative,
-                and build a better future together, we thrive.
-            </p>
-            <a href="HTML/membership.php" class="community-btn">BEE A MEMBER</a>
-        </div>
-
-    </section>
-    <!-- MANPOWER REQUEST -->
-     <section class="manpower-section">
-
-        <div class="manpower-container">
-            <h2>Manpower Request</h2>
-
-            <p>
-                We are happy to assist you with the manpower you need.
-                Click the manpower request button below and we will be proud
-                to provide the best and qualified Member workers for your company.
-            </p>
-
-            <a href="HTML/manpower_request.php" class="manpower-btn">
-                MANPOWER REQUEST
-            </a>
-        </div>
-
-    </section>
 
      <!-- CONTENT 6 - AFFILIATIORS -->
     <section class="affiliation">
