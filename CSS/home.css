@@ -422,7 +422,7 @@ section,
 .services-intro h2 {
     font-size: 70px;
     margin-bottom: 15px;
-    color: rgba(9,109,43,0.85);
+    color: #096d2bd9;
     flex:1;
 }
 
@@ -471,7 +471,7 @@ section,
 .dial__track {
   position: absolute;
   inset: 0;
-  border: 12px solid rgba(255,255,255,0.08);
+  border: 12px solid #096d2bd9;
   border-radius: 50%;
   transition: transform 0.2s ease-out;
 }
