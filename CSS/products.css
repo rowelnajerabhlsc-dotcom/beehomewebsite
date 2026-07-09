@@ -187,12 +187,17 @@ section {
 
 /* TITLE BAR */
 .product-box h3 {
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 700;
     margin-bottom: 8px;
-    color: #ffffff;
-    background-color: #096D2B;
-    padding: 12px;
-    border-radius: 5px;
+    color: #096D2B;
+    background-color: #f0f0f0;
+    border: 2px solid #096D2B;
+    padding: 10px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* TEXT */
