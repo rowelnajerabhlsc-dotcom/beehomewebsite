@@ -86,6 +86,7 @@ section {
     /* scroll distance available for the whole pinned sequence — tune this */
 }
 
+
 .mountain-left-wrap,
 .mountain-right-wrap {
     display: grid;

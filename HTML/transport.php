@@ -62,7 +62,6 @@
         </div>
         <div id="road"><img src="../IMAGES/road.jpg" id="srcImage" alt="Road Image" /></div>
       </div>
-
     </section>
 
     <section class="transport-info snap-section">
@@ -134,14 +133,18 @@
         function update() {
           const wrapperTop = wrapper.offsetTop;
           const wrapperHeight = wrapper.offsetHeight;
-          const viewportH = scroller.clientHeight;
+          const pinHeight = pin.offsetHeight; // NEW: actual rendered height of .animation, not assumed
           const scrollY = scroller.scrollTop;
 
-          const totalScrollable = wrapperHeight - viewportH; // distance the section stays pinned for
+          const totalScrollable = wrapperHeight - pinHeight; // was wrapperHeight - viewportH
           const scrolledIntoWrapper = scrollY - wrapperTop;
 
           let progress = totalScrollable > 0 ? scrolledIntoWrapper / totalScrollable : 0;
           progress = Math.max(0, Math.min(1, progress));
+
+
+          const insideSequence = scrolledIntoWrapper > 0 && scrolledIntoWrapper < totalScrollable;
+          scroller.style.scrollSnapType = insideSequence ? 'none' : 'y proximity';
 
           // --- Phase 1: mountains slide in ---
           const mountainProgress = Math.max(0, Math.min(1, progress / PHASE_MOUNTAINS_END));
@@ -172,6 +175,8 @@
         const clone = srcImg.cloneNode(true);
         road.appendChild(clone);
       }
+
+
     </script>
   </main>
 </body>
