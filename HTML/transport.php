@@ -15,7 +15,7 @@
 
   <?php include "navbar.php"; ?>
 
-  <!-- ABOUT US PAGE CONTENTS START HERE -->
+  <!-- ABOUT US PAGE CONTENTS START HER E -->
 
 
 
@@ -37,7 +37,7 @@
         <div class="mountain-right"></div>
       </div>
     </section>
-    
+
     <section class="transport-info snap-section">
       <div class="transport-info-container">
 
@@ -90,26 +90,55 @@
     <?php include "footer.php"; ?>
 
     <script>
+      console.log("Inline script is active!");
       function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("active");
       }
-      //scroll animaion
-      document.addEventListener('DOMContentLoaded', () => {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            console.log(entry.target.className, entry.isIntersecting); // keep temporarily to confirm it fires
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-            } else {
-              entry.target.classList.remove('visible');
-            }
-          });
-        }, {
-          threshold: 0.1
-        });
 
-        document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
-      });
+      // Mountain slide-in: progress tied to the .animation section's
+      // position within the actual scrolling element (the .scroll-container,
+      // not the window — the page itself doesn't scroll).
+      (function () {
+        const section = document.querySelector('.animation');
+        const left = document.querySelector('.scroll-element.left .mountain-left');
+        const right = document.querySelector('.scroll-element.right .mountain-right');
+        const scroller = document.querySelector('.scroll-container');
+        if (!section || !left || !right || !scroller) {
+          console.warn('[mountains] missing elements', { section, left, right, scroller });
+          return;
+        }
+        console.log('[mountains] scroller =', scroller);
+
+        function update() {
+          // sectionTop = section's offset from the top of the scroller's content
+          const sectionTop = section.offsetTop;
+          const scrollerRect = scroller.getBoundingClientRect();
+          // scrollY = how far the scroller has been scrolled
+          const scrollY = scroller.scrollTop;
+          // viewport-relative top of the section inside the scroller
+          const sectionViewportTop = sectionTop - scrollY + scrollerRect.top;
+          const vh = scroller.clientHeight;
+
+          // progress 0 -> 1 as section top moves from viewport bottom to middle
+          const start = vh;
+          const end = vh * 0.5;
+          const raw = (start - sectionViewportTop) / (start - end);
+          const progress = Math.max(0, Math.min(1, raw));
+
+          const txLeft = -100 + 100 * progress;
+          const txRight = 100 - 100 * progress;
+          left.style.transform = `translateX(${txLeft}%)`;
+          right.style.transform = `translateX(${txRight}%)`;
+
+          console.log('[mountains] progress =', progress.toFixed(3),
+            'sectionViewportTop =', sectionViewportTop.toFixed(1),
+            'vh =', vh, 'scrollY =', scrollY);
+        }
+
+        scroller.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+      })();
     </script>
   </main>
 </body>

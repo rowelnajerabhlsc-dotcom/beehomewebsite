@@ -92,23 +92,27 @@ section {
     position: relative;
 }
 
+/* scroll-driven: progress is tied to how far the .animation section
+   has scrolled through the viewport (0% = just entering, 100% = exited top) */
 .scroll-element.left .mountain-left {
-    left: -100vw;   /* long travel distance, fixed typo */
+    will-change: transform, opacity;
 }
 
 .scroll-element.right .mountain-right {
-    left: 100vw;    /* matching long distance on the right */
+    will-change: transform, opacity;
 }
 
-.scroll-element.visible .mountain-left,
-.scroll-element.visible .mountain-right {
-    animation: slideIn 1s forwards; /* tune duration separately from distance */
+/* JS-driven transform: styles applied via inline style in transport.php.
+   These rules act as the resting state (fully arrived) when JS hasn't
+   kicked in yet. */
+.mountain-left {
+    transform: translateX(0);
+    transition: transform 0.05s linear;
 }
 
-@keyframes slideIn {
-  100% {
-    left: 0;
-  }
+.mountain-right {
+    transform: translateX(0);
+    transition: transform 0.05s linear;
 }
 /* RESPONSIVE */
 @media (max-width: 900px) {
