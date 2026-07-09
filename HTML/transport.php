@@ -33,18 +33,29 @@
       <div class="mountain-left-wrap scroll-element left">
         <div class="mountain-left"></div>
       </div>
+      <div class="carousel">
+        <div class="carousel-track">
+          <div class="carousel-slide">
+            <div class="transport-info-image">
+              <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
+            </div>
+          </div>
+          <div class="carousel-slide square-blue"></div>
+          <div class="carousel-slide square-red"></div>
+        </div>
+        <button class="carousel-btn carousel-btn-next" aria-label="Next">&#10095;</button>
+      </div>
       <div class="mountain-right-wrap scroll-element right">
         <div class="mountain-right"></div>
       </div>
+
     </section>
 
     <section class="transport-info snap-section">
       <div class="transport-info-container">
 
         <!-- IMAGE -->
-        <div class="transport-info-image">
-          <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
-        </div>
+
 
         <!-- TEXT -->
         <div class="transport-info-text">
@@ -138,6 +149,30 @@
         scroller.addEventListener('scroll', update, { passive: true });
         window.addEventListener('resize', update);
         update();
+      })();
+
+      // Carousel: train-style, slides move left-to-right; clone first slide
+      // to the end so a new element is always available to enter from the left.
+      (function () {
+        const track = document.querySelector('.carousel-track');
+        const next = document.querySelector('.carousel-btn-next');
+        if (!track || !next) return;
+
+        const totalItems = track.children.length; // real slides only, no clone
+        const step = 100 / totalItems;
+        const lastIndex = totalItems - 1;
+
+        let index = 0;
+
+        // With row-reverse, offset so slide 1 (the last item in DOM order) shows first.
+        track.style.transform = `translateX(-${lastIndex * step}%)`;
+
+        next.addEventListener('click', () => {
+          if (index < lastIndex) {
+            index++;
+            track.style.transform = `translateX(-${(lastIndex - index) * step}%)`;
+          }
+        });
       })();
     </script>
   </main>
