@@ -330,7 +330,10 @@ section {
 
 .footer-left h3 {
     margin-top: 15px;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
 }
 
 .footer-left p {
@@ -378,8 +381,11 @@ section {
 }
 
 .footer-right h3 {
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
     margin-bottom: 15px;
+    letter-spacing: 0.5px;
 }
 
 .footer-right p {
