@@ -32,7 +32,7 @@
     <section class="animation-wrapper">
       <div class="animation">
         <div class="mountain-left-wrap scroll-element left">
-          <div class="mountain-left"><img src="../IMAGES/tree.png" alt="Tree Image" /></div>
+          <div class="mountain-left"><img src="../IMAGES/building.png" alt="Building Image" /></div>
         </div>
         <div class="carousel">
           <div class="carousel-track">
@@ -41,37 +41,32 @@
                 <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
               </div>
             </div>
-            <div class="carousel-slide square-blue"></div>
+            <div class="carousel-slide">
+              <div class="transport-info-text">
+                <h3>BEE HOME MODERN JEEPNEY</h3>
+                <p>
+                  The modern jeepney of Bee Home Labor Multi-Purpose Cooperative
+                  offers safe, comfortable, and efficient transportation. It features
+                  air-conditioning, modern safety systems, and eco-friendly technology
+                  to provide a better commuting experience for passengers.
+                </p>
+              </div>
+
+            </div>
             <div class="carousel-slide square-red"></div>
           </div>
           <!-- button removed: progression is now scroll-driven, not click-driven -->
         </div>
         <div class="mountain-right-wrap scroll-element right">
-          <div class="mountain-right"><img src="../IMAGES/bush.png" alt="Bush Image" /></div>
+          <div class="mountain-right"><img src="../IMAGES/building.png" alt="Building Image" /></div>
         </div>
-        <div class="road"></div>
+        <div id="road"><img src="../IMAGES/road.jpg" id="srcImage" alt="Road Image" /></div>
       </div>
 
     </section>
 
     <section class="transport-info snap-section">
-      <div class="transport-info-container">
-
-        <!-- IMAGE -->
-
-
-        <!-- TEXT -->
-        <div class="transport-info-text">
-          <h3>BEE HOME MODERN JEEPNEY</h3>
-          <p>
-            The modern jeepney of Bee Home Labor Multi-Purpose Cooperative
-            offers safe, comfortable, and efficient transportation. It features
-            air-conditioning, modern safety systems, and eco-friendly technology
-            to provide a better commuting experience for passengers.
-          </p>
-        </div>
-
-      </div>
+      <div class="transport-info-container"></div>
 
       <!-- ROUTES SECTION -->
       <div class="transport-routes">
@@ -169,6 +164,14 @@
         window.addEventListener('resize', update);
         update();
       })();
+
+      const road = document.getElementById('road');
+      const srcImg = document.getElementById('srcImage');
+
+      for (let i = 0; i < 20; i++) {
+        const clone = srcImg.cloneNode(true);
+        road.appendChild(clone);
+      }
     </script>
   </main>
 </body>
