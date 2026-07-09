@@ -68,8 +68,10 @@ section {
 }
 
 .animation {
+    position: sticky;
+    top: 0;
     display: grid;
-    grid-template-columns: 1fr 70vw 1fr;
+    grid-template-columns: 1fr 60vw 1fr;
     gap: 8px;
     background: linear-gradient(180deg, #eefaf0 0%, #dff4e3 100%);
     overflow: hidden;
@@ -77,9 +79,13 @@ section {
     place-content: center;
 }
 
+.animation-wrapper {
+    position: relative;
+    height: 400vh; /* scroll distance available for the whole pinned sequence — tune this */
+}
+
 .mountain-left-wrap,
 .mountain-right-wrap {
-    overflow: hidden;
     display: grid;
     align-items: center;
      grid-template-rows: 1fr;
@@ -88,32 +94,20 @@ section {
 .mountain-left,
 .mountain-right {
     display: block;
-    width: 160px;
-    height: 120px;
-    background: linear-gradient(135deg, #0b6c2a 0%, #32a64d 100%);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    border: 3px solid #0a4e21;
-    box-shadow: 0 12px 24px rgba(9, 109, 43, 0.2);
-    position: relative;
     justify-self: center;
+    z-index: 1;
 }
 
 /* ----------------------------- CAROUSEL ----------------------------- */
 .carousel {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    height: 300px;
-    overflow: hidden;
-    border-radius: 10px;
+    will-change: transform;
 }
-
 .carousel-track {
     display: flex;
     flex-direction: row-reverse;
-    width: 300%; /*add 100 every new child*/
+    width: 300%;
     height: 100%;
-    transition: transform 0.4s ease;
+    transition: none; 
 }
 
 .carousel-slide {

@@ -29,26 +29,27 @@
     include "video_section.php";
     ?>
 
-    <section class="animation">
-      <div class="mountain-left-wrap scroll-element left">
-        <div class="mountain-left"></div>
-      </div>
-      <div class="carousel">
-        <div class="carousel-track">
-          <div class="carousel-slide">
-            <div class="transport-info-image">
-              <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
-            </div>
-          </div>
-          <div class="carousel-slide square-blue"></div>
-          <div class="carousel-slide square-red"></div>
+    <section class="animation-wrapper">
+      <div class="animation">
+        <div class="mountain-left-wrap scroll-element left">
+          <div class="mountain-left"><img src="../IMAGES/tree.png" alt="Tree Image" /></div>
         </div>
-        <button class="carousel-btn carousel-btn-next" aria-label="Next">&#10095;</button>
+        <div class="carousel">
+          <div class="carousel-track">
+            <div class="carousel-slide">
+              <div class="transport-info-image">
+                <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
+              </div>
+            </div>
+            <div class="carousel-slide square-blue"></div>
+            <div class="carousel-slide square-red"></div>
+          </div>
+          <!-- button removed: progression is now scroll-driven, not click-driven -->
+        </div>
+        <div class="mountain-right-wrap scroll-element right">
+          <div class="mountain-right"><img src="../IMAGES/bush.png" alt="Bush Image" /></div>
+        </div>
       </div>
-      <div class="mountain-right-wrap scroll-element right">
-        <div class="mountain-right"></div>
-      </div>
-
     </section>
 
     <section class="transport-info snap-section">
@@ -110,69 +111,61 @@
       // position within the actual scrolling element (the .scroll-container,
       // not the window — the page itself doesn't scroll).
       (function () {
-        const section = document.querySelector('.animation');
-        const left = document.querySelector('.scroll-element.left .mountain-left');
-        const right = document.querySelector('.scroll-element.right .mountain-right');
+        const wrapper = document.querySelector('.animation-wrapper');
+        const pin = document.querySelector('.animation');
         const scroller = document.querySelector('.scroll-container');
-        if (!section || !left || !right || !scroller) {
-          console.warn('[mountains] missing elements', { section, left, right, scroller });
+        const left = document.querySelector('.mountain-left');
+        const right = document.querySelector('.mountain-right');
+        const carousel = document.querySelector('.carousel');
+        const track = document.querySelector('.carousel-track');
+
+        if (!wrapper || !pin || !scroller || !left || !right || !carousel || !track) {
+          console.warn('[animation] missing elements');
           return;
         }
-        console.log('[mountains] scroller =', scroller);
+
+        const totalItems = track.children.length;
+        const step = 100 / totalItems;
+        const lastIndex = totalItems - 1;
+
+        // Tune these to control how much of the pinned scroll each phase eats up.
+        const PHASE_MOUNTAINS_END = 0.30;   // 0 -> 0.30: mountains slide in
+        const PHASE_CAROUSEL_IN_END = 0.50; // 0.30 -> 0.50: whole carousel slides in from the left
+        const CAROUSEL_START_OFFSET = 180;
+        // 0.50 -> 1.0: carousel content scrubs left-to-right
 
         function update() {
-          // sectionTop = section's offset from the top of the scroller's content
-          const sectionTop = section.offsetTop;
-          const scrollerRect = scroller.getBoundingClientRect();
-          // scrollY = how far the scroller has been scrolled
+          const wrapperTop = wrapper.offsetTop;
+          const wrapperHeight = wrapper.offsetHeight;
+          const viewportH = scroller.clientHeight;
           const scrollY = scroller.scrollTop;
-          // viewport-relative top of the section inside the scroller
-          const sectionViewportTop = sectionTop - scrollY + scrollerRect.top;
-          const vh = scroller.clientHeight;
 
-          // progress 0 -> 1 as section top moves from viewport bottom to middle
-          const start = vh;
-          const end = vh * 0.5;
-          const raw = (start - sectionViewportTop) / (start - end);
-          const progress = Math.max(0, Math.min(1, raw));
+          const totalScrollable = wrapperHeight - viewportH; // distance the section stays pinned for
+          const scrolledIntoWrapper = scrollY - wrapperTop;
 
-          const txLeft = -100 + 100 * progress;
-          const txRight = 100 - 100 * progress;
-          left.style.transform = `translateX(${txLeft}%)`;
-          right.style.transform = `translateX(${txRight}%)`;
+          let progress = totalScrollable > 0 ? scrolledIntoWrapper / totalScrollable : 0;
+          progress = Math.max(0, Math.min(1, progress));
 
-          console.log('[mountains] progress =', progress.toFixed(3),
-            'sectionViewportTop =', sectionViewportTop.toFixed(1),
-            'vh =', vh, 'scrollY =', scrollY);
+          // --- Phase 1: mountains slide in ---
+          const mountainProgress = Math.max(0, Math.min(1, progress / PHASE_MOUNTAINS_END));
+          left.style.transform = `translateX(${-100 + 100 * mountainProgress}%)`;
+          right.style.transform = `translateX(${100 - 100 * mountainProgress}%)`;
+
+          // --- Phase 2: whole carousel slides in from off-screen left ---
+          const inRaw = (progress - PHASE_MOUNTAINS_END) / (PHASE_CAROUSEL_IN_END - PHASE_MOUNTAINS_END);
+          const inProgress = Math.max(0, Math.min(1, inRaw));
+          const startX = -CAROUSEL_START_OFFSET;
+          carousel.style.transform = `translateX(${startX + (CAROUSEL_START_OFFSET) * inProgress}%)`;
+
+          // --- Phase 3: carousel content scrubs left-to-right ---
+          const contentRaw = (progress - PHASE_CAROUSEL_IN_END) / (1 - PHASE_CAROUSEL_IN_END);
+          const contentProgress = Math.max(0, Math.min(1, contentRaw));
+          track.style.transform = `translateX(-${(1 - contentProgress) * lastIndex * step}%)`;
         }
 
         scroller.addEventListener('scroll', update, { passive: true });
         window.addEventListener('resize', update);
         update();
-      })();
-
-      // Carousel: train-style, slides move left-to-right; clone first slide
-      // to the end so a new element is always available to enter from the left.
-      (function () {
-        const track = document.querySelector('.carousel-track');
-        const next = document.querySelector('.carousel-btn-next');
-        if (!track || !next) return;
-
-        const totalItems = track.children.length; // real slides only, no clone
-        const step = 100 / totalItems;
-        const lastIndex = totalItems - 1;
-
-        let index = 0;
-
-        // With row-reverse, offset so slide 1 (the last item in DOM order) shows first.
-        track.style.transform = `translateX(-${lastIndex * step}%)`;
-
-        next.addEventListener('click', () => {
-          if (index < lastIndex) {
-            index++;
-            track.style.transform = `translateX(-${(lastIndex - index) * step}%)`;
-          }
-        });
       })();
     </script>
   </main>
