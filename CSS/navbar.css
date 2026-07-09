@@ -40,10 +40,17 @@ nav{
     font-size:16px;
     font-weight:bold;
     transition:.3s;
+    padding-bottom:4px;
+    border-bottom:3px solid transparent;
 }
 
 .nav-links a:hover{
     color:#FFF82E;
+}
+
+.nav-links a.active{
+    color:#FFF82E;
+    border-bottom-color:#FFF82E;
 }
 
 /* ================= ABOUT DROPDOWN ================= */
