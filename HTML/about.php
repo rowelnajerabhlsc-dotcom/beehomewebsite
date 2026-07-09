@@ -24,13 +24,15 @@
             <div class="about-row">
                 <div class="about-text">
                 <p style = "font-size: 20px; text-align: justify;">
-                    Bee Home Labor Multipurpose Cooperative (BHLMPC) is a duly registered cooperative established to provide quality labor 
-                    and manpower services across various industries. Guided by cooperative principles and values, we aim to uplift our members
-                    socio-economic well-being while delivering efficient and reliable manpower solutions to our clients.
+                    <strong>Bee Home Labor Multipurpose Cooperative (BHLMPC)</strong> is a duly registered multipurpose cooperative 
+                    offering a wide range of services beyond manpower — including labor and manpower solutions, credit and 
+                    financial assistance, transport services, and other member-driven programs. 
+                    Guided by cooperative principles and values, we aim to uplift our members' socio-economic well-being while 
+                    delivering efficient, reliable, and diverse services to our members and clients alike.<br>    
                 <br>    
-                <br>    
-                    We take pride in being more than a manpower agency, we are a partner in productivity and community development. 
-                    Each member-worker is part of a cooperative family committed to professionalism, integrity, and shared growth.
+                   We take pride in being more than a manpower agency — we are a full-service cooperative 
+                   and a partner in productivity, financial growth, and community development. Each member is part 
+                   of a cooperative family committed to professionalism, integrity, and shared growth across every service we offer.
                 </p>
                 </div>
                 <div class="about-image">
@@ -41,13 +43,16 @@
             <div class="about-row reverse">
                 <div class="about-text">
                 <p style = "font-size: 20px; text-align: justify;">
-                    Bee Home Labor Multipurpose Cooperative (BHLMPC) began as BEE HOME MANPOWER SERVICE, a sole proprietorship engaged 
-                    in manpower and labor services. On December 13, 2011, it transitioned into a cooperative and was registered as 
-                    BEE HOME LABOR SERVICE COOPERATIVE. The organization was later amended as a Labor Service Cooperative on December 14, 2017.
+                    Bee Home Labor Multipurpose Cooperative (BHLMPC) began as BEE HOME MANPOWER SERVICE, 
+                    a sole proprietorship engaged in manpower and labor services. On December 13, 2011, 
+                    it transitioned into a cooperative and was registered as BEE HOME LABOR SERVICE COOPERATIVE, 
+                    later amended as a Labor Service Cooperative on December 14, 2017.
                 <br>    
                 <br> 
-                    To expand its services and better serve its members, the cooperative was further amended as BEE HOME LABOR MULTIPURPOSE COOPERATIVE on November 15, 2023.
-                </p>
+                    As the needs of our members grew, so did we. On November 15, 2023, the cooperative 
+                    was formally amended into BEE HOME LABOR MULTIPURPOSE COOPERATIVE — expanding beyond labor 
+                    services to include credit and financial assistance, transport operations, and other member support services, 
+                    reflecting our commitment to serving our members' well-being in every aspect of their lives. </p>
                 </div>
                 <div class="about-image">
                 <img src="../IMAGES/aboutus-img1.png" alt="Vision">
@@ -291,7 +296,9 @@
                 <span class="arrow">&#9654;</span>
             </button>
             <div class="faq-answer">
-                <p>Bee Home Labor Multipurpose Cooperative is a manpower service provider that supplies trained and reliable workers to different industries..</p>
+                <p>Bee Home Labor Multipurpose Cooperative is a multipurpose cooperative offering 
+                    labor and manpower solutions, credit and financial assistance, transport services, 
+                    and other member-focused programs — all guided by cooperative principles that put members' well-being first.</p>
             </div>
         </div>
 

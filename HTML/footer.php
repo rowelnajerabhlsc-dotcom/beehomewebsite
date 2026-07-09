@@ -1,13 +1,14 @@
 <footer class="footer">
     <div class="footer-container">
 
-        <!-- LEFT -->
+        <!-- LEFT: COMPANY INFO -->
         <div class="footer-left">
             <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="footer-logo">
             <h3>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h3>
             <p>UNIT 203, 2ND FLOOR, MGC VERANDA BUILDING, 31, GOV. PASCUAL AVENUE, MALABON, METRO MANILA</p>
         </div>
 
+        <!-- MIDDLE: NAVIGATION -->
         <div class="footer-middle">
             <ul>
                 <li><a href="../HTML/home.php">Home</a></li>
@@ -19,6 +20,7 @@
             </ul>
         </div>
 
+        <!-- RIGHT: CONNECT WITH US -->
         <div class="footer-right">
             <h3>CONNECT WITH US</h3>
 

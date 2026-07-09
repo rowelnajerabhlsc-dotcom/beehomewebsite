@@ -2,6 +2,44 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Get current page
+$current_page = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Remove trailing slash for comparison
+$current_page = rtrim($current_page, '/') ?: '/';
+
+// Map URLs to nav items - handle both pretty URLs and direct file paths
+$nav_pages = [
+    '/' => 'home',
+    '/home' => 'home',
+    '/home.php' => 'home',
+    '/HTML/home.php' => 'home',
+    '/index.php' => 'home',
+    '/about' => 'about',
+    '/HTML/about.php' => 'about',
+    '/products' => 'products',
+    '/HTML/products.php' => 'products',
+    '/manpower_request' => 'manpower',
+    '/manpower-request' => 'manpower',
+    '/HTML/manpower_request.php' => 'manpower',
+    '/HTML/manpower-request.php' => 'manpower',
+    '/membership' => 'membership',
+    '/HTML/membership.php' => 'membership',
+    '/bee-home-cares' => 'cares',
+    '/HTML/bee-home-cares.php' => 'cares',
+    '/contact' => 'contact',
+    '/HTML/contact.php' => 'contact',
+    '/profile' => 'profile',
+    '/HTML/profile.php' => 'profile',
+    '/change_password' => 'profile',
+    '/HTML/change_password.php' => 'profile',
+    '/records' => 'profile',
+    '/HTML/records.php' => 'profile',
+    '/manpower-request-logs' => 'profile',
+    '/HTML/manpower-request-logs.php' => 'profile',
+];
+
+$active_page = $nav_pages[$current_page] ?? '';
 ?>
 
 <nav>
@@ -16,10 +54,10 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- NAV LINKS -->
     <ul class="nav-links" id="navLinks">
 
-        <li><a href="/">Home</a></li>
+        <li><a href="/" class="<?php echo $active_page === 'home' ? 'active' : ''; ?>">Home</a></li>
 
         <li class="dropdown">
-            <a href="/about">About Us ▾</a>
+            <a href="/about" class="<?php echo $active_page === 'about' ? 'active' : ''; ?>">About Us ▾</a>
 
             <ul class="dropdown-menu">
                 <li><a href="/about#history">History</a></li>
@@ -30,15 +68,15 @@ if (session_status() === PHP_SESSION_NONE) {
             </ul>
         </li>
 
-        <li><a href="/products">Products & Services</a></li>
+        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products & Services</a></li>
 
-        <li><a href="/manpower_request">Manpower Request</a></li>
+        <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower Request</a></li>
 
         <!-- Membership -->
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
                 ? '/membership'
-                : '/needlogin'; ?>">
+                : '/needlogin'; ?>" class="<?php echo $active_page === 'membership' ? 'active' : ''; ?>">
                 Membership
             </a>
         </li>
@@ -47,12 +85,12 @@ if (session_status() === PHP_SESSION_NONE) {
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
                 ? '/bee-home-cares'
-                : '/needlogin'; ?>">
+                : '/needlogin'; ?>" class="<?php echo $active_page === 'cares' ? 'active' : ''; ?>">
                 Bee Home Cares
             </a>
         </li>
 
-        <li><a href="/contact">Contact Us</a></li>
+        <li><a href="/contact" class="<?php echo $active_page === 'contact' ? 'active' : ''; ?>">Contact Us</a></li>
 
     </ul>
 
