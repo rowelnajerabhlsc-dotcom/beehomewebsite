@@ -14,6 +14,28 @@
     overflow: visible;
 }
 
+/* FORM ALERT (success / error banner) */
+.form-alert {
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-alert-success {
+    background: #e6f4ea;
+    color: #096D2B;
+    border: 2px solid #096D2B;
+}
+
+.form-alert-error {
+    background: #fdecea;
+    color: #b3261e;
+    border: 2px solid #b3261e;
+}
+
 /* TITLE */
 .business-form-wrapper h2 {
     text-align: center;
@@ -231,7 +253,10 @@ button:hover {
 
 .footer-left h3 {
     margin-top: 15px;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
 }
 
 .footer-left p {
@@ -279,8 +304,11 @@ button:hover {
 }
 
 .footer-right h3 {
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
     margin-bottom: 15px;
+    letter-spacing: 0.5px;
 }
 
 .footer-right p {
