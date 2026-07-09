@@ -6,6 +6,8 @@
     <title>Bee Home Labor Multipurpose Cooperative</title>
     <link rel="stylesheet" href="../CSS/contact.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="stylesheet" href="../CSS/leaflet.css">
+    <link rel="stylesheet" href="../CSS/leaflet-routing-machine.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
 </head>
 
@@ -25,16 +27,13 @@
         <div class="contact-container">
 
             <!-- LEFT: MAP -->
-            <div class="contact-map">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2104.536616129194!2d120.96974517321758!3d14.670846936716497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b43c1d92cd03%3A0x767f315e3a810013!2sBee%20Home%20Labor%20Service%20Cooperative!5e0!3m2!1sen!2sph!4v1770444765601!5m2!1sen!2sph" 
-                    width="100%" 
-                    height="100%" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div> 
+            <div class="contact-map-wrapper">
+                <div class="map-toolbar">
+                    <button id="locateBtn" type="button">Use my location</button>
+                    <div id="routeInfo" class="route-info">Allow location access to see directions and live ETA.</div>
+                </div>
+                <div id="map" class="contact-map"></div>
+            </div>
 
         
 
@@ -120,13 +119,14 @@
 
 
 
+<script src="../JS/leaflet.js"></script>
+<script src="../JS/leaflet-routing-machine.js"></script>
 <script>
     function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("active");
     }
 
-
-   const faqItems = document.querySelectorAll(".faq-item");
+    const faqItems = document.querySelectorAll(".faq-item");
 
     faqItems.forEach(item => {
         const button = item.querySelector(".faq-question");
@@ -136,6 +136,80 @@
         });
     });
 
+    const officeLocation = [14.6708469, 120.9697452];
+    const map = L.map('map').setView(officeLocation, 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const officeMarker = L.marker(officeLocation).addTo(map)
+        .bindPopup('Bee Home Labor Multipurpose Cooperative');
+
+    let routingControl = null;
+    const routeInfo = document.getElementById('routeInfo');
+    const locateBtn = document.getElementById('locateBtn');
+
+    function clearRoute() {
+        if (routingControl) {
+            map.removeControl(routingControl);
+            routingControl = null;
+        }
+    }
+
+    function showRoute(userLocation) {
+        clearRoute();
+
+        routingControl = L.Routing.control({
+            waypoints: [
+                L.latLng(userLocation.lat, userLocation.lng),
+                L.latLng(officeLocation[0], officeLocation[1])
+            ],
+            routeWhileDragging: false,
+            addWaypoints: false,
+            draggableWaypoints: false,
+            fitSelectedRoutes: true,
+            createMarker: function() {
+                return null;
+            },
+            lineOptions: {
+                styles: [{ color: '#096D2B', weight: 5, opacity: 0.8 }]
+            }
+        }).addTo(map);
+
+        routingControl.on('routesfound', function(e) {
+            const route = e.routes[0];
+            const distanceKm = (route.summary.totalDistance / 1000).toFixed(1);
+            const durationMinutes = Math.max(1, Math.round(route.summary.totalTime / 60));
+            routeInfo.innerHTML = `<strong>Estimated travel:</strong> ${distanceKm} km • ${durationMinutes} min`;
+        });
+    }
+
+    function locateUser() {
+        if (!navigator.geolocation) {
+            routeInfo.textContent = 'Geolocation is not supported by this browser.';
+            return;
+        }
+
+        routeInfo.textContent = 'Finding your location...';
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            L.marker([userLocation.lat, userLocation.lng]).addTo(map)
+                .bindPopup('Your location').openPopup();
+
+            map.setView([userLocation.lat, userLocation.lng], 14);
+            showRoute(userLocation);
+        }, function() {
+            routeInfo.textContent = 'Location access was denied. Please allow it to see live directions.';
+        });
+    }
+
+    locateBtn.addEventListener('click', locateUser);
 </script>
 
 </body>
