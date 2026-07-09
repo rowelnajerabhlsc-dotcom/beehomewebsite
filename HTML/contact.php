@@ -168,7 +168,7 @@
             routeWhileDragging: false,
             addWaypoints: false,
             draggableWaypoints: false,
-            fitSelectedRoutes: true,
+            fitSelectedRoutes: false,
             createMarker: function() {
                 return null;
             },
@@ -182,6 +182,13 @@
             const distanceKm = (route.summary.totalDistance / 1000).toFixed(1);
             const durationMinutes = Math.max(1, Math.round(route.summary.totalTime / 60));
             routeInfo.innerHTML = `<strong>Estimated travel:</strong> ${distanceKm} km • ${durationMinutes} min`;
+            
+            // Zoom to fit route but maintain aspect ratio
+            const bounds = route.coordinates.reduce((bounds, coord) => {
+                return bounds.extend(L.latLng(coord.lat, coord.lng));
+            }, L.latLngBounds(L.latLng(userLocation.lat, userLocation.lng), L.latLng(officeLocation[0], officeLocation[1])));
+            
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
         });
     }
 
