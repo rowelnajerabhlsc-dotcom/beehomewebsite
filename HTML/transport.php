@@ -49,7 +49,9 @@
         <div class="mountain-right-wrap scroll-element right">
           <div class="mountain-right"><img src="../IMAGES/bush.png" alt="Bush Image" /></div>
         </div>
+        <div class="road"></div>
       </div>
+
     </section>
 
     <section class="transport-info snap-section">

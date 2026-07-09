@@ -71,7 +71,8 @@ section {
     position: sticky;
     top: 0;
     display: grid;
-    grid-template-columns: 1fr 60vw 1fr;
+    grid-template-columns: 20vw 60vw 20vw;
+    grid-template-rows: auto auto;
     gap: 8px;
     background: linear-gradient(180deg, #eefaf0 0%, #dff4e3 100%);
     overflow: hidden;
@@ -96,6 +97,16 @@ section {
     display: block;
     justify-self: center;
     z-index: 1;
+}
+
+.road {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    height: 10px;
+    width: 100%;
+    background: linear-gradient(to right, #096D2B 0%, #0c8a36 50%, #096D2B 100%);
+    color: #096D2B;
+    margin-top: -10vh;
 }
 
 /* ----------------------------- CAROUSEL ----------------------------- */
