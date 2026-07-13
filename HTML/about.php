@@ -220,8 +220,8 @@
 
         <section class="officers">
             <div class="officers-container">
-                <img src="../IMAGES/team-img1.png" alt="Officers Image 1">
-                <img src="../IMAGES/team-img2.png" alt="Officers Image 2">
+                <img src="../IMAGES/team-img1.1.png" alt="Officers Image 1">
+                <img src="../IMAGES/team-img2.1.png" alt="Officers Image 2">
                 <img src="../IMAGES/team-img3.png" alt="Officers Image 3">
                 <img src="../IMAGES/team-img4.png" alt="Officers Image 4">
                 <img src="../IMAGES/team-img5.png" alt="Officers Image 5">
