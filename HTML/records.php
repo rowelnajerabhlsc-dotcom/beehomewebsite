@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['edit'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: records.php");
+    header("Location: /records");
     exit();
 }
 
@@ -86,7 +86,7 @@ if (isset($_GET['delete'])) {
         $stmt->close();
     }
 
-    header("Location: records.php");
+    header("Location: /records");
     exit();
 }
 
@@ -366,7 +366,7 @@ $result = $conn->query("
 
             <div class="button-group">
                 <button type="submit" class="save-btn">Save</button>
-                <button type="button" class="cancel-btn" onclick="window.location.href='records.php'">Cancel</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='/records'">Cancel</button>
             </div>
 
         </form>
@@ -384,14 +384,14 @@ $result = $conn->query("
     // Click on dim backdrop (not on the card itself) closes the modal
     modal.addEventListener('click', function (e) {
         if (e.target === modal) {
-            window.location.href = 'records.php';
+            window.location.href = '/records';
         }
     });
 
     // Escape key closes the modal
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            window.location.href = 'records.php';
+            window.location.href = '/records';
         }
     });
 })();
