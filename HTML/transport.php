@@ -390,7 +390,7 @@
         road.appendChild(clone);
       }
 
-      //-----------Calendar-------------------
+      //-----------Calendar + Availability-------------------
       (function () {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -410,6 +410,67 @@
         const calendarGrid = document.getElementById("calendarGrid");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
+
+        const fromInput = document.getElementById('fromDate');
+        const untilInput = document.getElementById('untilDate');
+
+        // Map of "YYYY-MM-DD" -> number of bookings covering that date.
+        let dateCounts = new Map();
+        // Total vehicles available for rent (sum of all vehicle quantities).
+        let totalVehicles = 0;
+
+        function toDateKey(year, month, day) {
+          const mm = String(month + 1).padStart(2, '0');
+          const dd = String(day).padStart(2, '0');
+          return `${year}-${mm}-${dd}`;
+        }
+
+        // Expand a from/until range (inclusive) into individual YYYY-MM-DD keys.
+        function expandRange(fromStr, untilStr) {
+          const keys = [];
+          const cursor = new Date(fromStr + 'T00:00:00');
+          const end = new Date(untilStr + 'T00:00:00');
+
+          while (cursor <= end) {
+            keys.push(toDateKey(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()));
+            cursor.setDate(cursor.getDate() + 1);
+          }
+
+          return keys;
+        }
+
+        // A date is fully booked when the number of overlapping bookings
+        // has reached (or exceeded) the total number of vehicles available.
+        function isFullyBooked(dateKey) {
+          if (totalVehicles <= 0) return false; // no fleet data yet / none configured
+          return (dateCounts.get(dateKey) || 0) >= totalVehicles;
+        }
+
+        // True if ANY date within [fromStr, untilStr] is fully booked.
+        function isRangeFullyBooked(fromStr, untilStr) {
+          return expandRange(fromStr, untilStr).some(isFullyBooked);
+        }
+
+        async function loadAvailability() {
+          try {
+            const response = await fetch('get-bookings.php');
+            const data = await response.json();
+            const counts = new Map();
+
+            (data.bookings || []).forEach(({ from, until }) => {
+              expandRange(from, until).forEach(key => {
+                counts.set(key, (counts.get(key) || 0) + 1);
+              });
+            });
+
+            dateCounts = counts;
+            totalVehicles = Number(data.totalVehicles) || 0;
+          } catch (error) {
+            console.warn('[availability] failed to load booking data:', error);
+            dateCounts = new Map();
+            totalVehicles = 0;
+          }
+        }
 
         function updateNavButtons() {
           // Disable "prev" only when viewing the current real-world month/year
@@ -440,6 +501,14 @@
             dayCell.textContent = day;
 
             const cellDate = new Date(year, month, day);
+            const dateKey = toDateKey(year, month, day);
+            const fullyBooked = isFullyBooked(dateKey);
+
+            if (fullyBooked) {
+              dayCell.classList.add("booked");
+              dayCell.style.backgroundColor = "#0c8a36";
+              dayCell.title = "Fully booked \u2014 no vehicles available";
+            }
 
             if (cellDate < today) {
               dayCell.classList.add("past");
@@ -449,11 +518,10 @@
               if (cellDate.getTime() === today.getTime()) {
                 dayCell.classList.add("today");
               }
-
-              dayCell.addEventListener("click", () => {
-                alert(`You selected: ${monthNames[month]} ${day}, ${year}`);
-              });
             }
+
+            // Calendar is display-only: no click selection, no "You selected" alert.
+            // Navigation is handled solely via the prev/next buttons.
 
             calendarGrid.appendChild(dayCell);
           }
@@ -482,32 +550,57 @@
           renderCalendar(currentMonth, currentYear);
         });
 
-        renderCalendar(currentMonth, currentYear);
+        //------------from - until date picker enforcement----------
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const formattedToday = `${yyyy}-${mm}-${dd}`;
+
+        //no past cur date
+        fromInput.min = formattedToday;
+        untilInput.min = formattedToday;
+
+        fromInput.addEventListener('change', function () {
+          if (!this.value) return;
+
+          if (isFullyBooked(this.value)) {
+            alert('That date is fully booked. Please choose another date.');
+            this.value = '';
+            return;
+          }
+
+          untilInput.min = this.value;
+
+          // If an "until" date was already picked and the new range now
+          // crosses a fully booked date, clear it so the user re-picks.
+          if (untilInput.value && isRangeFullyBooked(this.value, untilInput.value)) {
+            alert('That date range includes a fully booked date. Please adjust your dates.');
+            untilInput.value = '';
+          }
+        });
+
+        untilInput.addEventListener('change', function () {
+          if (!this.value) return;
+
+          if (isFullyBooked(this.value)) {
+            alert('That date is fully booked. Please choose another date.');
+            this.value = '';
+            return;
+          }
+
+          fromInput.max = this.value;
+
+          if (fromInput.value && isRangeFullyBooked(fromInput.value, this.value)) {
+            alert('That date range includes a fully booked date. Please adjust your dates.');
+            this.value = '';
+          }
+        });
+
+        // Load availability first, then render the calendar so it's accurate from the start.
+        loadAvailability().then(() => {
+          renderCalendar(currentMonth, currentYear);
+        });
       })();
-
-      //------------from - until date picker----------
-      const fromInput = document.getElementById('fromDate');
-      const untilInput = document.getElementById('untilDate');
-
-      //timezone
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const formattedToday = `${yyyy}-${mm}-${dd}`;
-
-      //no past cur date
-      fromInput.min = formattedToday;
-      untilInput.min = formattedToday;
-
-      //range locking
-      fromInput.addEventListener('input', function () {
-        untilInput.min = this.value ? this.value : formattedToday;
-      });
-      //from gone = reset until
-      untilInput.addEventListener('input', function () {
-        fromInput.max = this.value ? this.value : '';
-      });
 
       //-----------Map-------------------
       // Fallback coordinates (Manila, Philippines)
