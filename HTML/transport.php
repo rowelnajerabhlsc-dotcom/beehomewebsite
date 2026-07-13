@@ -164,7 +164,7 @@
             <!-- PRIVACY CHECKBOX -->
             <label>
               <input type="checkbox" name="privacy_agree" required>
-              agree with our
+              I agree with our
               <span class="privacy-link" onclick="openPrivacyModal()">
                 Confidentiality and Data Privacy Clause
               </span>
