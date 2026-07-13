@@ -9,10 +9,10 @@
   <link rel="stylesheet" href="../CSS/navbar.css">
   <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
   <link rel="stylesheet" href="../CSS/rent_request.css">
-  <link rel="stylesheet" href="https://unpkg.com" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin="" />
-  <script src="https://unpkg.com" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 
 <body>
@@ -371,16 +371,7 @@
         road.appendChild(clone);
       }
 
-      //For Rent Button
-      const link = document.getElementById('toggleLink');
-      const section = document.getElementById('hidden-form');
-
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // Stops the "#" from changing the URL or jumping the page
-        section.classList.toggle('hidden');
-      });
-
-      //from - until date picker
+      //------------from - until date picker----------
       const fromInput = document.getElementById('fromDate');
       const untilInput = document.getElementById('untilDate');
 
@@ -404,65 +395,73 @@
         fromInput.max = this.value ? this.value : '';
       });
 
-      window.addEventListener('DOMContentLoaded', () => {
+      //-----------Map-------------------
 
-        // Default coordinates (Manila, Philippines)
-        const startLat = 14.5995;
-        const startLng = 120.9842;
+      // Default coordinates (Manila, Philippines)
+      const startLat = 14.5995;
+      const startLng = 120.9842;
 
-        function createMapPicker(mapElementId, addressInputId) {
-          // 1. Render Map Engine
-          const map = L.map(mapElementId).setView([startLat, startLng], 13);
+      function createMapPicker(mapElementId, addressInputId) {
+        // 1. Render Map Engine
+        const map = L.map(mapElementId).setView([startLat, startLng], 13);
 
-          // 2. Load Graphic Imagery Tiles
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-          }).addTo(map);
+        // 2. Load Graphic Imagery Tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap'
+        }).addTo(map);
 
-          // 3. Mount Draggable Pin
-          const marker = L.marker([startLat, startLng], { draggable: true }).addTo(map);
+        // 3. Mount Draggable Pin
+        const marker = L.marker([startLat, startLng], { draggable: true }).addTo(map);
 
-          // 4. Fetch address names dynamically via OpenStreetMap API
-          async function reverseGeocode(lat, lng) {
-            const addressField = document.getElementById(addressInputId);
-            addressField.value = "Fetching address details...";
+        // 4. Fetch address names dynamically via OpenStreetMap API
+        async function reverseGeocode(lat, lng) {
+          const addressField = document.getElementById(addressInputId);
+          addressField.value = "Fetching address details...";
 
-            try {
-              const response = await fetch(`https://openstreetmap.org{lat}&lon=${lng}`);
-              const data = await response.json();
-              if (data && data.display_name) {
-                addressField.value = data.display_name;
-              } else {
-                addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-              }
-            } catch (error) {
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const data = await response.json();
+            if (data && data.display_name) {
+              addressField.value = data.display_name;
+            } else {
               addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             }
+          } catch (error) {
+            addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
           }
-
-          // Trigger initial lookup on page load
-          reverseGeocode(startLat, startLng);
-
-          // Handle dragging behaviors
-          marker.on('dragend', function (e) {
-            const currentPos = marker.getLatLng();
-            reverseGeocode(currentPos.lat, currentPos.lng);
-          });
-
-          // Handle map clicking behaviors
-          map.on('click', function (e) {
-            marker.setLatLng(e.latlng);
-            reverseGeocode(e.latlng.lat, e.latlng.lng);
-          });
-
-          // Force-refresh map dimensions calculation to prevent grey screens
-          setTimeout(() => { map.invalidateSize(); }, 200);
         }
 
-        // Initialize both maps safely
-        createMapPicker('mapPickUp', 'addressPickUp');
-        createMapPicker('mapDropOff', 'addressDropOff');
+        // Trigger initial lookup on page load
+        reverseGeocode(startLat, startLng);
+
+        // Handle dragging behaviors
+        marker.on('dragend', function (e) {
+          const currentPos = marker.getLatLng();
+          reverseGeocode(currentPos.lat, currentPos.lng);
+        });
+
+        // Handle map clicking behaviors
+        map.on('click', function (e) {
+          marker.setLatLng(e.latlng);
+          reverseGeocode(e.latlng.lat, e.latlng.lng);
+        });
+      }
+
+      //----------------For Rent Button---------------------
+      const link = document.getElementById('toggleLink');
+      const section = document.getElementById('hidden-form');
+      let mapsInitialized = false;
+
+      link.addEventListener('click', (e) => {
+        e.preventDefault(); // Stops the "#" from changing the URL or jumping the page
+        section.classList.toggle('hidden');
+
+        if (!mapsInitialized && !section.classList.contains('hidden')) {
+          createMapPicker('mapPickUp', 'addressPickUp');
+          createMapPicker('mapDropOff', 'addressDropOff');
+          mapsInitialized = true;
+        }
       });
     </script>
   </main>
