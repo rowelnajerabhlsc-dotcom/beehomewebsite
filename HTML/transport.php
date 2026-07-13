@@ -394,27 +394,22 @@
       untilInput.addEventListener('input', function () {
         fromInput.max = this.value ? this.value : '';
       });
-
+      
       //-----------Map-------------------
+      // Fallback coordinates (Manila, Philippines)
+      const defaultLat = 14.5995;
+      const defaultLng = 120.9842;
 
-      // Default coordinates (Manila, Philippines)
-      const startLat = 14.5995;
-      const startLng = 120.9842;
+      function createMapPicker(mapElementId, addressInputId, lat, lng) {
+        const map = L.map(mapElementId).setView([lat, lng], 15);
 
-      function createMapPicker(mapElementId, addressInputId) {
-        // 1. Render Map Engine
-        const map = L.map(mapElementId).setView([startLat, startLng], 13);
-
-        // 2. Load Graphic Imagery Tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // 3. Mount Draggable Pin
-        const marker = L.marker([startLat, startLng], { draggable: true }).addTo(map);
+        const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
 
-        // 4. Fetch address names dynamically via OpenStreetMap API
         async function reverseGeocode(lat, lng) {
           const addressField = document.getElementById(addressInputId);
           addressField.value = "Fetching address details...";
@@ -432,19 +427,40 @@
           }
         }
 
-        // Trigger initial lookup on page load
-        reverseGeocode(startLat, startLng);
+        reverseGeocode(lat, lng);
 
-        // Handle dragging behaviors
         marker.on('dragend', function (e) {
           const currentPos = marker.getLatLng();
           reverseGeocode(currentPos.lat, currentPos.lng);
         });
 
-        // Handle map clicking behaviors
         map.on('click', function (e) {
           marker.setLatLng(e.latlng);
           reverseGeocode(e.latlng.lat, e.latlng.lng);
+        });
+      }
+
+      // Get the user's current location, fall back to default if denied/unavailable
+      function getUserLocation() {
+        return new Promise((resolve) => {
+          if (!navigator.geolocation) {
+            resolve({ lat: defaultLat, lng: defaultLng });
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              });
+            },
+            (error) => {
+              console.warn('Geolocation denied or failed, using default location:', error.message);
+              resolve({ lat: defaultLat, lng: defaultLng });
+            },
+            { timeout: 8000 }
+          );
         });
       }
 
@@ -453,14 +469,17 @@
       const section = document.getElementById('hidden-form');
       let mapsInitialized = false;
 
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // Stops the "#" from changing the URL or jumping the page
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
         section.classList.toggle('hidden');
 
         if (!mapsInitialized && !section.classList.contains('hidden')) {
-          createMapPicker('mapPickUp', 'addressPickUp');
-          createMapPicker('mapDropOff', 'addressDropOff');
-          mapsInitialized = true;
+          mapsInitialized = true; // set before the await so a fast double-click can't fire this twice
+
+          const { lat, lng } = await getUserLocation();
+
+          createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
+          createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
         }
       });
     </script>
