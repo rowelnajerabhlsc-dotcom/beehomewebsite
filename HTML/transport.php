@@ -104,6 +104,25 @@
 
     </section>
 
+    <section class="calendar hidden" id="hidden-calendar">
+      <div class="calendar-header">
+        <button id="prevBtn">&lt;</button>
+        <h2 id="monthYearDisplay"></h2>
+        <button id="nextBtn">&gt;</button>
+      </div>
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- Weekday Headers -->
+        <div class="day-name">Su</div>
+        <div class="day-name">Mo</div>
+        <div class="day-name">Tu</div>
+        <div class="day-name">We</div>
+        <div class="day-name">Th</div>
+        <div class="day-name">Fr</div>
+        <div class="day-name">Sa</div>
+        <!-- Days will be dynamically injected here via JS -->
+      </div>
+    </section>
+
     <!-- FORM -->
     <div class="business-form-wrapper hidden" id="hidden-form">
 
@@ -371,6 +390,101 @@
         road.appendChild(clone);
       }
 
+      //-----------Calendar-------------------
+      (function () {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const minMonth = today.getMonth();
+        const minYear = today.getFullYear();
+
+        let currentMonth = minMonth;
+        let currentYear = minYear;
+
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+
+        const monthYearDisplay = document.getElementById("monthYearDisplay");
+        const calendarGrid = document.getElementById("calendarGrid");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        function updateNavButtons() {
+          // Disable "prev" only when viewing the current real-world month/year
+          const atMinimum = (currentYear === minYear && currentMonth === minMonth);
+          prevBtn.disabled = atMinimum;
+          prevBtn.classList.toggle("disabled", atMinimum);
+        }
+
+        function renderCalendar(month, year) {
+          const dayNames = document.querySelectorAll('.day-name');
+          calendarGrid.innerHTML = '';
+          dayNames.forEach(day => calendarGrid.appendChild(day));
+
+          monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+
+          const firstDayIndex = new Date(year, month, 1).getDay();
+          const totalDays = new Date(year, month + 1, 0).getDate();
+
+          for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.classList.add("empty-cell");
+            calendarGrid.appendChild(emptyDiv);
+          }
+
+          for (let day = 1; day <= totalDays; day++) {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("day-cell");
+            dayCell.textContent = day;
+
+            const cellDate = new Date(year, month, day);
+
+            if (cellDate < today) {
+              dayCell.classList.add("past");
+            } else {
+              dayCell.classList.add("future-active");
+
+              if (cellDate.getTime() === today.getTime()) {
+                dayCell.classList.add("today");
+              }
+
+              dayCell.addEventListener("click", () => {
+                alert(`You selected: ${monthNames[month]} ${day}, ${year}`);
+              });
+            }
+
+            calendarGrid.appendChild(dayCell);
+          }
+
+          updateNavButtons();
+        }
+
+        prevBtn.addEventListener("click", () => {
+          // Block navigating before the current real-world month
+          if (currentYear === minYear && currentMonth === minMonth) return;
+
+          currentMonth--;
+          if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+          }
+          renderCalendar(currentMonth, currentYear);
+        });
+
+        nextBtn.addEventListener("click", () => {
+          currentMonth++;
+          if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+          }
+          renderCalendar(currentMonth, currentYear);
+        });
+
+        renderCalendar(currentMonth, currentYear);
+      })();
+
       //------------from - until date picker----------
       const fromInput = document.getElementById('fromDate');
       const untilInput = document.getElementById('untilDate');
@@ -467,13 +581,21 @@
       //----------------For Rent Button---------------------
       const link = document.getElementById('toggleLink');
       const section = document.getElementById('hidden-form');
+      // 1. Target the new hidden calendar element
+      const calendarSection = document.getElementById('hidden-calendar');
       let mapsInitialized = false;
 
       link.addEventListener('click', async (e) => {
         e.preventDefault();
-        section.classList.toggle('hidden');
 
-        if (!mapsInitialized && !section.classList.contains('hidden')) {
+        // 2. Toggle both visibility classes simultaneously
+        section.classList.toggle('hidden');
+        calendarSection.classList.toggle('hidden');
+
+        // Check if either section is now visible before firing the maps API fetch
+        const isFormVisible = !section.classList.contains('hidden');
+
+        if (!mapsInitialized && isFormVisible) {
           mapsInitialized = true; // set before the await so a fast double-click can't fire this twice
 
           const { lat, lng } = await getUserLocation();

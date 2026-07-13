@@ -520,9 +520,131 @@ section {
     }
 }
 
-/* ----Form----------*/
+/*---------CALENDAR-----------*/
+
+.calendar {
+    /* Fluid size: occupies 40% of the viewport width, but remains between 320px and 600px */
+    width: clamp(320px, 40vw, 600px);
+    background: #fff;
+    /* Scale padding dynamically relative to the container width */
+    padding: min(2.5vw, 25px);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    /* Dynamic bottom spacing */
+    margin-bottom: min(2vw, 20px);
+}
+
+.calendar-header h2 {
+    margin: 0;
+    /* Scales font smoothly between 1.1rem and 1.6rem based on screen width */
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    color: #333;
+}
+
+.calendar-header button {
+    background: none;
+    border: 1px solid #dee2e6;
+    /* Scales padding relative to viewport */
+    padding: min(0.8vw, 8px) min(1.5vw, 16px);
+    /* Font scales based on viewport size */
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.calendar-header button:hover {
+    background-color: var(--gray-light);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    /* Keeps day spacing cohesive across sizing adjustments */
+    gap: min(0.8vw, 8px);
+    text-align: center;
+}
+
+.day-name {
+    font-weight: 600;
+    color: var(--gray-text);
+    padding-bottom: min(0.6vw, 6px);
+    font-size: clamp(0.8rem, 1.3vw, 1.1rem);
+}
+
+.day-cell {
+    /* Scales height cleanly using vertical viewport metrics */
+    padding: clamp(8px, 1.5vh, 18px) 0;
+    border-radius: 6px;
+    font-size: clamp(0.85rem, 1.4vw, 1.2rem);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Grayed out styling for past dates */
+.day-cell.past {
+    background-color: var(--past-date-bg);
+    color: var(--past-date-text);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Active styling for valid dates */
+.day-cell.future-active {
+    background-color: #fff;
+    color: #333;
+}
+
+.day-cell.future-active:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Today indicator */
+.day-cell.today {
+    border: 2px solid #096D2B;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+/* Empty buffer cells for offset days */
+.empty-cell {
+    visibility: hidden;
+}
+
+#prevBtn:disabled,
+#prevBtn.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+#prevBtn,
+#nextBtn {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    color: #096D2B;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* ----------Form----------*/
 .hidden {
     display: none;
+}
+
+.business-form-wrapper {
+    margin: 20px auto 20px;
 }
 
 .passenger-input {
