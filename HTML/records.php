@@ -207,6 +207,29 @@ $result = $conn->query("
             background: #f44336;
             color: white;
         }
+
+        /* ===== EDIT MODAL ===== */
+        .edit-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;     /* let card sit near top, scroll down if tall */
+            padding: 40px 16px;
+            background: rgba(0, 0, 0, 0.55);
+            overflow-y: auto;             /* modal scrolls, not the page */
+            overflow-x: hidden;
+        }
+
+        .edit-modal .auth-card {
+            max-width: 700px;
+            width: 100%;
+            max-height: calc(100vh - 80px); /* leave breathing room top + bottom */
+            overflow-y: auto;             /* card scrolls if its form is tall */
+            overflow-x: hidden;            /* never scroll horizontally */
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -260,7 +283,7 @@ $result = $conn->query("
 </div>
 
 <?php if ($editing && $edit_row): ?>
-<div class="auth-container">
+<div class="auth-container edit-modal" id="editModal">
     <div class="auth-card edit-card">
 
         <h1>Edit User</h1>
@@ -350,6 +373,29 @@ $result = $conn->query("
 
     </div>
 </div>
+<?php endif; ?>
+
+<?php if ($editing && $edit_row): ?>
+<script>
+(function () {
+    const modal = document.getElementById('editModal');
+    if (!modal) return;
+
+    // Click on dim backdrop (not on the card itself) closes the modal
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            window.location.href = 'records.php';
+        }
+    });
+
+    // Escape key closes the modal
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            window.location.href = 'records.php';
+        }
+    });
+})();
+</script>
 <?php endif; ?>
 
 <script>
