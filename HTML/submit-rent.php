@@ -1,19 +1,20 @@
 <?php
 require_once __DIR__ . '/config.php'; // provides $conn (mysqli) and starts the session
 
-// Build an absolute URL for redirects so there's no ambiguity from relative
-// path resolution (which is what caused the earlier 404 after submission).
-function rent_redirect(): void
+header('Content-Type: application/json');
+
+// Sends a JSON response and stops execution. Used for every outcome now
+// that the form submits via fetch() instead of a full page navigation.
+function rent_respond(string $status, string $message, int $httpCode = 200): void
 {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = $_SERVER['HTTP_HOST'] ?? 'beehome.ph';
-    header('Location: ' . $scheme . '://' . $host . '/transport');
+    http_response_code($httpCode);
+    echo json_encode(['status' => $status, 'message' => $message]);
     exit;
 }
 
 // ---- ONLY ACCEPT POST ----
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    rent_redirect();
+    rent_respond('error', 'Invalid request method.', 405);
 }
 
 // ---- BASIC VALIDATION ----
@@ -25,34 +26,24 @@ $required = [
 
 foreach ($required as $field) {
     if (empty($_POST[$field])) {
-        $_SESSION['rent_status'] = 'error';
-        $_SESSION['rent_message'] = 'Please fill out all required fields.';
-        rent_redirect();
+        rent_respond('error', 'Please fill out all required fields.', 422);
     }
 }
 
 if (!isset($_POST['privacy_agree'])) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Please agree to the Confidentiality and Data Privacy Clause.';
-    rent_redirect();
+    rent_respond('error', 'Please agree to the Confidentiality and Data Privacy Clause.', 422);
 }
 
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Please enter a valid email address.';
-    rent_redirect();
+    rent_respond('error', 'Please enter a valid email address.', 422);
 }
 
 if (!preg_match('/^09[0-9]{9}$/', $_POST['phone'])) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Please enter a valid contact number.';
-    rent_redirect();
+    rent_respond('error', 'Please enter a valid contact number.', 422);
 }
 
 if (!filter_var($_POST['passengers'], FILTER_VALIDATE_INT) || (int) $_POST['passengers'] < 1 || (int) $_POST['passengers'] > 26) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Number of passengers must be between 1 and 26.';
-    rent_redirect();
+    rent_respond('error', 'Number of passengers must be between 1 and 26.', 422);
 }
 
 $fromDate  = $_POST['fromDate'];
@@ -63,9 +54,7 @@ $fromValid  = (bool) DateTime::createFromFormat('Y-m-d', $fromDate);
 $untilValid = (bool) DateTime::createFromFormat('Y-m-d', $untilDate);
 
 if (!$fromValid || !$untilValid || $fromDate < $today || $untilDate < $fromDate) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Please select a valid date range.';
-    rent_redirect();
+    rent_respond('error', 'Please select a valid date range.', 422);
 }
 
 // ---- CHECK VEHICLE AVAILABILITY (server-side, since JS can be bypassed) ----
@@ -74,9 +63,7 @@ $totalVehicles = $vehicleResult ? (int) $vehicleResult->fetch_assoc()['total'] :
 
 if ($totalVehicles <= 0) {
     error_log('Rent form submission blocked: no vehicles configured in vehicles table.');
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Sorry, no vehicles are currently available for rent. Please contact us directly.';
-    rent_redirect();
+    rent_respond('error', 'Sorry, no vehicles are currently available for rent. Please contact us directly.', 409);
 }
 
 $checkStmt = $conn->prepare(
@@ -89,9 +76,7 @@ $overlapCount = (int) $checkStmt->get_result()->fetch_assoc()['cnt'];
 $checkStmt->close();
 
 if ($overlapCount >= $totalVehicles) {
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Sorry, all vehicles are already booked for one or more of the selected dates. Please choose different dates.';
-    rent_redirect();
+    rent_respond('error', 'Sorry, all vehicles are already booked for one or more of the selected dates. Please choose different dates.', 409);
 }
 
 // ---- BUILD DATA (sanitized/trimmed) ----
@@ -118,9 +103,7 @@ $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
     error_log('Rent form submission - prepare failed: ' . $conn->error);
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Sorry, something went wrong submitting your request. Please try again or contact us directly.';
-    rent_redirect();
+    rent_respond('error', 'Sorry, something went wrong submitting your request. Please try again or contact us directly.', 500);
 }
 
 // types: s = string, i = integer
@@ -143,17 +126,13 @@ $stmt->bind_param(
 
 if (!$stmt->execute()) {
     error_log('Rent form submission - execute failed: ' . $stmt->error);
-    $_SESSION['rent_status'] = 'error';
-    $_SESSION['rent_message'] = 'Sorry, something went wrong submitting your request. Please try again or contact us directly.';
     $stmt->close();
     $conn->close();
-    rent_redirect();
+    rent_respond('error', 'Sorry, something went wrong submitting your request. Please try again or contact us directly.', 500);
 }
 
 $stmt->close();
 $conn->close();
 
 // ---- SUCCESS ----
-$_SESSION['rent_status'] = 'success';
-$_SESSION['rent_message'] = 'Thank you! Your rent request has been received. We will get back to you soon.';
-rent_redirect();
+rent_respond('success', 'Thank you! Your rent request has been received. We will get back to you soon.');

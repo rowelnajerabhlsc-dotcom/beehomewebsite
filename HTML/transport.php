@@ -128,17 +128,7 @@
 
       <h2>Rent Request Form</h2>
 
-      <?php if (isset($_SESSION['rent_status'])): ?>
-        <div class="form-alert form-alert-<?php echo htmlspecialchars($_SESSION['rent_status']); ?>">
-          <?php echo htmlspecialchars($_SESSION['rent_message']); ?>
-        </div>
-        <?php
-        unset($_SESSION['rent_status']);
-        unset($_SESSION['rent_message']);
-        ?>
-      <?php endif; ?>
-
-      <form action="/submit-rent" method="POST">
+      <form action="/submit-rent" method="POST" id="rentRequestForm">
 
         <div class="form-grid">
 
@@ -164,7 +154,7 @@
             <!-- PRIVACY CHECKBOX -->
             <label>
               <input type="checkbox" name="privacy_agree" required>
-              agree with our
+              I agree with our
               <span class="privacy-link" onclick="openPrivacyModal()">
                 Confidentiality and Data Privacy Clause
               </span>
@@ -244,6 +234,18 @@
     </div>
 
     <!-- ================= MODAL ================= -->
+    <!-- ================= SUBMISSION RESULT MODAL ================= -->
+    <div id="rentResultModal" class="modal-overlay"
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+      <div class="modal-box" style="background:#fff; border-radius:8px; padding:24px; max-width:420px; width:90%;">
+        <h2 id="rentResultTitle">Request Submitted</h2>
+        <div class="modal-content">
+          <p id="rentResultMessage"></p>
+        </div>
+        <button class="close-btn" onclick="closeRentResultModal()">Close</button>
+      </div>
+    </div>
+
     <div id="privacyModal" class="modal-overlay">
 
       <div class="modal-box">
@@ -608,21 +610,72 @@
         });
 
         // Load availability first, then render the calendar so it's accurate from the start.
-        // ---- DEBUG: log the form's actual submit target, and confirm
-        // right on page load whether the clean URLs the site depends on
-        // are actually reachable (helps catch .htaccess / rewrite issues).
-        const rentForm = document.querySelector('form[action="/submit-rent"]');
-        if (rentForm) {
-          console.log('[debug] rent form action attribute:', rentForm.getAttribute('action'));
-          console.log('[debug] rent form resolved action URL:', rentForm.action);
-          rentForm.addEventListener('submit', () => {
-            console.log('[debug] submitting form to:', rentForm.action);
-          });
-        } else {
-          console.warn('[debug] could not find the rent request form on this page');
+        const rentForm = document.getElementById('rentRequestForm');
+
+        function openRentResultModal(status, message) {
+          const modal = document.getElementById('rentResultModal');
+          const title = document.getElementById('rentResultTitle');
+          const msg = document.getElementById('rentResultMessage');
+          if (!modal || !title || !msg) return;
+
+          title.textContent = status === 'success' ? 'Request Submitted' : 'Submission Error';
+          msg.textContent = message;
+          msg.style.color = status === 'success' ? '#0c8a36' : '#c0392b';
+          modal.style.display = 'flex';
         }
 
-        console.log('[debug] current page URL:', window.location.href);
+        window.closeRentResultModal = function () {
+          const modal = document.getElementById('rentResultModal');
+          if (modal) modal.style.display = 'none';
+        };
+
+        if (rentForm) {
+          rentForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // stay on the page instead of redirecting
+
+            // Trigger native browser validation (required fields, email format, etc.)
+            if (!rentForm.checkValidity()) {
+              rentForm.reportValidity();
+              return;
+            }
+
+            const submitBtn = rentForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Submitting...';
+            }
+
+            try {
+              const response = await fetch(rentForm.action, {
+                method: 'POST',
+                body: new FormData(rentForm),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+              });
+
+              const data = await response.json();
+              openRentResultModal(data.status, data.message);
+
+              if (data.status === 'success') {
+                rentForm.reset();
+                // Refresh availability so the calendar/date pickers reflect the new booking right away.
+                loadAvailability().then(() => {
+                  renderCalendar(currentMonth, currentYear);
+                });
+              }
+            } catch (error) {
+              console.error('[rent form] submission failed:', error);
+              openRentResultModal('error', 'Sorry, something went wrong submitting your request. Please try again or contact us directly.');
+            } finally {
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+              }
+            }
+          });
+        } else {
+          console.warn('[rent form] could not find the rent request form on this page');
+        }
 
         loadAvailability().then(() => {
           renderCalendar(currentMonth, currentYear);
