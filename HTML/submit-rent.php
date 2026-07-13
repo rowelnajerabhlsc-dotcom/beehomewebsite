@@ -1,10 +1,19 @@
 <?php
 require_once __DIR__ . '/config.php'; // provides $conn (mysqli) and starts the session
 
+// Build an absolute URL for redirects so there's no ambiguity from relative
+// path resolution (which is what caused the earlier 404 after submission).
+function rent_redirect(): void
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'beehome.ph';
+    header('Location: ' . $scheme . '://' . $host . '/transport');
+    exit;
+}
+
 // ---- ONLY ACCEPT POST ----
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 // ---- BASIC VALIDATION ----
@@ -18,37 +27,32 @@ foreach ($required as $field) {
     if (empty($_POST[$field])) {
         $_SESSION['rent_status'] = 'error';
         $_SESSION['rent_message'] = 'Please fill out all required fields.';
-        header('Location: transport.php');
-        exit;
+        rent_redirect();
     }
 }
 
 if (!isset($_POST['privacy_agree'])) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Please agree to the Confidentiality and Data Privacy Clause.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Please enter a valid email address.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 if (!preg_match('/^09[0-9]{9}$/', $_POST['phone'])) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Please enter a valid contact number.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 if (!filter_var($_POST['passengers'], FILTER_VALIDATE_INT) || (int) $_POST['passengers'] < 1 || (int) $_POST['passengers'] > 26) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Number of passengers must be between 1 and 26.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 $fromDate  = $_POST['fromDate'];
@@ -61,8 +65,7 @@ $untilValid = (bool) DateTime::createFromFormat('Y-m-d', $untilDate);
 if (!$fromValid || !$untilValid || $fromDate < $today || $untilDate < $fromDate) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Please select a valid date range.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 // ---- CHECK VEHICLE AVAILABILITY (server-side, since JS can be bypassed) ----
@@ -73,8 +76,7 @@ if ($totalVehicles <= 0) {
     error_log('Rent form submission blocked: no vehicles configured in vehicles table.');
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Sorry, no vehicles are currently available for rent. Please contact us directly.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 $checkStmt = $conn->prepare(
@@ -89,8 +91,7 @@ $checkStmt->close();
 if ($overlapCount >= $totalVehicles) {
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Sorry, all vehicles are already booked for one or more of the selected dates. Please choose different dates.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 // ---- BUILD DATA (sanitized/trimmed) ----
@@ -119,8 +120,7 @@ if (!$stmt) {
     error_log('Rent form submission - prepare failed: ' . $conn->error);
     $_SESSION['rent_status'] = 'error';
     $_SESSION['rent_message'] = 'Sorry, something went wrong submitting your request. Please try again or contact us directly.';
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 // types: s = string, i = integer
@@ -147,8 +147,7 @@ if (!$stmt->execute()) {
     $_SESSION['rent_message'] = 'Sorry, something went wrong submitting your request. Please try again or contact us directly.';
     $stmt->close();
     $conn->close();
-    header('Location: transport.php');
-    exit;
+    rent_redirect();
 }
 
 $stmt->close();
@@ -157,5 +156,4 @@ $conn->close();
 // ---- SUCCESS ----
 $_SESSION['rent_status'] = 'success';
 $_SESSION['rent_message'] = 'Thank you! Your rent request has been received. We will get back to you soon.';
-header('Location: transport.php');
-exit;
+rent_redirect();
