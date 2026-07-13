@@ -8,9 +8,136 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] != 3 && $_SESSION['role']
     exit();
 }
 
-/* FETCH DATA */
+/* =========================================================
+   HANDLE EDIT (POST) — update user and profile, then back to list
+   ========================================================= */
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['edit'])) {
+
+    $user_id = (int) $_GET['edit'];
+
+    $username       = $_POST['username'];
+    $email          = $_POST['email'];
+    $role           = $_POST['role'];
+    $fname          = $_POST['fname'];
+    $mname          = $_POST['mname'];
+    $lname          = $_POST['lname'];
+    $address        = $_POST['address'];
+    $department     = $_POST['department'];
+    $position       = $_POST['position'];
+    $contact_number = $_POST['contact_number'];
+    $birthday       = $_POST['birthday'];
+    $civil_status   = $_POST['civil_status'];
+    $gender         = $_POST['gender'];
+
+    /* Ensure profile row exists */
+    $check = $conn->prepare("SELECT user_id FROM user_profiles WHERE user_id=?");
+    $check->bind_param("i", $user_id);
+    $check->execute();
+    $check->store_result();
+
+    if ($check->num_rows == 0) {
+        $insert = $conn->prepare("INSERT INTO user_profiles (user_id) VALUES (?)");
+        $insert->bind_param("i", $user_id);
+        $insert->execute();
+        $insert->close();
+    }
+    $check->close();
+
+    /* Update USERS */
+    $stmt = $conn->prepare("UPDATE users SET username=?, email=?, role=? WHERE id=?");
+    $stmt->bind_param("ssii", $username, $email, $role, $user_id);
+    $stmt->execute();
+    $stmt->close();
+
+    /* Update PROFILE */
+    $stmt = $conn->prepare("
+        UPDATE user_profiles SET
+            fname=?, mname=?, lname=?,
+            address=?, contact_number=?,
+            department=?, position=?,
+            birthday=?, civil_status=?, gender=?
+        WHERE user_id=?
+    ");
+    $stmt->bind_param(
+        "ssssssssssi",
+        $fname, $mname, $lname,
+        $address, $contact_number,
+        $department, $position,
+        $birthday, $civil_status, $gender,
+        $user_id
+    );
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: records.php");
+    exit();
+}
+
+/* =========================================================
+   HANDLE DELETE (GET ?delete=<id>) — self-delete guard + DELETE
+   ========================================================= */
+if (isset($_GET['delete'])) {
+    $del_id = (int) $_GET['delete'];
+
+    if ($del_id !== (int) $_SESSION['user_id']) {
+        $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
+        $stmt->bind_param("i", $del_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    header("Location: records.php");
+    exit();
+}
+
+/* =========================================================
+   EDIT MODE (GET ?edit=<id>) — fetch row to populate the form
+   ========================================================= */
+$editing = false;
+$edit_row = null;
+
+if (isset($_GET['edit'])) {
+    $editing = true;
+    $user_id = (int) $_GET['edit'];
+
+    $stmt = $conn->prepare("
+        SELECT
+            u.id, u.username, u.email, u.role,
+            p.fname, p.mname, p.lname,
+            p.address, p.contact_number,
+            p.department, p.position,
+            p.birthday, p.civil_status, p.gender
+        FROM users u
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        WHERE u.id = ?
+    ");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $stmt->bind_result(
+        $e_id, $username, $email, $role,
+        $fname, $mname, $lname,
+        $address, $contact_number,
+        $department, $position,
+        $birthday, $civil_status, $gender
+    );
+
+    if ($stmt->fetch()) {
+        $edit_row = compact(
+            'username','email','role',
+            'fname','mname','lname',
+            'address','contact_number',
+            'department','position',
+            'birthday','civil_status','gender'
+        );
+    }
+    $stmt->close();
+}
+
+/* =========================================================
+   LIST DATA
+   ========================================================= */
 $result = $conn->query("
-    SELECT 
+    SELECT
         u.id,
         u.username,
         u.email,
@@ -117,11 +244,11 @@ $result = $conn->query("
             <td><?= htmlspecialchars($row['contact_number']); ?></td>
 
             <td>
-                <a href="edit_user.php?id=<?= $row['id']; ?>">
+                <a href="records.php?edit=<?= (int)$row['id']; ?>">
                     <button class="action-btn edit">Edit</button>
                 </a>
 
-                <a href="delete_user.php?id=<?= $row['id']; ?>" onclick="return confirm('Delete this user?')">
+                <a href="records.php?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
                     <button class="action-btn delete">Delete</button>
                 </a>
             </td>
@@ -131,6 +258,99 @@ $result = $conn->query("
     </table>
 
 </div>
+
+<?php if ($editing && $edit_row): ?>
+<div class="auth-container">
+    <div class="auth-card edit-card">
+
+        <h1>Edit User</h1>
+
+        <form method="POST" action="records.php?edit=<?= (int)$_GET['edit']; ?>" class="profile-form">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" name="username" value="<?= htmlspecialchars($edit_row['username']); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" value="<?= htmlspecialchars($edit_row['email']); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Role:</label>
+                    <select name="role">
+                        <option value="1" <?= $edit_row['role']==1?'selected':'' ?>>User</option>
+                        <option value="2" <?= $edit_row['role']==2?'selected':'' ?>>Staff</option>
+                        <option value="3" <?= $edit_row['role']==3?'selected':'' ?>>Manager</option>
+                        <option value="4" <?= $edit_row['role']==4?'selected':'' ?>>Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <input type="text" name="fname" value="<?= htmlspecialchars($edit_row['fname']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Middle Name:</label>
+                    <input type="text" name="mname" value="<?= htmlspecialchars($edit_row['mname']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <input type="text" name="lname" value="<?= htmlspecialchars($edit_row['lname']); ?>">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Address:</label>
+                    <input type="text" name="address" value="<?= htmlspecialchars($edit_row['address']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Contact:</label>
+                    <input type="text" name="contact_number" value="<?= htmlspecialchars($edit_row['contact_number']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Department:</label>
+                    <input type="text" name="department" value="<?= htmlspecialchars($edit_row['department']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Position:</label>
+                    <input type="text" name="position" value="<?= htmlspecialchars($edit_row['position']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Birthday:</label>
+                    <input type="date" name="birthday" value="<?= htmlspecialchars($edit_row['birthday']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <input type="text" name="gender" value="<?= htmlspecialchars($edit_row['gender']); ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Civil Status:</label>
+                    <input type="text" name="civil_status" value="<?= htmlspecialchars($edit_row['civil_status']); ?>">
+                </div>
+
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='records.php'">Cancel</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
 document.getElementById("searchInput").addEventListener("keyup", function () {
