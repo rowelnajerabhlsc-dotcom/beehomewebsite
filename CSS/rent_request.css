@@ -6,7 +6,7 @@
     background: #fff;
     border: 2px solid #096D2B;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     overflow: visible;
 }
 
@@ -55,9 +55,18 @@
 /* COLUMNS */
 .form-left,
 .form-right {
-    flex: 1 1 280px;
+    flex: 1 1 calc(50% - 20px);
+    width: 50%;
     min-width: 0;
     overflow: visible;
+}
+
+.form-below {
+    flex: 1 1 100%;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 /* SECTION TITLES */
@@ -91,7 +100,7 @@ input:focus,
 textarea:focus {
     border-color: #096D2B;
     outline: none;
-    box-shadow: 0 0 8px rgba(9,109,43,0.3);
+    box-shadow: 0 0 8px rgba(9, 109, 43, 0.3);
 }
 
 /* TEXTAREA SIZE */
@@ -132,6 +141,7 @@ button:hover {
         padding: 25px;
     }
 }
+
 /* PRIVACY CHECKBOX */
 .privacy-checkbox {
     margin-top: 15px;
@@ -152,6 +162,7 @@ button:hover {
     line-height: 1.4;
     cursor: pointer;
 }
+
 /* CHECKBOX (MATCH FORM STYLE) */
 .form-left label input[type="checkbox"] {
     width: auto;
@@ -164,10 +175,29 @@ button:hover {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    font-weight: normal; /* override bold if needed */
+    font-weight: normal;
+    /* override bold if needed */
     color: #096D2B;
     line-height: 1.4;
 }
+
+.form-right label input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.form-right label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: normal;
+    /* override bold if needed */
+    color: #096D2B;
+    line-height: 1.4;
+}
+
 /* LINK STYLE */
 .privacy-link {
     color: #096D2B;
@@ -183,7 +213,7 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     display: none;
     justify-content: center;
@@ -200,7 +230,7 @@ button:hover {
     overflow-y: auto;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* TITLE */
@@ -341,12 +371,16 @@ button:hover {
         align-items: flex-start;
     }
 
-    .footer-left, .footer-middle, .footer-right {
+    .footer-left,
+    .footer-middle,
+    .footer-right {
         flex: 1 1 100%;
         margin-bottom: 30px;
     }
 
-    .footer-left h3, .footer-middle h3, .footer-right h3 {
+    .footer-left h3,
+    .footer-middle h3,
+    .footer-right h3 {
         font-size: 16px;
     }
 }

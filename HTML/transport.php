@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="../CSS/navbar.css">
   <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
   <link rel="stylesheet" href="../CSS/rent_request.css">
+  <link rel="stylesheet" href="https://unpkg.com" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+  <script src="https://unpkg.com" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 </head>
 
 <body>
@@ -122,28 +126,21 @@
           <!-- LEFT SIDE -->
           <div class="form-left">
 
-            <h3>Business Information</h3>
+            <h3>Renter Information</h3>
 
-            <label>Business Name</label>
-            <input type="text" name="business_name" required>
+            <label for="business_name">Name</label>
+            <input type="text" id="business_name" name="business_name" placeholder="JUAN B. BEE"
+              style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required>
 
-            <label>Contact Person</label>
-            <input type="text" name="contact_person" required>
-
-            <label>Position</label>
-            <input type="text" name="position" required>
-
-            <label>Email Address</label>
-            <input type="email" name="email" required>
+            <label>Contact Number</label>
+            <input type="tel" id="phone" name="phone" value="09" placeholder="0917XXXXXXX" pattern="09[0-9]{9}"
+              maxlength="11" required>
 
             <label>Telephone Number</label>
-            <input type="text" name="telephone">
+            <input type="text" name="telephone" placeholder="123-1234">
 
-            <label>Fax Number</label>
-            <input type="text" name="fax">
-
-            <label>Website</label>
-            <input type="text" name="website">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="example@email.com" required>
 
             <!-- PRIVACY CHECKBOX -->
             <label>
@@ -159,20 +156,64 @@
           <!-- RIGHT SIDE -->
           <div class="form-right">
 
-            <h3>Rent Requirements</h3>
+            <h3>Rent Details</h3>
 
-            <label>Position</label>
-            <input type="text" name="req_position" required>
+            <label for="passengers">Number of Passengers:</label>
+            <input type="number" id="passengers" name="passengers" class="passenger-input" value="5" step="5" min="0"
+              required>
 
-            <label>Number Required</label>
-            <input type="number" name="number_required" required>
+            <!-- From Date Field -->
+            <label for="fromDate">From:</label>
+            <input type="date" id="fromDate" name="fromDate" required>
 
-            <label>Job Description</label>
-            <textarea name="job_description"></textarea>
+            <!-- Until Date Field -->
+            <label for="untilDate">Until:</label>
+            <input type="date" id="untilDate" name="untilDate" required>
+          </div>
 
-            <label>Place of Assignment</label>
-            <textarea name="assignment_place"></textarea>
+          <!-- Below Part-->
+          <div class="form-below">
+            <!-- ================= PICK UP SECTION ================= -->
+            <div class="booking-section form-left">
+              <h3>Location A: Pick Up</h3>
 
+              <div class="form-group">
+                <label>Pin Pick Up Location:</label>
+                <div id="mapPickUp" class="map-box"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="addressPickUp">Pick Up Address:</label>
+                <input type="text" id="addressPickUp" name="pickup_address" placeholder="Click or drag pin on map..."
+                  readonly required>
+              </div>
+
+              <div class="form-group">
+                <label for="timePickUp">Pick Up Time:</label>
+                <input type="time" id="timePickUp" name="pickup_time" required>
+              </div>
+            </div>
+
+            <!-- ================= DROP OFF SECTION ================= -->
+            <div class="booking-section form-right">
+              <h3>Location B: Drop Off</h3>
+
+              <div class="form-group">
+                <label>Pin Drop Off Location:</label>
+                <div id="mapDropOff" class="map-box"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="addressDropOff">Drop Off Address:</label>
+                <input type="text" id="addressDropOff" name="dropoff_address" placeholder="Click or drag pin on map..."
+                  readonly required>
+              </div>
+
+              <div class="form-group">
+                <label for="timeDropOff">Drop Off Time:</label>
+                <input type="time" id="timeDropOff" name="dropoff_time" required>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -337,6 +378,91 @@
       link.addEventListener('click', (e) => {
         e.preventDefault(); // Stops the "#" from changing the URL or jumping the page
         section.classList.toggle('hidden');
+      });
+
+      //from - until date picker
+      const fromInput = document.getElementById('fromDate');
+      const untilInput = document.getElementById('untilDate');
+
+      //timezone
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const formattedToday = `${yyyy}-${mm}-${dd}`;
+
+      //no past cur date
+      fromInput.min = formattedToday;
+      untilInput.min = formattedToday;
+
+      //range locking
+      fromInput.addEventListener('input', function () {
+        untilInput.min = this.value ? this.value : formattedToday;
+      });
+      //from gone = reset until
+      untilInput.addEventListener('input', function () {
+        fromInput.max = this.value ? this.value : '';
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+
+        // Default coordinates (Manila, Philippines)
+        const startLat = 14.5995;
+        const startLng = 120.9842;
+
+        function createMapPicker(mapElementId, addressInputId) {
+          // 1. Render Map Engine
+          const map = L.map(mapElementId).setView([startLat, startLng], 13);
+
+          // 2. Load Graphic Imagery Tiles
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+          }).addTo(map);
+
+          // 3. Mount Draggable Pin
+          const marker = L.marker([startLat, startLng], { draggable: true }).addTo(map);
+
+          // 4. Fetch address names dynamically via OpenStreetMap API
+          async function reverseGeocode(lat, lng) {
+            const addressField = document.getElementById(addressInputId);
+            addressField.value = "Fetching address details...";
+
+            try {
+              const response = await fetch(`https://openstreetmap.org{lat}&lon=${lng}`);
+              const data = await response.json();
+              if (data && data.display_name) {
+                addressField.value = data.display_name;
+              } else {
+                addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+              }
+            } catch (error) {
+              addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            }
+          }
+
+          // Trigger initial lookup on page load
+          reverseGeocode(startLat, startLng);
+
+          // Handle dragging behaviors
+          marker.on('dragend', function (e) {
+            const currentPos = marker.getLatLng();
+            reverseGeocode(currentPos.lat, currentPos.lng);
+          });
+
+          // Handle map clicking behaviors
+          map.on('click', function (e) {
+            marker.setLatLng(e.latlng);
+            reverseGeocode(e.latlng.lat, e.latlng.lng);
+          });
+
+          // Force-refresh map dimensions calculation to prevent grey screens
+          setTimeout(() => { map.invalidateSize(); }, 200);
+        }
+
+        // Initialize both maps safely
+        createMapPicker('mapPickUp', 'addressPickUp');
+        createMapPicker('mapDropOff', 'addressDropOff');
       });
     </script>
   </main>

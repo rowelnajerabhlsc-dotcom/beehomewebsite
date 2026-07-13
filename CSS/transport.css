@@ -521,9 +521,67 @@ section {
 }
 
 /* ----Form----------*/
-  .hidden {
+.hidden {
     display: none;
-  }
+}
+
+.passenger-input {
+    padding: 8px;
+    font-size: 16px;
+    width: 150px;
+}
+
+/*map*/
+.map-box {
+    height: 250px;
+    width: 100%;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #eee;
+    /* Fallback gray block so you know it's there */
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="time"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
 
 
 /* ----------------------------- FOOTER ----------------------------- */
