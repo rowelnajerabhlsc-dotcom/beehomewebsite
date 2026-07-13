@@ -138,7 +138,7 @@
         ?>
       <?php endif; ?>
 
-      <form action="submit-rent.php" method="POST">
+      <form action="/submit-rent" method="POST">
 
         <div class="form-grid">
 
@@ -453,7 +453,7 @@
 
         async function loadAvailability() {
           try {
-            const response = await fetch('get-bookings.php');
+            const response = await fetch('/get-bookings');
             const data = await response.json();
             const counts = new Map();
 
