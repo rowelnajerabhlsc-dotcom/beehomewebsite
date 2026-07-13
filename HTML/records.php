@@ -244,11 +244,11 @@ $result = $conn->query("
             <td><?= htmlspecialchars($row['contact_number']); ?></td>
 
             <td>
-                <a href="records.php?edit=<?= (int)$row['id']; ?>">
+                <a href="?edit=<?= (int)$row['id']; ?>">
                     <button class="action-btn edit">Edit</button>
                 </a>
 
-                <a href="records.php?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
+                <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
                     <button class="action-btn delete">Delete</button>
                 </a>
             </td>
@@ -265,7 +265,7 @@ $result = $conn->query("
 
         <h1>Edit User</h1>
 
-        <form method="POST" action="records.php?edit=<?= (int)$_GET['edit']; ?>" class="profile-form">
+        <form method="POST" action="?edit=<?= (int)$_GET['edit']; ?>" class="profile-form">
 
             <div class="form-grid">
 
