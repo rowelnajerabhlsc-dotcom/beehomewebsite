@@ -16,6 +16,30 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 $username = trim($_POST['username']);
 $email = trim($_POST['email']);
 
+/* ============================================================
+   DIAGNOSTIC LOGGING
+   Toggle on with: ?debug=1 on the URL that hits this script.
+   Writes to /HTML/registration_debug.log (same folder).
+   ============================================================ */
+$DEBUG = isset($_GET['debug']) && $_GET['debug'] == '1';
+$LOG_FILE = __DIR__ . '/registration_debug.log';
+
+function reglog($msg) {
+    global $DEBUG, $LOG_FILE;
+    $line = '[' . date('Y-m-d H:i:s') . '] ' . $msg . PHP_EOL;
+    @file_put_contents($LOG_FILE, $line, FILE_APPEND | LOCK_EX);
+    if ($DEBUG) { error_log($line); }
+}
+
+reglog("--- registration attempt ---");
+reglog("username={$username} email={$email} ip=" . ($_SERVER['REMOTE_ADDR'] ?? '?'));
+
+// Verify log file is writable. If not, fall back to PHP error_log only.
+$logWritable = is_writable($LOG_FILE) || (is_writable(dirname($LOG_FILE)) && !file_exists($LOG_FILE));
+if (!$logWritable && $DEBUG) {
+    error_log("REGISTRATION DEBUG: log file not writable at {$LOG_FILE}");
+}
+
 /* Validate email format */
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['message'] = "Invalid email format.";
@@ -65,6 +89,14 @@ $mail->Port = 587;
 
     $mail->Timeout = 30;
 
+    // Pipe SMTP conversation into our log when ?debug=1
+    if ($DEBUG) {
+        $mail->SMTPDebug = 2; // 2 = client + server transcript
+        $mail->Debugoutput = function ($str, $level) {
+            reglog("SMTP[{$level}]: {$str}");
+        };
+    }
+
     // Optional (helps debugging)
     $mail->SMTPOptions = [
         'ssl' => [
@@ -109,6 +141,7 @@ $mail->Port = 587;
 
     // Send Email
     $mail->send();
+    reglog("PHPMailer: send() returned true. To={$email}");
 
     // Insert user after successful email
     $stmt = $conn->prepare("INSERT INTO users (username, email, password, temp_password) VALUES (?, ?, ?, 1)");
@@ -116,17 +149,20 @@ $mail->Port = 587;
 
     if ($stmt->execute()) {
 
+        reglog("DB: user inserted id=" . $stmt->insert_id);
         $_SESSION['message'] = "Registration successful! Please check your email.";
         $_SESSION['msg_type'] = "success";
 
     } else {
 
+        reglog("DB ERROR: " . $stmt->error);
         $_SESSION['message'] = "Database Error: " . $stmt->error;
         $_SESSION['msg_type'] = "error";
     }
 
 } catch (Exception $e) {
 
+    reglog("MAIL EXCEPTION: " . $mail->ErrorInfo);
     $_SESSION['message'] = "Email Error: " . $mail->ErrorInfo;
     $_SESSION['msg_type'] = "error";
 }
