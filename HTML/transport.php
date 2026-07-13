@@ -159,8 +159,8 @@
             <h3>Rent Details</h3>
 
             <label for="passengers">Number of Passengers:</label>
-            <input type="number" id="passengers" name="passengers" class="passenger-input" value="5" step="5" min="0"
-              required>
+            <input type="number" id="passengers" name="passengers" class="passenger-input" value="5" step="1" min="0"
+              max="26" required>
 
             <!-- From Date Field -->
             <label for="fromDate">From:</label>
@@ -394,7 +394,7 @@
       untilInput.addEventListener('input', function () {
         fromInput.max = this.value ? this.value : '';
       });
-      
+
       //-----------Map-------------------
       // Fallback coordinates (Manila, Philippines)
       const defaultLat = 14.5995;
@@ -480,6 +480,24 @@
 
           createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
           createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
+        }
+      });
+
+      //---------max passenger (form)---------------
+      const passengerInput = document.getElementById('passengers');
+
+      passengerInput.addEventListener('input', function () {
+        // 1. Convert input text to an actual number
+        const value = parseInt(this.value, 10);
+
+        // 2. If the user typed a number greater than 26, force it to 26
+        if (value > 26) {
+          this.value = 26;
+        }
+
+        // 3. Optional: Prevent negative numbers if typed manually
+        if (value < 0) {
+          this.value = 0;
         }
       });
     </script>
