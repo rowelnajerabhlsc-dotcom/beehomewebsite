@@ -164,7 +164,7 @@
             <!-- PRIVACY CHECKBOX -->
             <label>
               <input type="checkbox" name="privacy_agree" required>
-              I agree with our
+              agree with our
               <span class="privacy-link" onclick="openPrivacyModal()">
                 Confidentiality and Data Privacy Clause
               </span>
@@ -453,8 +453,19 @@
 
         async function loadAvailability() {
           try {
+            console.log('[availability] fetching /get-bookings ...');
             const response = await fetch('/get-bookings');
+            console.log('[availability] response status:', response.status, response.statusText);
+            console.log('[availability] response URL (after any redirects):', response.url);
+
+            if (!response.ok) {
+              const bodyText = await response.text();
+              console.error('[availability] non-OK response body:', bodyText);
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+
             const data = await response.json();
+            console.log('[availability] parsed data:', data);
             const counts = new Map();
 
             (data.bookings || []).forEach(({ from, until }) => {
@@ -597,6 +608,22 @@
         });
 
         // Load availability first, then render the calendar so it's accurate from the start.
+        // ---- DEBUG: log the form's actual submit target, and confirm
+        // right on page load whether the clean URLs the site depends on
+        // are actually reachable (helps catch .htaccess / rewrite issues).
+        const rentForm = document.querySelector('form[action="/submit-rent"]');
+        if (rentForm) {
+          console.log('[debug] rent form action attribute:', rentForm.getAttribute('action'));
+          console.log('[debug] rent form resolved action URL:', rentForm.action);
+          rentForm.addEventListener('submit', () => {
+            console.log('[debug] submitting form to:', rentForm.action);
+          });
+        } else {
+          console.warn('[debug] could not find the rent request form on this page');
+        }
+
+        console.log('[debug] current page URL:', window.location.href);
+
         loadAvailability().then(() => {
           renderCalendar(currentMonth, currentYear);
         });
