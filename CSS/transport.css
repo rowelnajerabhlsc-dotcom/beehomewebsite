@@ -440,6 +440,22 @@ section {
     margin: 0;
 }
 
+#routes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5vw;
+}
+
+.route-grid img{
+    height: 20vw;
+    width: 20vw;
+}
+
+.route-grid p {
+    font-size: clamp(1rem, 0.45vw + 0.85rem, 1.25rem);
+    line-height: 1.6;
+}
+
 
 @media (max-width: 768px) {
     .transport-info-container {

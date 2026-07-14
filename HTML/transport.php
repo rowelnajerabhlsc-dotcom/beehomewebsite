@@ -60,10 +60,16 @@
             </div>
             <div class="carousel-slide transport-info-text" style="margin: auto;">
               <h3>ROUTES</h3>
-              <ul>
-                <li>Malabon - Monumento</li>
-                <li>MCU - Divisoria</li>
-              </ul>
+              <div id="routes">
+                <div class="route-grid">
+                  <p>Malabon - Monumento</p>
+                  <img src="../IMAGES/ROUTE(m-m).webp" alt="Malabon - Monumento Route">
+                </div>
+                <div class="route-grid">
+                  <p>MCU - Divisoria</p>
+                  <img src="../IMAGES/ROUTE(d-m).webp" alt="MCU - Divisoria Route">
+                </div>
+              </div>
             </div>
             <div class="page-buttons carousel-slide">
               <div id="slide4">
