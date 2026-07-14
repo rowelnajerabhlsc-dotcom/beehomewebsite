@@ -1,4 +1,4 @@
- * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -95,16 +95,38 @@ section,
     height: calc(100dvh - 70px);
     overflow-y: auto;
     overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
+    /* TEMP DISABLED to test conflict with Lenis - re-enable to restore native snap */
+    /* scroll-snap-type: y proximity; */
     scroll-padding-top: 0;
     width: 100%;
 }
+
+/* LENIS SMOOTH SCROLL - Lenis puts its state classes on the element passed
+   as "wrapper" (here .scroll-container), not on <html>, since we're using a
+   custom scroll container instead of the window. */
+.scroll-container.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.scroll-container.lenis-stopped {
+    overflow: hidden;
+}
+
+.scroll-container.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.scroll-container.lenis-smooth iframe {
+    pointer-events: none;
+}
+
 /* HERO SECTION */
 .hero {
     width: 100%;
-    height: 100%;
-    min-height: 100%;
+    height: calc(100dvh - 70px);
+    min-height: calc(100dvh - 70px);
     background: url('../IMAGES/home-img1.png') no-repeat center center/cover;
+    will-change: opacity;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -117,11 +139,11 @@ section,
 
 /* Dark overlay for better text visibility */
 .hero::after {
-      content: "";
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to top, rgb(9, 109, 42), rgba(9,109,43,0) 250%);
+    background: linear-gradient(to top, rgb(9, 109, 42), rgba(9, 109, 43, 0) 250%);
     top: 0;
     left: 0;
 }
@@ -213,19 +235,23 @@ section,
 
 @keyframes heroTwoSlide {
 
-    0%, 24% {
+    0%,
+    24% {
         background-image: url('../IMAGES/home-img2.png');
     }
 
-    25%, 49% {
+    25%,
+    49% {
         background-image: url('../IMAGES/aboutus-img1.png');
     }
 
-    50%, 74% {
+    50%,
+    74% {
         background-image: url('../IMAGES/aboutus-img3.png');
     }
 
-    75%, 100% {
+    75%,
+    100% {
         background-image: url('../IMAGES/aboutus-img4.png');
     }
 
@@ -309,7 +335,7 @@ section,
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(9,109,43,0.75);
+    background: rgba(9, 109, 43, 0.75);
     top: 0;
     left: 0;
     z-index: 0;
@@ -327,7 +353,8 @@ section,
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(9, 109, 43, 0.75); /* 75% opacity */
+    background: rgba(9, 109, 43, 0.75);
+    /* 75% opacity */
     top: 0;
     left: 0;
 }
@@ -413,6 +440,7 @@ section,
     justify-content: space-evenly;
     height: 90vh;
     overflow: hidden;
+    will-change: opacity;
 
     position: sticky;
     top: 0;
@@ -423,33 +451,33 @@ section,
     font-size: 70px;
     margin-bottom: 15px;
     color: #096d2bd9;
-    flex:1;
+    flex: 1;
 }
 
 #service-intro-left {
     width: 50%;
     padding: 20px;
     text-align: center;
-    flex:1;
+    flex: 1;
 }
 
 /* Initial hidden state (e.g., shifted to the left) */
 .scroll-element.left {
-  opacity: 0;
-  transform: translateX(-100px);
-  transition: opacity 0.6s ease-out, transform 1s ease-out;
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: opacity 0.6s ease-out, transform 1s ease-out;
 }
 
 .scroll-element.right {
-  opacity: 0;
-  transform: translateX(100px);
-  transition: opacity 0.6s ease-out, transform 1s ease-out;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: opacity 0.6s ease-out, transform 1s ease-out;
 }
 
 /* Active state when visible on screen */
 .scroll-element.visible {
-  opacity: 1;
-  transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0);
 }
 
 
@@ -458,103 +486,123 @@ section,
     width: 50%;
     padding: 20px;
     text-align: center;
-    flex:1;
+    flex: 1;
 }
 
 .dial__wrapper {
-  position: relative;
-  width: 300px;   /* match roughly to your track's diameter + segment size */
-  height: 300px;
-  margin: 40px auto 0; /* pushes it below the heading, centers it */
+    position: relative;
+    width: 300px;
+    /* match roughly to your track's diameter + segment size */
+    height: 300px;
+    margin: 40px auto 0;
+    /* pushes it below the heading, centers it */
 }
 
 .dial__track {
-  position: absolute;
-  inset: 0;
-  border: 12px solid #096d2bd9;
-  border-radius: 50%;
-  transition: transform 0.2s ease-out;
+    position: absolute;
+    inset: 0;
+    border: 12px solid #096d2bd9;
+    border-radius: 50%;
+    transition: transform 0.2s ease-out;
 }
 
 .dial__segment {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50px;
-  height: 50px;
-  margin: -25px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000000;
-  font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin: -25px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    font-size: 20px;
 
 }
 
 .dial__inner {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transition: transform 0.2s ease, background 0.2s ease;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .dial__segment i {
-  /* ensure transform applies cleanly */
-  display: block;
-  transition: transform 0.2s ease-out;
-  font-size: 50px;
-  opacity: 0.6;
+    /* ensure transform applies cleanly */
+    display: block;
+    transition: transform 0.2s ease-out;
+    font-size: 50px;
+    opacity: 0.6;
 }
+
 .dial__segment.is-active i {
-  transform: scale(1.5);
-  opacity: 1;
+    transform: scale(1.5);
+    opacity: 1;
 }
 
 .dial__segment.is-active .dial__inner {
-  transform: scale(1.5);
-  background: rgba(255,255,255,0.25);
+    transform: scale(1.5);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 
 
 /* spread them evenly at 60° intervals */
-.dial__segment:nth-child(1) { transform: rotate(0deg)    translate(0,-120px) rotate(0deg); }
-.dial__segment:nth-child(2) { transform: rotate(60deg)   translate(0,-120px) rotate(-60deg); }
-.dial__segment:nth-child(3) { transform: rotate(120deg)  translate(0,-120px) rotate(-120deg); }
-.dial__segment:nth-child(4) { transform: rotate(180deg)  translate(0,-120px) rotate(-180deg); }
-.dial__segment:nth-child(5) { transform: rotate(240deg)  translate(0,-120px) rotate(-240deg); }
-.dial__segment:nth-child(6) { transform: rotate(300deg)  translate(0,-120px) rotate(-300deg); }
+.dial__segment:nth-child(1) {
+    transform: rotate(0deg) translate(0, -120px) rotate(0deg);
+}
+
+.dial__segment:nth-child(2) {
+    transform: rotate(60deg) translate(0, -120px) rotate(-60deg);
+}
+
+.dial__segment:nth-child(3) {
+    transform: rotate(120deg) translate(0, -120px) rotate(-120deg);
+}
+
+.dial__segment:nth-child(4) {
+    transform: rotate(180deg) translate(0, -120px) rotate(-180deg);
+}
+
+.dial__segment:nth-child(5) {
+    transform: rotate(240deg) translate(0, -120px) rotate(-240deg);
+}
+
+.dial__segment:nth-child(6) {
+    transform: rotate(300deg) translate(0, -120px) rotate(-300deg);
+}
 
 /* central knob */
 .dial__knob {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100px;
-  height: 100px;
-  margin: -50px;
-  background: #222;
-  border: 6px solid #333;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  cursor: grab;
-  z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    margin: -50px;
+    background: #222;
+    border: 6px solid #333;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+    z-index: 2;
 }
 
 .dial__btn,
 .dial__knob {
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* hover on the central knob */
 .dial__knob:hover {
-  background: #2a2a2a;
-  box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+    background: #2a2a2a;
+    box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
 }
 
 /*Services*/
@@ -575,7 +623,7 @@ section,
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(9,109,43,0.85);
+    background: rgba(9, 109, 43, 0.85);
     z-index: 0;
 }
 
@@ -612,7 +660,7 @@ section,
 
 /* BOX STYLE */
 .service-box {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(5px);
     color: white;
     padding: 60px 25px;
@@ -620,7 +668,7 @@ section,
     text-align: center;
     transition: 0.3s;
     text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .service-box img {
@@ -645,7 +693,7 @@ section,
 /* Hover */
 .service-box:hover {
     transform: translateY(-8px);
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* RESPONSIVE */
@@ -661,13 +709,13 @@ section,
     }
 
     .services-intro {
-    flex-direction: column;
-    align-items: center;
-    height:auto
+        flex-direction: column;
+        align-items: center;
+        height: auto
     }
 
     .services-intro h2 {
-    flex: none;
+        flex: none;
     }
 }
 
@@ -678,11 +726,13 @@ section,
 .community {
     width: 100%;
     background: white;
-    padding: 140px 10%;   /* increased vertical spacing */
+    padding: 140px 10%;
+    /* increased vertical spacing */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 80px;            /* more space between left and right */
+    gap: 80px;
+    /* more space between left and right */
 }
 
 /* LEFT SIDE */
@@ -863,7 +913,7 @@ section,
 }
 
 .proud-logos img {
-    width: 170px;        
+    width: 170px;
     height: auto;
     object-fit: contain;
     transition: transform 0.3s ease;
@@ -1005,12 +1055,16 @@ section,
         align-items: flex-start;
     }
 
-    .footer-left, .footer-middle, .footer-right {
+    .footer-left,
+    .footer-middle,
+    .footer-right {
         flex: 1 1 100%;
         margin-bottom: 30px;
     }
 
-    .footer-left h3, .footer-middle h3, .footer-right h3 {
+    .footer-left h3,
+    .footer-middle h3,
+    .footer-right h3 {
         font-size: 16px;
     }
 }
@@ -1029,12 +1083,13 @@ section,
 /* TRANSPARENT GREEN CONTAINER */
 .manpower-container {
     width: 100%;
-    background: rgba(9, 109, 43, 0.5); /* 50% transparency */
+    background: rgba(9, 109, 43, 0.5);
+    /* 50% transparency */
     backdrop-filter: blur(8px);
     padding: 70px 50px;
     text-align: center;
     color: white;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* TITLE */
@@ -1072,6 +1127,7 @@ section,
 
 /* MOBILE */
 @media (max-width: 768px) {
+
     html,
     body {
         width: 100%;
