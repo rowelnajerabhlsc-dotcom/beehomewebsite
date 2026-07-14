@@ -121,10 +121,6 @@ section,
 }
 
 /* HERO SECTION */
-.services-intro {
-    will-change: opacity;
-}
-
 .hero {
     width: 100%;
     height: calc(100dvh - 70px);
