@@ -664,6 +664,42 @@ section {
     cursor: pointer;
 }
 
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.legend-today {
+    background-color: transparent;
+    border: 2px solid #096D2B;
+}
+
+.legend-booked {
+    background-color: #0c8a36;
+}
+
+.legend-low {
+    background-color: #e6c200;
+}
+
 /* ----------Form----------*/
 .hidden {
     display: none;

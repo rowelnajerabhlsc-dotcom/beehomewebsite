@@ -100,6 +100,21 @@
         <div class="day-name">Sa</div>
         <!-- Days will be dynamically injected here via JS -->
       </div>
+      <!-- CALENDAR LEGEND -->
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <span class="legend-swatch legend-today"></span>
+          <span class="legend-label">Today</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-booked"></span>
+          <span class="legend-label">Fully booked</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-low"></span>
+          <span class="legend-label">1 vehicle left</span>
+        </div>
+      </div>
     </section>
 
     <!-- FORM -->
