@@ -1,0 +1,47 @@
+/*
+ * Lenis recommended CSS state classes
+ *
+ * These mirror the rules from the Lenis documentation (originally scoped
+ * to html.lenis-smooth). The site has two scroll models:
+ *   - Window scrolling (most pages) — classes on <html>.
+ *   - Custom .scroll-container (home, transport) — classes on .scroll-container.
+ *
+ * Both scopes are listed so the same stylesheet works regardless of which
+ * scroll model the page uses.
+ */
+
+/* Window-scrolling pages */
+html.lenis,
+html.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+html.lenis-stopped {
+    overflow: hidden;
+}
+
+html.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+html.lenis-smooth iframe {
+    pointer-events: none;
+}
+
+/* Custom .scroll-container pages (home, transport) */
+.scroll-container.lenis,
+.scroll-container.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.scroll-container.lenis-stopped {
+    overflow: hidden;
+}
+
+.scroll-container.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.scroll-container.lenis-smooth iframe {
+    pointer-events: none;
+}

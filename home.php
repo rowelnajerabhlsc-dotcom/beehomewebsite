@@ -12,8 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- LENIS SMOOTH SCROLL -->
-    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
 </head>
 
 <body class="loading">
@@ -30,7 +28,7 @@
             </div>
         </div>
     </div>
-    <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+
 
     <?php include "HTML/navbar.php"; ?>
 
@@ -332,27 +330,6 @@
 
 
     <script>
-        // LENIS SMOOTH SCROLL INIT
-        // Runs on the existing .scroll-container (the page's real scroll element),
-        // so the fade / dial / IntersectionObserver logic below keeps working untouched.
-        const lenisWrapperEl = document.querySelector('.scroll-container');
-        const lenisContentEl = document.querySelector('.lenis-content');
-
-        const lenis = new Lenis({
-            wrapper: lenisWrapperEl,   // element that has overflow-y: auto
-            content: lenisContentEl,   // its direct child holding all the sections
-            lerp: 0.12,                // lower = snappier response, higher = floatier
-            smoothWheel: true,
-            touchMultiplier: 1.5,
-        });
-        window.lenis = lenis; // exposed so the Snap module script below can use the same instance
-
-        function lenisRaf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(lenisRaf);
-        }
-        requestAnimationFrame(lenisRaf);
-
         function toggleMenu() {
             document.getElementById("navLinks").classList.toggle("active");
         }
@@ -553,21 +530,6 @@
         // Target all elements you want to animate
         document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
 
-    </script>
-
-    <!-- LENIS SNAP - restores section snapping through Lenis itself instead of
-         native CSS scroll-snap, which was fighting Lenis and causing stutter.
-         Loaded as an ES module since lenis/snap has no prebuilt <script> tag version. -->
-    <script type="module">
-        import Snap from "https://esm.sh/lenis/snap";
-
-        const snap = new Snap(window.lenis, {
-            type: 'proximity', // matches the old scroll-snap-type: y proximity
-            duration: 0.8,
-        });
-
-        const snapTargets = document.querySelectorAll('.lenis-content > section, .lenis-content > .footer');
-        snap.addElements(snapTargets, { align: 'start' });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
