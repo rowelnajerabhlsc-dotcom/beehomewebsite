@@ -47,7 +47,7 @@ section {
     height: calc(100dvh - 70px);
     overflow-y: auto;
     overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
+    scroll-snap-type: none;
     scroll-padding-top: 70px;
     width: 100%;
 }
@@ -108,6 +108,12 @@ section {
     justify-self: center;
     z-index: 1;
     margin-bottom: 5vh;
+    will-change: transform;
+}
+
+.carousel,
+.carousel-track {
+    will-change: transform;
 }
 
 .mountain-left img {

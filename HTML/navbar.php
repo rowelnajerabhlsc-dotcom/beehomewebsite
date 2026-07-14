@@ -42,6 +42,12 @@ $nav_pages = [
 $active_page = $nav_pages[$current_page] ?? '';
 ?>
 
+<link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
+<link rel="stylesheet" href="/CSS/lenis.css">
+<script defer src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+<script defer src="/JS/lenis.js"></script>
+<script type="module" src="/JS/lenis-snap.js"></script>
+
 <nav>
 
     <!-- LOGO -->
