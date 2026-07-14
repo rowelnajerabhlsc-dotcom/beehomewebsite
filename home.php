@@ -232,7 +232,7 @@
             </section>
 
             <!-- CONTENT 5 - GROWING COMMUNITY -->
-            <section class="hero-two">
+            <section class="hero-two" data-no-snap>
                 <div class="hero-two-content"  data-animate="fade-in">
                     <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo">
 
@@ -250,7 +250,7 @@
 
 
             <!-- CONTENT 6 - AFFILIATIORS -->
-            <section class="affiliation">
+            <section class="affiliation" data-no-snap>
                 <div class="affiliation-container">
 
                     <div class="affiliation-wrapper">

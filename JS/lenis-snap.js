@@ -42,6 +42,12 @@ import Snap from "https://esm.sh/lenis/snap";
                 targets = scrollContainer.querySelectorAll(":scope > *");
             }
         }
+
+        // Fallback mode snaps every section by default — let individual
+        // sections opt out with `data-no-snap` on the element.
+        targets = Array.from(targets).filter(function (el) {
+            return !el.hasAttribute("data-no-snap");
+        });
     }
 
     if (!targets.length) {
