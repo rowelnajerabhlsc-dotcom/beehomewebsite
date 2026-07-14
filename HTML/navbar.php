@@ -68,9 +68,11 @@ $active_page = $nav_pages[$current_page] ?? '';
             </ul>
         </li>
 
-        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products & Services</a></li>
+        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products &
+                Services</a></li>
 
-        <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower Request</a></li>
+        <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower
+                Request</a></li>
 
         <!-- Membership -->
         <li>
@@ -89,7 +91,7 @@ $active_page = $nav_pages[$current_page] ?? '';
                 Bee Home Cares
             </a>
         </li>
-
+        <!-- contact -->
         <li><a href="/contact" class="<?php echo $active_page === 'contact' ? 'active' : ''; ?>">Contact Us</a></li>
 
     </ul>
@@ -143,23 +145,23 @@ $active_page = $nav_pages[$current_page] ?? '';
 </nav>
 
 <script>
-const accountToggle = document.getElementById("accountToggle");
-const accountMenu = document.getElementById("accountMenu");
+    const accountToggle = document.getElementById("accountToggle");
+    const accountMenu = document.getElementById("accountMenu");
 
-if (accountToggle) {
-    accountToggle.addEventListener("click", function(e) {
-        e.preventDefault();
-        accountMenu.classList.toggle("show");
-    });
+    if (accountToggle) {
+        accountToggle.addEventListener("click", function (e) {
+            e.preventDefault();
+            accountMenu.classList.toggle("show");
+        });
 
-    document.addEventListener("click", function(e) {
-        if (!accountToggle.contains(e.target) && !accountMenu.contains(e.target)) {
-            accountMenu.classList.remove("show");
-        }
-    });
-}
+        document.addEventListener("click", function (e) {
+            if (!accountToggle.contains(e.target) && !accountMenu.contains(e.target)) {
+                accountMenu.classList.remove("show");
+            }
+        });
+    }
 
-function toggleMenu() {
-    document.getElementById("navLinks").classList.toggle("active");
-}
+    function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
+    }
 </script>

@@ -284,7 +284,7 @@
     <section class="contact-cta-section snap-section">
       <div class="contact-cta">
         <p>For more questions, please contact us</p>
-        <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
+        <a href="/contact" class="cta-btn">Click Here</a>
       </div>
     </section>
 
@@ -425,6 +425,12 @@
           return (dateCounts.get(dateKey) || 0) >= totalVehicles;
         }
 
+        function isLowAvailability(dateKey) {
+          if (totalVehicles <= 0) return false;
+          const remaining = totalVehicles - (dateCounts.get(dateKey) || 0);
+          return remaining === 1;
+        }
+
         // True if ANY date within [fromStr, untilStr] is fully booked.
         function isRangeFullyBooked(fromStr, untilStr) {
           return expandRange(fromStr, untilStr).some(isFullyBooked);
@@ -493,11 +499,16 @@
             const cellDate = new Date(year, month, day);
             const dateKey = toDateKey(year, month, day);
             const fullyBooked = isFullyBooked(dateKey);
+            const lowAvailability = isLowAvailability(dateKey);
 
             if (fullyBooked) {
               dayCell.classList.add("booked");
               dayCell.style.backgroundColor = "#0c8a36";
               dayCell.title = "Fully booked \u2014 no vehicles available";
+            } else if (lowAvailability) {
+              dayCell.classList.add("low-availability");
+              dayCell.style.backgroundColor = "#e6c200";
+              dayCell.title = "Only 1 vehicle remaining";
             }
 
             if (cellDate < today) {
