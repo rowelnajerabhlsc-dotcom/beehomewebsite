@@ -48,6 +48,7 @@ if (isset($_SESSION['must_login'])) {
 
         <div class="auth-link">
             <p>Don't have an account? <a href="/register">Register</a></p>
+            <p>Forgot Password? <a href="forgot_password.php">Forgot Password?</a></p>
         </div>
     </div>
 </div>
