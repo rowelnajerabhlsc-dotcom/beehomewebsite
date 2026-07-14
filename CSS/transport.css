@@ -86,6 +86,14 @@ section {
     /* scroll distance available for the whole pinned sequence — tune this */
 }
 
+.snap-marker {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    scroll-snap-align: start;
+    pointer-events: none;
+}
 
 .mountain-left-wrap,
 .mountain-right-wrap {
@@ -138,14 +146,15 @@ section {
 .carousel-track {
     display: flex;
     flex-direction: row-reverse;
-    width: 300%;
+    width: 400%;
     height: 100%;
     transition: none;
+    margin-left: 7vw;
 }
 
 .carousel-slide {
-    flex: 0 0 33.333%;
-    width: 33.333%;
+    flex: 0 0 25%;
+    width: 25%;
     height: 100%;
     display: flex;
     align-items: flex-end;
@@ -180,6 +189,7 @@ section {
     background-color: #d32f2f;
     height: 10px;
     width: 10px;
+    margin-left: 1vw;
 }
 
 .carousel-btn {
@@ -226,6 +236,20 @@ section {
 .mountain-right {
     transform: translateX(0);
     transition: transform 0.05s linear;
+}
+
+#slide4 {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: center;
+    margin: auto 10vw;
+}
+
+#slide4 h3 {
+    margin-bottom: 15px;
+    font-size: clamp(1.2rem, 3vw + 1rem, 2.75rem);
 }
 
 /* RESPONSIVE */
@@ -481,7 +505,9 @@ section {
 /* PAGE BUTTONS WRAPPER */
 .page-buttons {
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
 }
