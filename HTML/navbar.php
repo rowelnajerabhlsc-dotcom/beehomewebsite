@@ -47,6 +47,8 @@ $active_page = $nav_pages[$current_page] ?? '';
 <script defer src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
 <script defer src="/JS/lenis.js"></script>
 <script type="module" src="/JS/lenis-snap.js"></script>
+<link rel="stylesheet" href="/CSS/scroll-animate.css">
+<script defer src="/JS/scroll-animate.js"></script>
 
 <nav>
 

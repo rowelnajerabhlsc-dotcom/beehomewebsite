@@ -29,7 +29,6 @@
         </div>
     </div>
 
-
     <?php include "HTML/navbar.php"; ?>
 
 
@@ -136,7 +135,7 @@
             <section class="community">
 
                 <!-- LEFT SIDE -->
-                <div class="community-left">
+                <div class="community-left" data-animate="slide-left">
                     <h2 style="font-size: 30px; text-align: center;">
                         ARE YOU LOOKING FOR LABOR EMPLOYMENT?
                     </h2>
@@ -148,7 +147,7 @@
                 </div>
 
                 <!-- RIGHT SIDE -->
-                <div class="community-content">
+                <div class="community-content" data-animate="slide-right">
                     <h2 style="font-size: 30px; text-align: center;">
                         BEE ONE OF US!</h2>
                     <p>
@@ -162,7 +161,7 @@
             <!-- MANPOWER REQUEST -->
             <section class="manpower-section">
 
-                <div class="manpower-container">
+                <div class="manpower-container" data-animate="fade-in">
                     <h2>Manpower Request</h2>
 
                     <p>
@@ -181,9 +180,9 @@
             <!-- CONTENT 4 - ABOUT US -->
             <section class="about">
                 <div class="about-container">
-                    <h2>ABOUT US</h2>
+                    <h2 data-animate="fade-in">ABOUT US</h2>
 
-                    <p style="font-size: 22px; text-align: justify;">
+                    <p style="font-size: 22px; text-align: justify;" data-animate="slide-left">
                         Bee Home Labor Multipurpose Cooperative (BHLMPC) is a duly registered cooperative established to
                         provide quality
                         labor and manpower services across various industries. Guided by cooperative principles and
@@ -194,7 +193,7 @@
                         our clients.
                     </p>
 
-                    <p style="font-size: 22px; text-align: justify;">
+                    <p style="font-size: 22px; text-align: justify;" data-animate="slide-right">
                         We take pride in being more than a manpower agency, we are a partner in productivity and
                         community
                         development.
@@ -202,7 +201,7 @@
                         shared growth.
                     </p>
 
-                    <div class="about-slider">
+                    <div class="about-slider"  data-animate="fade-in">
 
                         <div class="slides fade">
                             <img src="../IMAGES/home-img2.png" alt="Slide 1">
@@ -234,7 +233,7 @@
 
             <!-- CONTENT 5 - GROWING COMMUNITY -->
             <section class="hero-two">
-                <div class="hero-two-content">
+                <div class="hero-two-content"  data-animate="fade-in">
                     <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo">
 
                     <h2>THE GROWING COMMUNITY OF</h2>
@@ -257,7 +256,7 @@
                     <div class="affiliation-wrapper">
 
                         <!-- LEFT SIDE -->
-                        <div class="affiliation-left">
+                        <div class="affiliation-left" data-animate="slide-left">
                             <h2>Proud Member of</h2>
                             <div class="affiliation-logos">
                                 <img src="../IMAGES/oc-img.png" alt="Org 1">
@@ -267,7 +266,7 @@
                         </div>
 
                         <!-- RIGHT SIDE -->
-                        <div class="affiliation-right">
+                        <div class="affiliation-right" data-animate="slide-right">
                             <h2>Affiliation</h2>
                             <div class="proud-logos">
                                 <img src="../IMAGES/logo-cda.png" alt="CDA">
@@ -330,6 +329,10 @@
 
 
     <script>
+        // Lenis is now initialized sitewide via HTML/navbar.php -> JS/lenis.js
+        // (which auto-detects this page's .scroll-container / .lenis-content
+        // and exposes window.lenis). No per-page init needed here anymore.
+
         function toggleMenu() {
             document.getElementById("navLinks").classList.toggle("active");
         }
@@ -531,6 +534,11 @@
         document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
 
     </script>
+
+    <!-- Section snapping is now handled sitewide via HTML/navbar.php ->
+         JS/lenis-snap.js, which auto-detects this page's .lenis-content
+         sections and offsets for the navbar height. No per-page snap init
+         needed here anymore. -->
 
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
     <script src="JS/home-loader.js?v=loader-fragments-2"></script>
