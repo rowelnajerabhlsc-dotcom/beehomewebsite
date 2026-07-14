@@ -58,7 +58,20 @@
               </div>
 
             </div>
-            <div class="carousel-slide square-red"></div>
+            <div class="carousel-slide transport-info-text" style="margin: auto;">
+              <h3>ROUTES</h3>
+              <ul>
+                <li>Malabon - Monumento</li>
+                <li>MCU - Divisoria</li>
+              </ul>
+            </div>
+            <div class="page-buttons carousel-slide">
+              <div id="slide4">
+                <h3>BEE A MODERN JEEP RENTER</h3>
+                <a href="#hidden-calendar" id="rentSlideBtn" role="button" class="btn-rent"
+                  style="margin-bottom: auto;">Rent</a>
+              </div>
+            </div>
           </div>
           <!-- button removed: progression is now scroll-driven, not click-driven -->
         </div>
@@ -69,41 +82,7 @@
       </div>
     </section>
 
-    <section class="transport-info snap-section">
-      <div class="transport-info-container"></div>
-
-      <!-- ROUTES SECTION -->
-      <div class="transport-routes">
-        <h3>ROUTES</h3>
-        <ul>
-          <li>Malabon - Monumento</li>
-          <li>MCU - Divisoria</li>
-        </ul>
-      </div>
-
-    </section>
-
-    <div class="page-buttons snap-section">
-      <a href="javascript:history.back()" class="btn-back">Back to Services</a>
-      <a href="#" id="toggleLink" role="button" class="btn-rent">For Rent</a>
-    </div>
-
-    <!-- RENT HERO -->
-    <section class="rent-section">
-
-      <div class="rent-container">
-
-        <h2>Rent Request</h2>
-
-        <p>
-          We are happy to assist you with your rent request.
-          Fill out the form below and we will get back to you as soon as possible.
-        </p>
-
-      </div>
-
-    </section>
-
+    <!------------------------------RENT HERO--------------------------->
     <section class="calendar hidden" id="hidden-calendar">
       <div class="calendar-header">
         <button id="prevBtn">&lt;</button>
@@ -121,11 +100,25 @@
         <div class="day-name">Sa</div>
         <!-- Days will be dynamically injected here via JS -->
       </div>
+      <!-- CALENDAR LEGEND -->
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <span class="legend-swatch legend-today"></span>
+          <span class="legend-label">Today</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-booked"></span>
+          <span class="legend-label">Fully booked</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-low"></span>
+          <span class="legend-label">1 vehicle left</span>
+        </div>
+      </div>
     </section>
 
     <!-- FORM -->
     <div class="business-form-wrapper hidden" id="hidden-form">
-
       <h2>Rent Request Form</h2>
 
       <form action="/submit-rent" method="POST" id="rentRequestForm">
@@ -299,17 +292,16 @@
 
     </div>
 
-
-
+    <div class="page-buttons snap-section">
+      <a href="javascript:history.back()" class="btn-back">Back to Services</a>
+    </div>
 
     <section class="contact-cta-section snap-section">
       <div class="contact-cta">
         <p>For more questions, please contact us</p>
-        <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
+        <a href="/contact" class="cta-btn">Click Here</a>
       </div>
     </section>
-
-
 
     <?php include "footer.php"; ?>
 
@@ -448,6 +440,12 @@
           return (dateCounts.get(dateKey) || 0) >= totalVehicles;
         }
 
+        function isLowAvailability(dateKey) {
+          if (totalVehicles <= 0) return false;
+          const remaining = totalVehicles - (dateCounts.get(dateKey) || 0);
+          return remaining === 1;
+        }
+
         // True if ANY date within [fromStr, untilStr] is fully booked.
         function isRangeFullyBooked(fromStr, untilStr) {
           return expandRange(fromStr, untilStr).some(isFullyBooked);
@@ -516,11 +514,16 @@
             const cellDate = new Date(year, month, day);
             const dateKey = toDateKey(year, month, day);
             const fullyBooked = isFullyBooked(dateKey);
+            const lowAvailability = isLowAvailability(dateKey);
 
             if (fullyBooked) {
               dayCell.classList.add("booked");
               dayCell.style.backgroundColor = "#0c8a36";
               dayCell.title = "Fully booked \u2014 no vehicles available";
+            } else if (lowAvailability) {
+              dayCell.classList.add("low-availability");
+              dayCell.style.backgroundColor = "#e6c200";
+              dayCell.title = "Only 1 vehicle remaining";
             }
 
             if (cellDate < today) {
@@ -758,25 +761,31 @@
       const calendarSection = document.getElementById('hidden-calendar');
       let mapsInitialized = false;
 
-      link.addEventListener('click', async (e) => {
-        e.preventDefault();
+      const rentSlideBtn = document.getElementById('rentSlideBtn');
 
-        // 2. Toggle both visibility classes simultaneously
-        section.classList.toggle('hidden');
-        calendarSection.classList.toggle('hidden');
+      if (rentSlideBtn) {
+        rentSlideBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
 
-        // Check if either section is now visible before firing the maps API fetch
-        const isFormVisible = !section.classList.contains('hidden');
+          // Reveal the calendar + form the same way the original toggle does,
+          // but only if they're currently hidden (avoid re-hiding on repeat clicks).
+          if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            calendarSection.classList.remove('hidden');
 
-        if (!mapsInitialized && isFormVisible) {
-          mapsInitialized = true; // set before the await so a fast double-click can't fire this twice
+            const isFormVisible = !section.classList.contains('hidden');
+            if (!mapsInitialized && isFormVisible) {
+              mapsInitialized = true;
+              const { lat, lng } = await getUserLocation();
+              createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
+              createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
+            }
+          }
 
-          const { lat, lng } = await getUserLocation();
-
-          createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
-          createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
-        }
-      });
+          // Now that it's visible, scroll to it.
+          calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
 
       //---------max passenger (form)---------------
       const passengerInput = document.getElementById('passengers');
