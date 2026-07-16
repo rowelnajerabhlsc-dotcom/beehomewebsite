@@ -446,7 +446,7 @@ section {
     gap: 5vw;
 }
 
-.route-grid img{
+.route-grid img {
     height: 20vw;
     width: 20vw;
 }
@@ -737,6 +737,11 @@ section {
     width: 150px;
 }
 
+.privacy {
+    display: grid;
+
+}
+
 /*map*/
 .map-box {
     height: 250px;
@@ -787,6 +792,49 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #0056b3;
+}
+
+.address-search-wrapper {
+    position: relative;
+}
+
+.address-suggestions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.address-suggestions.active {
+    display: block;
+}
+
+.address-suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.address-suggestions li:last-child {
+    border-bottom: none;
+}
+
+.address-suggestions li:hover,
+.address-suggestions li.highlighted {
+    background-color: #e6f4ea;
 }
 
 
