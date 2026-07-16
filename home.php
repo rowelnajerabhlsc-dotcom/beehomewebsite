@@ -188,15 +188,18 @@
                         dedicated to driving community growth and uplifting our members' socio-economic well-being. As a
                         dynamic, <strong>multipurpose organization</strong>, we operate a diverse ecosystem of services
                         engineered to
-                        meet a wide range of business and community needs. Our comprehensive portfolio spans essential
-                        public <strong>utilities</strong> and <strong>transport</strong>, <strong>property</strong>
+                        meet a wide range of business and community needs. Our comprehensive portfolio spans
+                        <strong>modern</strong> essential public utility <strong>transports</strong>,
+                        <strong>property</strong>
                         management, diverse <strong>financial</strong> and <strong>credit</strong> solutions,
-                        <strong>retail</strong> distribution, and professional <strong>manpower</strong> services.
+                        <strong>retail</strong> distribution, and professional <strong>labor</strong> services.
                     </p>
 
                     <p style="font-size: 22px; text-align: justify;" data-animate="slide-right">
-                        Looking forward, we <strong>continue to expand</strong> our reach with upcoming services in <strong>travel and tours</strong>,
-                        alongside convenient <strong>bills and payment</strong> solutions. Every member-worker is a co-owner of this
+                        Looking forward, we <strong>continue to expand</strong> our reach with upcoming services in
+                        <strong>travel and tours</strong>,
+                        alongside convenient <strong>bills and payment</strong> solutions. Every member-worker is a
+                        co-owner of this
                         growing enterprise, united under the shared values of professionalism, integrity, and mutual
                         progress. By continuously bridging new service gaps, BHLMPC remains a proud partner in
                         productivity and sustainable community development.

@@ -44,7 +44,7 @@
                 <h3>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h3>
 
                 <p><strong>Location:</strong><br>
-                    Unit 203, 2ND Floor, MGC Veranda Building, 31, Gov. Pascual Avenue, Tinajeros, Malabon, Metro Manila
+                    Unit 203, 2nd Floor, MGC Veranda Building, 31, Gov. Pascual Avenue, Tinajeros, Malabon, Metro Manila
                 </p>
 
                 <p><strong>Message / Call Us</strong></p>
