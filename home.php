@@ -183,25 +183,26 @@
                     <h2 data-animate="fade-in">ABOUT US</h2>
 
                     <p style="font-size: 22px; text-align: justify;" data-animate="slide-left">
-                        Bee Home Labor Multipurpose Cooperative (BHLMPC) is a duly registered cooperative established to
-                        provide quality
-                        labor and manpower services across various industries. Guided by cooperative principles and
-                        values,
-                        we aim to uplift
-                        our members’ socio-economic well-being while delivering efficient and reliable manpower
-                        solutions to
-                        our clients.
+                        <strong>Bee Home Labor Multipurpose Cooperative (BHLMPC)</strong> is a registered, versatile
+                        cooperative
+                        dedicated to driving community growth and uplifting our members' socio-economic well-being. As a
+                        dynamic, <strong>multipurpose organization</strong>, we operate a diverse ecosystem of services
+                        engineered to
+                        meet a wide range of business and community needs. Our comprehensive portfolio spans essential
+                        public <strong>utilities</strong> and <strong>transport</strong>, <strong>property</strong>
+                        management, diverse <strong>financial</strong> and <strong>credit</strong> solutions,
+                        <strong>retail</strong> distribution, and professional <strong>manpower</strong> services.
                     </p>
 
                     <p style="font-size: 22px; text-align: justify;" data-animate="slide-right">
-                        We take pride in being more than a manpower agency, we are a partner in productivity and
-                        community
-                        development.
-                        Each member-worker is part of a cooperative family committed to professionalism, integrity, and
-                        shared growth.
+                        Looking forward, we <strong>continue to expand</strong> our reach with upcoming services in <strong>travel and tours</strong>,
+                        alongside convenient <strong>bills and payment</strong> solutions. Every member-worker is a co-owner of this
+                        growing enterprise, united under the shared values of professionalism, integrity, and mutual
+                        progress. By continuously bridging new service gaps, BHLMPC remains a proud partner in
+                        productivity and sustainable community development.
                     </p>
 
-                    <div class="about-slider"  data-animate="fade-in">
+                    <div class="about-slider" data-animate="fade-in">
 
                         <div class="slides fade">
                             <img src="../IMAGES/home-img2.png" alt="Slide 1">
@@ -233,7 +234,7 @@
 
             <!-- CONTENT 5 - GROWING COMMUNITY -->
             <section class="hero-two" data-no-snap>
-                <div class="hero-two-content"  data-animate="fade-in">
+                <div class="hero-two-content" data-animate="fade-in">
                     <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo">
 
                     <h2>THE GROWING COMMUNITY OF</h2>
