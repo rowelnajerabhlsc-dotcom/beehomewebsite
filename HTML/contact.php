@@ -49,7 +49,7 @@
 
                 <p><strong>Message / Call Us</strong></p>
                 <p>Facebook: Bee Home Labor Multipurpose Cooperative</p>
-                <p>Gmail: info.bhscoop@gmail.com</p>
+                <p>Gmail: infoadmin@beehome.ph</p>
                 <p>Contact No: 0917 588 1203</p>
 
                 <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="contact-logo">

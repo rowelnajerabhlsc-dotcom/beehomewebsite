@@ -118,7 +118,7 @@
         </div>
         <div class="legend-item">
           <span class="legend-swatch legend-low"></span>
-          <span class="legend-label">1 vehicle left</span>
+          <span class="legend-label">Last vehicle available</span>
         </div>
       </div>
     </section>
@@ -149,16 +149,6 @@
 
             <label>Email Address</label>
             <input type="email" name="email" placeholder="example@email.com" required>
-
-            <!-- PRIVACY CHECKBOX -->
-            <label>
-              <input type="checkbox" name="privacy_agree" required>
-              I agree with our
-              <span class="privacy-link" onclick="openPrivacyModal()">
-                Confidentiality and Data Privacy Clause
-              </span>
-            </label>
-
           </div>
 
           <!-- RIGHT SIDE -->
@@ -167,7 +157,7 @@
             <h3>Rent Details</h3>
 
             <label for="passengers">Number of Passengers:</label>
-            <input type="number" id="passengers" name="passengers" class="passenger-input" value="5" step="1" min="0"
+            <input type="number" id="passengers" name="passengers" class="passenger-input" value="26" step="1" min="0"
               max="26" required>
 
             <!-- From Date Field -->
@@ -192,8 +182,11 @@
 
               <div class="form-group">
                 <label for="addressPickUp">Pick Up Address:</label>
-                <input type="text" id="addressPickUp" name="pickup_address" placeholder="Click or drag pin on map..."
-                  readonly required>
+                <div class="address-search-wrapper">
+                  <input type="text" id="addressPickUp" name="pickup_address" placeholder="Type an address..." required
+                    autocomplete="off">
+                  <ul id="addressPickUp-suggestions" class="address-suggestions"></ul>
+                </div>
               </div>
 
               <div class="form-group">
@@ -213,10 +206,12 @@
 
               <div class="form-group">
                 <label for="addressDropOff">Drop Off Address:</label>
-                <input type="text" id="addressDropOff" name="dropoff_address" placeholder="Click or drag pin on map..."
-                  readonly required>
+                <div class="address-search-wrapper">
+                  <input type="text" id="addressDropOff" name="dropoff_address" placeholder="Type an address..."
+                    required autocomplete="off">
+                  <ul id="addressDropOff-suggestions" class="address-suggestions"></ul>
+                </div>
               </div>
-
               <div class="form-group">
                 <label for="timeDropOff">Drop Off Time:</label>
                 <input type="time" id="timeDropOff" name="dropoff_time" required>
@@ -225,7 +220,16 @@
           </div>
 
         </div>
-
+        <div class="form-left">
+          <!-- PRIVACY CHECKBOX -->
+          <label>
+            <input type="checkbox" name="privacy_agree" required>
+            I agree with our
+            <span class="privacy-link" onclick="openPrivacyModal()">
+              Confidentiality and Data Privacy Clause
+            </span>
+          </label>
+        </div>
         <button type="submit">Submit Request</button>
 
       </form>
@@ -711,7 +715,7 @@
           addressField.value = "Fetching address details...";
 
           try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&countrycodes=ph`);
             const data = await response.json();
             if (data && data.display_name) {
               addressField.value = data.display_name;
@@ -724,6 +728,103 @@
         }
 
         reverseGeocode(lat, lng);
+
+        const addressInputEl = document.getElementById(addressInputId);
+        const suggestionsEl = document.getElementById(`${addressInputId}-suggestions`);
+        let debounceTimer = null;
+        let currentSuggestions = [];
+        let highlightedIndex = -1;
+
+        function closeSuggestions() {
+          suggestionsEl.innerHTML = "";
+          suggestionsEl.classList.remove("active");
+          currentSuggestions = [];
+          highlightedIndex = -1;
+        }
+
+        function selectSuggestion(place) {
+          const newLat = parseFloat(place.lat);
+          const newLng = parseFloat(place.lon);
+
+          map.setView([newLat, newLng], 16);
+          marker.setLatLng([newLat, newLng]);
+          addressInputEl.value = place.display_name;
+          closeSuggestions();
+        }
+
+        function renderSuggestions(results) {
+          currentSuggestions = results;
+          highlightedIndex = -1;
+          suggestionsEl.innerHTML = "";
+
+          if (results.length === 0) {
+            closeSuggestions();
+            return;
+          }
+
+          results.forEach((place) => {
+            const li = document.createElement("li");
+            li.textContent = place.display_name;
+            li.addEventListener("click", () => selectSuggestion(place));
+            suggestionsEl.appendChild(li);
+          });
+
+          suggestionsEl.classList.add("active");
+        }
+
+        async function fetchSuggestions(query) {
+          if (!query || query.trim().length < 3) {
+            closeSuggestions();
+            return;
+          }
+
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ph&viewbox=116.9,21.1,126.6,4.6&bounded=1`);
+            const results = await response.json();
+            renderSuggestions(results);
+          } catch (error) {
+            closeSuggestions();
+          }
+        }
+
+        addressInputEl.addEventListener("input", function () {
+          clearTimeout(debounceTimer);
+          const query = addressInputEl.value;
+          debounceTimer = setTimeout(() => fetchSuggestions(query), 400);
+        });
+
+        addressInputEl.addEventListener("keydown", function (e) {
+          const items = suggestionsEl.querySelectorAll("li");
+
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (items.length === 0) return;
+            highlightedIndex = (highlightedIndex + 1) % items.length;
+            items.forEach((item, i) => item.classList.toggle("highlighted", i === highlightedIndex));
+            items[highlightedIndex].scrollIntoView({ block: "nearest" });
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (items.length === 0) return;
+            highlightedIndex = (highlightedIndex - 1 + items.length) % items.length;
+            items.forEach((item, i) => item.classList.toggle("highlighted", i === highlightedIndex));
+            items[highlightedIndex].scrollIntoView({ block: "nearest" });
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (highlightedIndex >= 0 && currentSuggestions[highlightedIndex]) {
+              selectSuggestion(currentSuggestions[highlightedIndex]);
+            } else if (currentSuggestions.length > 0) {
+              selectSuggestion(currentSuggestions[0]);
+            }
+          } else if (e.key === "Escape") {
+            closeSuggestions();
+          }
+        });
+
+        document.addEventListener("click", function (e) {
+          if (!addressInputEl.contains(e.target) && !suggestionsEl.contains(e.target)) {
+            closeSuggestions();
+          }
+        });
 
         marker.on('dragend', function (e) {
           const currentPos = marker.getLatLng();
@@ -770,26 +871,24 @@
       const rentSlideBtn = document.getElementById('rentSlideBtn');
 
       if (rentSlideBtn) {
-        rentSlideBtn.addEventListener('click', async (e) => {
+        rentSlideBtn.addEventListener('click', (e) => {
           e.preventDefault();
 
-          // Reveal the calendar + form the same way the original toggle does,
-          // but only if they're currently hidden (avoid re-hiding on repeat clicks).
           if (section.classList.contains('hidden')) {
             section.classList.remove('hidden');
             calendarSection.classList.remove('hidden');
-
-            const isFormVisible = !section.classList.contains('hidden');
-            if (!mapsInitialized && isFormVisible) {
-              mapsInitialized = true;
-              const { lat, lng } = await getUserLocation();
-              createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
-              createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
-            }
           }
 
-          // Now that it's visible, scroll to it.
+          // Scroll right away — don't wait on map initialization.
           calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          if (!mapsInitialized) {
+            mapsInitialized = true;
+            getUserLocation().then(({ lat, lng }) => {
+              createMapPicker('mapPickUp', 'addressPickUp', lat, lng);
+              createMapPicker('mapDropOff', 'addressDropOff', lat, lng);
+            });
+          }
         });
       }
 
