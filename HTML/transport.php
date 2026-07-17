@@ -145,7 +145,7 @@
               maxlength="11" required>
 
             <label>Telephone Number</label>
-            <input type="text" name="telephone" placeholder="123-1234">
+            <input type="tel" name="telephone" placeholder="123-1234">
 
             <label>Email Address</label>
             <input type="email" name="email" placeholder="example@email.com" required>
@@ -157,8 +157,8 @@
             <h3>Rent Details</h3>
 
             <label for="passengers">Number of Passengers:</label>
-            <input type="number" id="passengers" name="passengers" class="passenger-input" value="26" step="1" min="0"
-              max="26" required>
+            <input type="number" id="passengers" name="passengers" class="passenger-input" value="26" step="1" min="26"
+              max="26" required readonly>
 
             <!-- From Date Field -->
             <label for="fromDate">From:</label>
