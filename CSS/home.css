@@ -496,6 +496,11 @@ section,
     height: 300px;
     margin: 40px auto 0;
     /* pushes it below the heading, centers it */
+    /* The wrapper and its track/segments are decorative. Only the .dial__knob
+       needs to capture pointer events for the drag interaction. Leaving the
+       rest click-through prevents the sticky .services-intro from swallowing
+       clicks meant for sections below (e.g. the .community buttons). */
+    pointer-events: none;
 }
 
 .dial__track {
@@ -593,6 +598,10 @@ section,
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     cursor: grab;
     z-index: 2;
+    /* Re-enable clicks on the knob even though the .dial__wrapper is
+       click-through — the knob is the only part the user actually
+       drags. */
+    pointer-events: auto;
 }
 
 .dial__btn,
@@ -1219,6 +1228,7 @@ section,
         padding-right: 20px;
         white-space: normal;
         text-align: center;
+        z-index: 100;
     }
 
     .hero-text h1,
