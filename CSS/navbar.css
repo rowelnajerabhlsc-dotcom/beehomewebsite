@@ -32,6 +32,11 @@ nav{
 
 .nav-links li{
     position:relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-links li:hover{
+    transform: scale(1.05);
 }
 
 .nav-links a{
@@ -46,6 +51,7 @@ nav{
 
 .nav-links a:hover{
     color:#FFF82E;
+    transform: scale(1.05);
 }
 
 .nav-links a.active{

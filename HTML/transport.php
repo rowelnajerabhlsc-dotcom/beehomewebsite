@@ -21,9 +21,6 @@
   <?php include "navbar.php"; ?>
 
   <!-- ABOUT US PAGE CONTENTS START HER E -->
-
-
-
   <main class="transport-section scroll-container">
 
     <section class="contact-hero">
@@ -33,7 +30,6 @@
     $videoPath = "../VIDEO/transportManagement.mp4";
     include "video_section.php";
     ?>
-
     <section class="animation-wrapper">
       <div class="animation">
         <div class="mountain-left-wrap scroll-element left">
