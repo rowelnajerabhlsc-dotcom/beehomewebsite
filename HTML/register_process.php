@@ -13,6 +13,14 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
     exit();
 }
 
+// Must have a valid, unexpired registration session (set by reg_token_check.php on register.php)
+if (!isset($_SESSION['reg_valid']) || $_SESSION['reg_valid'] !== true
+    || !isset($_SESSION['reg_expires']) || time() > $_SESSION['reg_expires']) {
+    unset($_SESSION['reg_valid'], $_SESSION['reg_expires'], $_SESSION['reg_token']);
+    header("Location: /register");
+    exit();
+}
+
 $username = trim($_POST['username']);
 $email = trim($_POST['email']);
 
@@ -150,6 +158,15 @@ $mail->Port = 587;
     if ($stmt->execute()) {
 
         reglog("DB: user inserted id=" . $stmt->insert_id);
+
+        // Mark the registration token as used so the link cannot be reused
+        if (isset($_SESSION['reg_token'])) {
+            $usedStmt = $conn->prepare("UPDATE reg_tokens SET used = 1, used_at = NOW() WHERE token = ?");
+            $usedStmt->bind_param("s", $_SESSION['reg_token']);
+            $usedStmt->execute();
+        }
+        unset($_SESSION['reg_valid'], $_SESSION['reg_expires'], $_SESSION['reg_token']);
+
         $_SESSION['message'] = "Registration successful! Please check your email.";
         $_SESSION['msg_type'] = "success";
 

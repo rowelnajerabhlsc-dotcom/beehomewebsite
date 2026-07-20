@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require "config.php";
+require "reg_token_check.php"; // gates access — exits with unable_to_register.php if invalid
+?>
 <!DOCTYPE html>
 <html>
 <head>
