@@ -437,8 +437,12 @@ section,
 /* SERVICES SECTION */
 .services-intro {
     display: flex;
-    justify-content: space-evenly;
-    height: 90vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    height: calc(100dvh - 70px);
+    padding: 0 6%;
     overflow: hidden;
     will-change: opacity;
 
@@ -447,11 +451,66 @@ section,
     z-index: 1;
 }
 
+.orbit-showcase-header {
+    text-align: center;
+    max-width: 700px;
+}
+
+.orbit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: #e7f5ea;
+    color: #096D2B;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
 .services-intro h2 {
-    font-size: 70px;
-    margin-bottom: 15px;
+    font-size: 34px;
+    margin: 0 0 8px;
     color: #096d2bd9;
+}
+
+.orbit-showcase-desc {
+    font-size: 14px;
+    color: #5a6b5f;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.orbit-showcase-grid {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    width: 100%;
     flex: 1;
+    min-height: 0;
+}
+
+.orbit-showcase-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #096D2B;
+    opacity: 0.65;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.orbit-footer-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #2cab4a;
 }
 
 #service-intro-left {
@@ -489,130 +548,249 @@ section,
     flex: 1;
 }
 
-.dial__wrapper {
-    position: relative;
-    width: 300px;
-    /* match roughly to your track's diameter + segment size */
-    height: 300px;
-    margin: 40px auto 0;
-    /* pushes it below the heading, centers it */
-    /* The wrapper and its track/segments are decorative. Only the .dial__knob
-       needs to capture pointer events for the drag interaction. Leaving the
-       rest click-through prevents the sticky .services-intro from swallowing
-       clicks meant for sections below (e.g. the .community buttons). */
-    pointer-events: none;
+/* ---------- Products & Services Orbit ---------- */
+
+@keyframes spin-clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.dial__track {
+@keyframes spin-counterclockwise {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(9, 109, 43, 0.15), inset 0 0 10px rgba(9, 109, 43, 0.05);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(9, 109, 43, 0.4), inset 0 0 20px rgba(9, 109, 43, 0.2);
+    }
+}
+
+.orbit-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.orbit-header {
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.orbit-header h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #096D2B;
+    margin: 0;
+}
+
+.orbit-header p {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5a6b5f;
+    margin: 4px 0 0;
+    transition: color 0.3s ease;
+}
+
+.orbit-header p.orbit-active-desc {
+    color: #096D2B;
+    font-weight: 600;
+}
+
+.orbit-circle {
+    position: relative;
+    width: clamp(260px, 24vw, 340px);
+    height: clamp(260px, 24vw, 340px);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orbit-glow {
     position: absolute;
     inset: 0;
-    border: 12px solid #2cab4a;
+    background: rgba(9, 109, 43, 0.15);
     border-radius: 50%;
-    transition: transform 0.2s ease-out;
+    filter: blur(40px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
 }
 
-.dial__segment {
+.orbit-pulse-ring {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50px;
-    height: 50px;
-    margin: -25px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    inset: 8px;
+    border-radius: 50%;
+    border: 4px solid rgba(9, 109, 43, 0.1);
+    animation: pulse-glow 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+.orbit-dashed-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px dashed #b7dcc0;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: spin-clockwise 40s linear infinite;
+    z-index: 0;
+}
+
+/* Rotating ring that carries the icons around the circle.
+   Rotation itself is driven by JS (see initOrbit) so the ring and its
+   icons' counter-rotation can never drift out of sync. */
+.orbit-ring {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.orbit-icon-wrap {
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+/* Counter-rotation applied via inline style by JS */
+.orbit-icon {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: #000000;
-    font-size: 20px;
-
+    cursor: pointer;
 }
 
-.dial__inner {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: transform 0.2s ease, background 0.2s ease;
+.orbit-tooltip {
+    position: absolute;
+    top: -42px;
+    opacity: 0;
+    pointer-events: none;
+    background: #1e2b22;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+    z-index: 3;
 }
 
-.dial__segment i {
-    /* ensure transform applies cleanly */
-    display: block;
-    transition: transform 0.2s ease-out;
-    font-size: 50px;
-    opacity: 0.6;
-    color: #096D2B;
-}
-
-.dial__segment.is-active i {
-    transform: scale(1.5);
+.orbit-icon:hover .orbit-tooltip {
     opacity: 1;
 }
 
-.dial__segment.is-active .dial__inner {
-    transform: scale(1.5);
-    background: rgba(255, 255, 255, 0.25);
-}
-
-
-
-/* spread them evenly at 60° intervals */
-.dial__segment:nth-child(1) {
-    transform: rotate(0deg) translate(0, -120px) rotate(0deg);
-}
-
-.dial__segment:nth-child(2) {
-    transform: rotate(60deg) translate(0, -120px) rotate(-60deg);
-}
-
-.dial__segment:nth-child(3) {
-    transform: rotate(120deg) translate(0, -120px) rotate(-120deg);
-}
-
-.dial__segment:nth-child(4) {
-    transform: rotate(180deg) translate(0, -120px) rotate(-180deg);
-}
-
-.dial__segment:nth-child(5) {
-    transform: rotate(240deg) translate(0, -120px) rotate(-240deg);
-}
-
-.dial__segment:nth-child(6) {
-    transform: rotate(300deg) translate(0, -120px) rotate(-300deg);
-}
-
-/* central knob */
-.dial__knob {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    margin: -50px;
-    background: #2cab4a;
-    border: 6px solid #2cab4a;
+.orbit-icon-btn {
+    width: clamp(60px, 6vw, 76px);
+    height: clamp(60px, 6vw, 76px);
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    cursor: grab;
-    z-index: 2;
-    /* Re-enable clicks on the knob even though the .dial__wrapper is
-       click-through — the knob is the only part the user actually
-       drags. */
-    pointer-events: auto;
+    background: #fff;
+    border: 1px solid #d8ecdd;
+    box-shadow: 0 2px 8px rgba(9, 109, 43, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #096D2B;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.dial__btn,
-.dial__knob {
-    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+.orbit-icon-btn svg {
+    width: clamp(26px, 2.6vw, 32px);
+    height: clamp(26px, 2.6vw, 32px);
 }
 
-/* hover on the central knob */
-.dial__knob:hover {
+.orbit-icon:hover .orbit-icon-btn {
     background: #096D2B;
-    box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+    border-color: #096D2B;
+    color: #fff;
+    transform: scale(1.12);
+    box-shadow: 0 4px 14px rgba(9, 109, 43, 0.35);
+}
+
+/* Static, non-rotating center label */
+.orbit-center {
+    position: absolute;
+    width: clamp(110px, 10vw, 140px);
+    height: clamp(110px, 10vw, 140px);
+    border-radius: 50%;
+    background: #096D2B;
+    box-shadow: 0 8px 20px rgba(9, 109, 43, 0.3);
+    outline: 6px solid #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    z-index: 2;
+    transition: transform 0.4s ease;
+}
+
+.orbit-center:hover {
+    transform: scale(1.05);
+}
+
+.orbit-center-title {
+    font-size: clamp(15px, 1.4vw, 19px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.orbit-center-divider {
+    width: 26px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    margin: 5px 0;
+    border-radius: 2px;
+}
+
+.orbit-center-sub {
+    font-size: clamp(10px, 1vw, 13px);
+    font-weight: 600;
+    color: #cdeed8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.orbit-footer {
+    font-size: 11px;
+    font-weight: 500;
+    color: #7c8a80;
+    text-align: center;
+    margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+    .orbit-circle {
+        width: clamp(220px, 34vw, 280px);
+        height: clamp(220px, 34vw, 280px);
+    }
+
+    .orbit-center {
+        width: clamp(90px, 14vw, 116px);
+        height: clamp(90px, 14vw, 116px);
+    }
 }
 
 /*Services*/
@@ -719,13 +897,18 @@ section,
     }
 
     .services-intro {
+        height: auto;
+        padding: 30px 6%;
+    }
+
+    .orbit-showcase-grid {
         flex-direction: column;
         align-items: center;
-        height: auto
+        gap: 30px;
     }
 
     .services-intro h2 {
-        flex: none;
+        font-size: 26px;
     }
 }
 
