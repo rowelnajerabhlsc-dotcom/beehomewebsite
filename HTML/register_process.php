@@ -96,7 +96,7 @@ try {
     // Currently uses gmail under OU admin
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = '@beehome.ph';
+    $mail->Username = 'adminstmp@beehome.ph';
     $mail->Password = 'qipizhdiflzyczly';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
