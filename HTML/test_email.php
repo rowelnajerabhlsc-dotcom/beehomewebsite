@@ -45,6 +45,12 @@ $mail->SMTPSecure = $mail_config['secure'] === 'ssl'
     ? PHPMailer::ENCRYPTION_SMTPS
     : PHPMailer::ENCRYPTION_STARTTLS;
 
+// TEMP: capture full SMTP transcript to PHP error log for debugging.
+$mail->SMTPDebug  = 2;
+$mail->Debugoutput = function ($str, $level) {
+    error_log("SMTP[{$level}]: {$str}");
+};
+
 $mail->setFrom($mail_config['from_email'], $mail_config['from_name']);
 $mail->addAddress($to);
 $mail->Subject = 'SMTP Test';
@@ -55,6 +61,6 @@ try {
     echo "Email sent to {$to}.";
 } catch (Exception $e) {
     http_response_code(500);
-    // Generic message only — never echo ErrorInfo to anonymous callers.
-    echo "Email send failed.";
+    // TEMP: surface the error so we can see why the send failed.
+    echo "Email send failed: " . htmlspecialchars($mail->ErrorInfo);
 }
