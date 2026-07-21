@@ -10,10 +10,10 @@ $mail->Debugoutput = 'html';
 $mail->Timeout = 15;
 
 $mail->isSMTP();
-$mail->Host = 'smtp.office365.com';
+$mail->Host = 'smtp.gmail.com';
 $mail->SMTPAuth = true;
 $mail->Username = 'infoadmin@beehome.ph';
-$mail->Password = 'YOUR_EMAIL_PASSWORD';
+$mail->Password = 'REPLACE_ME_WITH_GOOGLE_APP_PASSWORD'; // 16-char Google App Password
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 $mail->Port = 587;
 

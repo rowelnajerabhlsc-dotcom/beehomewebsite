@@ -14,8 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 }
 
 // Must have a valid, unexpired registration session (set by reg_token_check.php on register.php)
-if (!isset($_SESSION['reg_valid']) || $_SESSION['reg_valid'] !== true
-    || !isset($_SESSION['reg_expires']) || time() > $_SESSION['reg_expires']) {
+if (
+    !isset($_SESSION['reg_valid']) || $_SESSION['reg_valid'] !== true
+    || !isset($_SESSION['reg_expires']) || time() > $_SESSION['reg_expires']
+) {
     unset($_SESSION['reg_valid'], $_SESSION['reg_expires'], $_SESSION['reg_token']);
     header("Location: /register");
     exit();
@@ -32,11 +34,14 @@ $email = trim($_POST['email']);
 $DEBUG = isset($_GET['debug']) && $_GET['debug'] == '1';
 $LOG_FILE = __DIR__ . '/registration_debug.log';
 
-function reglog($msg) {
+function reglog($msg)
+{
     global $DEBUG, $LOG_FILE;
     $line = '[' . date('Y-m-d H:i:s') . '] ' . $msg . PHP_EOL;
     @file_put_contents($LOG_FILE, $line, FILE_APPEND | LOCK_EX);
-    if ($DEBUG) { error_log($line); }
+    if ($DEBUG) {
+        error_log($line);
+    }
 }
 
 reglog("--- registration attempt ---");
@@ -87,13 +92,14 @@ $mail = new PHPMailer(true);
 
 try {
 
-    // SMTP Settings
-   $mail->Host = 'smtp.titan.email';
-$mail->SMTPAuth = true;
-$mail->Username = 'infoadmin@beehome.ph';
-$mail->Password = 'Beehome@2011';
-$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-$mail->Port = 587;
+    // SMTP Settings (Google Workspace)
+    // Currently uses gmail under OU admin
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = '@beehome.ph';
+    $mail->Password = 'qipizhdiflzyczly';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
     $mail->Timeout = 30;
 
