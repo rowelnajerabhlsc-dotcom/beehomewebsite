@@ -12,13 +12,13 @@ $mail->Timeout = 15;
 $mail->isSMTP();
 $mail->Host = 'smtp.gmail.com';
 $mail->SMTPAuth = true;
-$mail->Username = 'infoadmin@beehome.ph';
-$mail->Password = 'REPLACE_ME_WITH_GOOGLE_APP_PASSWORD'; // 16-char Google App Password
+$mail->Username = 'adminstmp@beehome.ph';
+$mail->Password = 'qipizhdiflzyczly'; // 16-char Google App Password
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 $mail->Port = 587;
 
 $mail->setFrom('infoadmin@beehome.ph', 'Bee Home');
-$mail->addAddress('YOUR_PERSONAL_EMAIL@example.com');
+$mail->addAddress('rowelnajera.bhlsc@gmail.com');
 
 $mail->Subject = 'SMTP Test';
 $mail->Body = 'This is a test email.';
