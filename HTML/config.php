@@ -3,6 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/* ============================================================
+   Load private env-style secrets from outside the web root.
+   File Manager -> Home (/home/kwchy8j4554l/secrets.php) — one
+   level above public_html, so it's never reachable by URL.
+   Safe to skip silently if it doesn't exist yet (e.g. local dev).
+   ============================================================ */
+$secretsPath = '/home/kwchy8j4554l/secrets.php';
+if (file_exists($secretsPath)) {
+    require $secretsPath;
+}
+
 $host = "localhost";
 $user = "kwchy8j4554l";
 $password = "Be3home@2026";
@@ -40,4 +51,26 @@ $mail_config = [
 /* Shared token required to run test_email.php. The .htaccess
    rule below also blocks direct access without it. */
 $test_email_token = getenv('TEST_EMAIL_TOKEN') ?: 'dev-only-change-me';
+
+/* ============================================================
+   Registration-link mailer
+   ------------------------------------------------------------
+   Deliberately separate from $mail_config above. That block sends
+   as infoadmin@beehome.ph relayed through a Gmail account
+   (adminstmp@beehome.ph) and has an unresolved delivery problem.
+   This one sends locally, from a real cPanel mailbox on the same
+   server, authenticated with that mailbox's own password — not a
+   Gmail App Password. Set these via env vars in cPanel; there is
+   no working hardcoded fallback on purpose, so a missing env var
+   fails loudly instead of silently trying bad credentials.
+   ============================================================ */
+$reg_mail_config = [
+    'host'      => getenv('REG_MAIL_HOST')      ?: 'mail.beehome.ph',
+    'port'      => (int)(getenv('REG_MAIL_PORT') ?: 465),
+    'username'  => getenv('REG_MAIL_USER')      ?: '',
+    'password'  => getenv('REG_MAIL_PASS')      ?: '',
+    'secure'    => getenv('REG_MAIL_SECURE')    ?: 'ssl', // 'tls' (587) or 'ssl' (465)
+    'from_email'=> getenv('REG_MAIL_FROM')      ?: 'registration@beehome.ph',
+    'from_name' => getenv('REG_MAIL_FROM_NAME') ?: 'Bee Home Labor Multipurpose Cooperative',
+];
 ?>
