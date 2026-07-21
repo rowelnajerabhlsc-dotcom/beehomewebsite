@@ -40,3 +40,12 @@ RewriteRule ^ - [L]
 # Secretly match extensionless URLs to their file inside the HTML folder
 RewriteCond %{DOCUMENT_ROOT}/HTML/$1.php -f
 RewriteRule ^([^/]+)/?$ HTML/$1.php [L]
+
+# ==========================================
+# 7. LOCK DOWN test_email.php
+# ==========================================
+# Only the ?token= path is allowed. The token must equal the
+# server-side TEST_EMAIL_TOKEN (matched in PHP); here we just refuse
+# any direct hit that doesn't at least carry a token query string.
+RewriteCond %{QUERY_STRING} !token=
+RewriteRule ^HTML/test_email\.php$ - [F,L]

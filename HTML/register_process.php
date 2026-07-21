@@ -92,14 +92,15 @@ $mail = new PHPMailer(true);
 
 try {
 
-    // SMTP Settings (Google Workspace)
-    // Currently uses gmail under OU admin
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'adminstmp@beehome.ph';
-    $mail->Password = 'qipizhdiflzyczly';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    // SMTP Settings — credentials come from config.php (env-driven)
+    $mail->Host       = $mail_config['host'];
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $mail_config['username'];
+    $mail->Password   = $mail_config['password'];
+    $mail->SMTPSecure = $mail_config['secure'] === 'ssl'
+        ? PHPMailer::ENCRYPTION_SMTPS
+        : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = $mail_config['port'];
 
     $mail->Timeout = 30;
 
@@ -121,7 +122,7 @@ try {
     ];
 
     // Sender & Recipient
-    $mail->setFrom('infoadmin@beehome.ph', 'Bee Home Labor Multipurpose Cooperative');
+    $mail->setFrom($mail_config['from_email'], $mail_config['from_name']);
     $mail->addAddress($email, $username);
 
     // Email Content
