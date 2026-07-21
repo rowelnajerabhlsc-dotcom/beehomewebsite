@@ -60,6 +60,10 @@ $mail->Debugoutput = function ($str, $level) {
 };
 
 $mail->setFrom($mail_config['from_email'], $mail_config['from_name']);
+// Envelope sender must be a local mailbox or exim's sender-verify
+// check silently drops the message. The cPanel account's own address
+// always passes; visible From: stays as infoadmin@beehome.ph.
+$mail->Sender = 'kwchy8j4554l@beehome.ph';
 $mail->addAddress($to);
 $mail->Subject = 'SMTP Test';
 $mail->Body    = 'This is a test email.';
