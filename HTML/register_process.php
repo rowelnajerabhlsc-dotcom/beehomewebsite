@@ -117,6 +117,9 @@ if ($stmt->execute()) {
     $_SESSION['message'] = "Registration successful! You can now log in.";
     $_SESSION['msg_type'] = "success";
 
+    header("Location: /login");
+    exit();
+
 } else {
 
     reglog("DB ERROR: " . $stmt->error);
