@@ -49,3 +49,7 @@ RewriteRule ^([^/]+)/?$ HTML/$1.php [L]
 # any direct hit that doesn't at least carry a token query string.
 RewriteCond %{QUERY_STRING} !token=
 RewriteRule ^HTML/test_email\.php$ - [F,L]
+
+# Same lockdown for probe.php (diagnostic; not for public use).
+RewriteCond %{QUERY_STRING} !token=
+RewriteRule ^HTML/probe\.php$ - [F,L]
