@@ -114,10 +114,10 @@ if ($stmt->execute()) {
     }
     unset($_SESSION['reg_valid'], $_SESSION['reg_expires'], $_SESSION['reg_token']);
 
-    $_SESSION['message'] = "Registration successful! You can now log in.";
-    $_SESSION['msg_type'] = "success";
+    $_SESSION['just_registered']     = true;
+    $_SESSION['registered_username'] = $username;
 
-    header("Location: /login");
+    header("Location: /registration_success");
     exit();
 
 } else {
