@@ -23,6 +23,11 @@ if ($conn->connect_error) {
    production App Password should be rotated and replaced.
    ============================================================ */
 $mail_config = [
+    // 'smtp' (default) talks to Gmail over the network.
+    // 'sendmail' hands the message to the host's local MTA — use this when
+    // outbound SMTP (465/587) is blocked by the hosting firewall.
+    'driver'       => getenv('MAIL_DRIVER')    ?: 'sendmail',
+
     'host'         => getenv('SMTP_HOST')     ?: 'smtp.gmail.com',
     'port'         => (int)(getenv('SMTP_PORT') ?: 465),
     'username'     => getenv('SMTP_USER')     ?: 'adminstmp@beehome.ph',

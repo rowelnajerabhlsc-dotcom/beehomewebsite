@@ -92,15 +92,20 @@ $mail = new PHPMailer(true);
 
 try {
 
-    // SMTP Settings — credentials come from config.php (env-driven)
-    $mail->Host       = $mail_config['host'];
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $mail_config['username'];
-    $mail->Password   = $mail_config['password'];
-    $mail->SMTPSecure = $mail_config['secure'] === 'ssl'
-        ? PHPMailer::ENCRYPTION_SMTPS
-        : PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = $mail_config['port'];
+    // SMTP Settings — credentials come from config.php (env-driven).
+    // Switches to local sendmail when MAIL_DRIVER=sendmail (host blocks outbound SMTP).
+    if ($mail_config['driver'] === 'sendmail') {
+        $mail->isSendmail();
+    } else {
+        $mail->Host       = $mail_config['host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $mail_config['username'];
+        $mail->Password   = $mail_config['password'];
+        $mail->SMTPSecure = $mail_config['secure'] === 'ssl'
+            ? PHPMailer::ENCRYPTION_SMTPS
+            : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $mail_config['port'];
+    }
 
     $mail->Timeout = 30;
 

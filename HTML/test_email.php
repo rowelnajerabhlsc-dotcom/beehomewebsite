@@ -34,16 +34,22 @@ if (!$to) {
 
 // --- Send ------------------------------------------------------------------
 $mail = new PHPMailer(true);
-$mail->isSMTP();
-$mail->Host       = $mail_config['host'];
-$mail->SMTPAuth   = true;
-$mail->Username   = $mail_config['username'];
-$mail->Password   = $mail_config['password'];
-$mail->Port       = $mail_config['port'];
-$mail->Timeout    = 15;
-$mail->SMTPSecure = $mail_config['secure'] === 'ssl'
-    ? PHPMailer::ENCRYPTION_SMTPS
-    : PHPMailer::ENCRYPTION_STARTTLS;
+
+if ($mail_config['driver'] === 'sendmail') {
+    // Host's outbound SMTP is blocked; hand the message to the local MTA.
+    $mail->isSendmail();
+} else {
+    $mail->isSMTP();
+    $mail->Host       = $mail_config['host'];
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $mail_config['username'];
+    $mail->Password   = $mail_config['password'];
+    $mail->Port       = $mail_config['port'];
+    $mail->Timeout    = 15;
+    $mail->SMTPSecure = $mail_config['secure'] === 'ssl'
+        ? PHPMailer::ENCRYPTION_SMTPS
+        : PHPMailer::ENCRYPTION_STARTTLS;
+}
 
 // TEMP: capture full SMTP transcript to PHP error log for debugging.
 $mail->SMTPDebug  = 2;
