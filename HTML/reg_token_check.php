@@ -19,7 +19,14 @@ function reg_show_denied_and_exit() {
     exit();
 }
 
-// Case 1: Already have a valid registration session
+$urlToken = $_GET['token'] ?? '';
+
+if ($urlToken !== '' && $urlToken !== ($_SESSION['reg_token'] ?? null)) {
+    unset($_SESSION['reg_valid'], $_SESSION['reg_expires'], $_SESSION['reg_token']);
+}
+
+// Case 2: Already have a valid registration session (and either no URL
+// token was supplied, or it matches the session's token exactly)
 if (isset($_SESSION['reg_valid']) && $_SESSION['reg_valid'] === true) {
 
     if (!isset($_SESSION['reg_expires']) || time() > $_SESSION['reg_expires']) {
@@ -31,7 +38,7 @@ if (isset($_SESSION['reg_valid']) && $_SESSION['reg_valid'] === true) {
     return;
 }
 
-// Case 2: No active session yet — must have a token in the URL
+// Case 3: No active session — must have a token in the URL
 $token = $_GET['token'] ?? '';
 
 if ($token === '') {
