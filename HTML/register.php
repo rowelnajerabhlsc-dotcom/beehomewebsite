@@ -55,6 +55,12 @@ require "reg_token_check.php"; // gates access — exits with unable_to_register
             <label>Email</label>
             <input type="email" name="email" required>
 
+            <label>Password</label>
+            <input type="password" name="password" required minlength="8">
+
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" required minlength="8">
+
             <button type="submit">Register</button>
         </form>
 

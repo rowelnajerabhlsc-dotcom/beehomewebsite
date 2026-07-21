@@ -127,6 +127,8 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                         <a href="/manpower-request-logs">Manpower Request Logs</a>
 
+                        <a href="/generate_reg_link">Generate Registration Link</a>
+
                     <?php endif; ?>
 
                     <a href="/logout">Logout</a>
