@@ -24,10 +24,10 @@ if ($conn->connect_error) {
    ============================================================ */
 $mail_config = [
     'host'         => getenv('SMTP_HOST')     ?: 'smtp.gmail.com',
-    'port'         => (int)(getenv('SMTP_PORT') ?: 587),
+    'port'         => (int)(getenv('SMTP_PORT') ?: 465),
     'username'     => getenv('SMTP_USER')     ?: 'adminstmp@beehome.ph',
     'password'     => getenv('SMTP_PASS')     ?: 'qipizhdiflzyczly',
-    'secure'       => getenv('SMTP_SECURE')   ?: 'tls', // 'tls' or 'ssl'
+    'secure'       => getenv('SMTP_SECURE')   ?: 'ssl', // 'tls' or 'ssl'
     'from_email'   => getenv('MAIL_FROM')     ?: 'infoadmin@beehome.ph',
     'from_name'    => getenv('MAIL_FROM_NAME')?: 'Bee Home Labor Multipurpose Cooperative',
 ];
