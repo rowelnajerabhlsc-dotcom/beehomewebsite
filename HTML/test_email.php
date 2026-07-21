@@ -38,6 +38,8 @@ $mail = new PHPMailer(true);
 if ($mail_config['driver'] === 'sendmail') {
     // Host's outbound SMTP is blocked; hand the message to the local MTA.
     $mail->isSendmail();
+    // TEMP: verbose mode so exim's response lands in PHP's error log.
+    $mail->Sendmail = '/usr/sbin/sendmail -v -t -i';
 } else {
     $mail->isSMTP();
     $mail->Host       = $mail_config['host'];
