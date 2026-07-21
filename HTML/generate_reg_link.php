@@ -52,16 +52,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate'])) {
         }
         .link-box {
             display: flex;
+            align-items: stretch;
             gap: 8px;
             margin-top: 15px;
+            width: 100%;
         }
-        .link-box input {
-            flex: 1;
+        .link-box input[type="text"] {
+            flex: 1 1 auto;
+            width: auto;
+            min-width: 0;
+            height: auto;
             padding: 10px;
             font-family: monospace;
+            font-size: 0.85em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         .link-box button {
+            flex: 0 0 auto;
+            width: auto;
             padding: 10px 16px;
+            white-space: nowrap;
         }
         .copied-msg {
             display: none;
