@@ -118,6 +118,7 @@ function sendRegLinkEmail(string $link, string $to, mysqli $conn, string $tokenF
     <title>Generate Registration Link</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="icon" href="IMAGES/logo.png">
     <style>
         .alert {
             padding: 10px;

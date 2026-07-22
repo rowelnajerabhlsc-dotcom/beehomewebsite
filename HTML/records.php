@@ -157,6 +157,7 @@ $result = $conn->query("
     <title>Records</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="icon" href="IMAGES/logo.png">
 
     <style>
         .table-container {

@@ -24,6 +24,7 @@ $stmt->close();
     <title>Change Password</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="icon" href="IMAGES/logo.png">
     <script>
     function togglePassword(id) {
         var input = document.getElementById(id);

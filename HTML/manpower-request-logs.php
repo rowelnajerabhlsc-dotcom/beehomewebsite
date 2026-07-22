@@ -31,6 +31,7 @@ $result = $conn->query("
 <link rel="stylesheet" href="../CSS/navbar.css">
 <link rel="stylesheet" href="../CSS/home.css">
 <link rel="stylesheet" href="../CSS/manpower-request-logs.css">
+<link rel="icon" href="IMAGES/logo.png">
 
 </head>
 <body>
