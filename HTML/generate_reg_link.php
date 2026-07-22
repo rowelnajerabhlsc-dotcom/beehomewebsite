@@ -73,35 +73,30 @@ function burnToken(mysqli $conn, string $token): void {
 function sendRegLinkEmail(string $link, string $to, mysqli $conn, string $tokenForLog): bool {
     global $reg_mail_config;
 
-    if (empty($reg_mail_config['username']) || empty($reg_mail_config['password'])) {
-        error_log("Reg-link mail not configured (REG_MAIL_USER / REG_MAIL_PASS missing).");
+    if (empty($reg_mail_config['from_email'])) {
+        error_log("Reg-link mail not configured (REG_MAIL_FROM missing).");
         return false;
     }
 
     $mail = new PHPMailer(true);
     try {
-        $mail->isSMTP();
-        $mail->Host       = $reg_mail_config['host'];
-        $mail->Port       = $reg_mail_config['port'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $reg_mail_config['username'];
-        $mail->Password   = $reg_mail_config['password'];
-        $mail->SMTPSecure = $reg_mail_config['secure'] === 'tls'
-            ? PHPMailer::ENCRYPTION_STARTTLS
-            : PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Timeout    = 15;
+        // Local mail() rather than SMTP relay: outbound SMTP (465/587) is
+        // separately blocked at the network level on this hosting account,
+        // independent of the account-wide spam block that was resolved.
+        // Local mail()/sendmail is the path that's actually open.
+        $mail->isMail();
 
         $mail->setFrom($reg_mail_config['from_email'], $reg_mail_config['from_name']);
         $mail->addAddress($to);
-        $mail->Subject = 'Your Bee Home registration link';
+        $mail->Subject = 'You are invited to complete your Bee Home Labor Multipurpose Cooperative registration';
         $mail->isHTML(true);
 
         $safeLink = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
-        $mail->Body = "Hello,<br><br>"
-            . "You've been invited to create an account on the Bee Home Labor Multipurpose Cooperative system.<br><br>"
-            . "Click the link below to register. The link can be used once:<br><br>"
-            . "<a href=\"{$safeLink}\">Create your account</a><br><br>"
-            . "If you didn't request this, you can ignore this email.<br><br>"
+        $mail->Body = "Good day,<br><br>"
+            . "You have been invited to complete your account registration with Bee Home Labor Multipurpose Cooperative.<br><br>"
+            . "Please use the link below to complete your registration. This link may only be used once:<br><br>"
+            . "<a href=\"{$safeLink}\">Complete your registration</a><br><br>"
+            . "If you were not expecting this, you can disregard this message.<br><br>"
             . "Bee Home Labor Multipurpose Cooperative";
 
         $mail->send();
