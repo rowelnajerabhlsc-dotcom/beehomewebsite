@@ -133,25 +133,22 @@ function sendRegLinkEmail(string $link, string $to, mysqli $conn, string $tokenF
             background-color: #d4edda;
             color: #155724;
         }
-        .reg-link-actions {
-            display: flex;
-            align-items: stretch;
-            gap: 8px;
-            margin-top: 10px;
+        .reg-link-primary {
             width: 100%;
         }
-        .reg-link-actions input[type="email"] {
-            flex: 1 1 auto;
-            min-width: 0;
-            padding: 10px;
+        .reg-link-recipient {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 1em;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 8px;
             box-sizing: border-box;
         }
-        .reg-link-actions button {
-            flex: 0 0 auto;
-            padding: 10px 16px;
-            white-space: nowrap;
+        .reg-link-recipient:focus {
+            border-color: #0c8a36;
+            outline: none;
         }
         .reg-link-divider {
             margin: 18px 0;
@@ -203,18 +200,15 @@ function sendRegLinkEmail(string $link, string $to, mysqli $conn, string $tokenF
            Once used, the link stops working — it cannot be reused or shared again.</p>
 
         <form method="POST">
-            <div class="reg-link-actions">
-                <button type="submit" name="generate" value="1">Generate New Link</button>
-            </div>
+            <button type="submit" name="generate" value="1" class="reg-link-primary">Generate New Link</button>
 
             <hr class="reg-link-divider">
 
             <label for="recipient">Or email the link to a recipient:</label>
-            <div class="reg-link-actions">
-                <input type="email" id="recipient" name="recipient" placeholder="name@example.com"
-                       value="<?php echo htmlspecialchars($_POST['recipient'] ?? ''); ?>">
-                <button type="submit" name="email_link" value="1">Send via Email</button>
-            </div>
+            <input type="email" id="recipient" name="recipient" placeholder="name@example.com"
+                   class="reg-link-recipient"
+                   value="<?php echo htmlspecialchars($_POST['recipient'] ?? ''); ?>">
+            <button type="submit" name="email_link" value="1" class="reg-link-primary">Send via Email</button>
         </form>
 
         <?php if ($errorMsg): ?>
