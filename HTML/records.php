@@ -259,7 +259,7 @@ $result = $conn->query("
 
         <?php while($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= htmlspecialchars($row['user_id'] ?? ''); ?></td>
+            <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
             <td><?= htmlspecialchars($row['username']); ?></td>
             <td><?= htmlspecialchars(trim($row['fname']." ".$row['mname']." ".$row['lname'])); ?></td>
             <td><?= htmlspecialchars($row['email']); ?></td>
