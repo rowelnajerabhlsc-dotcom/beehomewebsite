@@ -5,6 +5,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
+
+    <!-- CRITICAL: inline copy of the loader CSS from home.css, so the   -->
+    <!-- loader paints on the very first frame instead of waiting on a   -->
+    <!-- network round-trip for home.css. This is a verbatim duplicate — -->
+    <!-- the animation/markup/behavior are unchanged. If you ever edit   -->
+    <!-- the "HOME LOADING SCREEN" block in home.css, mirror the change  -->
+    <!-- here too. -->
+    <style>
+        body.loading {
+            overflow: hidden;
+        }
+
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            overflow: hidden;
+            will-change: transform;
+        }
+
+        .loader-fragments {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .loader-fragment {
+            display: block;
+            width: calc(100% / var(--fragment-columns));
+            height: calc(100% / var(--fragment-rows));
+            background: #ffffff;
+            box-shadow: 0 0 0 1px #ffffff;
+            will-change: transform, opacity;
+        }
+
+        .loader-stage {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            transform: scale(clamp(0.55, 18vw, 1));
+        }
+
+        .loader-wordmark {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .loader-wordmark--measure {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 16px;
+            visibility: hidden;
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+
+        .loader-wordmark--measure .loader-piece {
+            position: static;
+            opacity: 1;
+        }
+
+        .loader-wordmark--ready .loader-piece {
+            position: absolute;
+            will-change: left, opacity, transform;
+        }
+
+        .loader-emblem {
+            z-index: 4;
+            width: clamp(96px, 22vw, 138px);
+            height: clamp(96px, 22vw, 138px);
+            opacity: 0;
+        }
+
+        .loader-emblem img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+        }
+
+        .loader-c,
+        .loader-o,
+        .loader-p {
+            z-index: 2;
+            opacity: 0;
+            font-family: "Fredoka", "Trebuchet MS", sans-serif;
+            font-size: clamp(96px, 22vw, 200px);
+            font-weight: 700;
+            line-height: 0.85;
+            color: #2cab4a;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .loader-p {
+            z-index: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .page-loader {
+                display: none;
+            }
+
+            body.loading {
+                overflow-x: hidden;
+            }
+        }
+    </style>
+
     <link rel="stylesheet" href="CSS/home.css?v=scroll-snap-mandatory-2">
     <link rel="stylesheet" href="CSS/navbar.css">
     <link rel="icon" href="IMAGES/logo.png">
@@ -51,163 +174,234 @@
                     <span class="orbit-badge">Our Offerings</span>
                     <h2>Explore Our Products &amp; Services</h2>
                     <p class="orbit-showcase-desc">
-                        Empowering our cooperative community with nourishing farm essentials and reliable household welfare programs.
+                        Empowering our cooperative community with nourishing farm essentials and reliable household
+                        welfare programs.
                     </p>
                 </div>
 
                 <div class="orbit-showcase-grid">
-                <div id="service-intro-left" class="scroll-element left">
-                    <div class="orbit-col">
-                        <div class="orbit-header">
-                            <h3>Products</h3>
-                            <p id="product-desc">Fresh groceries, essentials &amp; more</p>
-                        </div>
-
-                        <div class="orbit-circle">
-                            <div class="orbit-glow"></div>
-                            <div class="orbit-pulse-ring"></div>
-                            <div class="orbit-dashed-ring"></div>
-
-                            <div id="product-orbit-ring" class="orbit-ring">
-
-                                <div class="orbit-icon-wrap" style="top:15%; left:50%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('product', 'Fresh Groceries', 'Farm-to-table organic produce & essentials')" onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
-                                        <span class="orbit-tooltip">Fresh Groceries</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:39.5%; left:88.5%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('product', 'Warm Meals', 'Nutritious hot meals cooked daily')" onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
-                                        <span class="orbit-tooltip">Warm Meals</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:79.5%; left:74%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('product', 'Preserves', 'Artisanal jams, honey & home preserves')" onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
-                                        <span class="orbit-tooltip">Local Preserves</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:79.5%; left:26%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('product', 'Organic Grains', 'Premium grains, rice, & baking staples')" onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
-                                        <span class="orbit-tooltip">Organic Grains</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:39.5%; left:11.5%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('product', 'Home Supplies', 'Daily necessities & household care')" onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
-                                        <span class="orbit-tooltip">Home Essentials</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
+                    <div id="service-intro-left" class="scroll-element left">
+                        <div class="orbit-col">
+                            <div class="orbit-header">
+                                <h3>Products</h3>
+                                <p id="product-desc">Fresh groceries, essentials &amp; more</p>
                             </div>
 
-                            <div class="orbit-center">
-                                <span id="product-center-title" class="orbit-center-title">Products</span>
-                                <span class="orbit-center-divider"></span>
-                                <span class="orbit-center-sub">Cooperative</span>
-                            </div>
-                        </div>
+                            <div class="orbit-circle">
+                                <div class="orbit-glow"></div>
+                                <div class="orbit-pulse-ring"></div>
+                                <div class="orbit-dashed-ring"></div>
 
-                        <p class="orbit-footer">Hover over icons to inspect details</p>
+                                <div id="product-orbit-ring" class="orbit-ring">
+
+                                    <div class="orbit-icon-wrap" style="top:15%; left:50%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('product', 'Fresh Groceries', 'Farm-to-table organic produce & essentials')"
+                                            onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
+                                            <span class="orbit-tooltip">Fresh Groceries</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:39.5%; left:88.5%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('product', 'Warm Meals', 'Nutritious hot meals cooked daily')"
+                                            onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
+                                            <span class="orbit-tooltip">Warm Meals</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:79.5%; left:74%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('product', 'Preserves', 'Artisanal jams, honey & home preserves')"
+                                            onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
+                                            <span class="orbit-tooltip">Local Preserves</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:79.5%; left:26%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('product', 'Organic Grains', 'Premium grains, rice, & baking staples')"
+                                            onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
+                                            <span class="orbit-tooltip">Organic Grains</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:39.5%; left:11.5%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('product', 'Home Supplies', 'Daily necessities & household care')"
+                                            onmouseout="resetCenterLabel('product', 'Products', 'Fresh groceries, essentials & more')">
+                                            <span class="orbit-tooltip">Home Essentials</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="orbit-center">
+                                    <span id="product-center-title" class="orbit-center-title">Products</span>
+                                    <span class="orbit-center-divider"></span>
+                                    <span class="orbit-center-sub">Cooperative</span>
+                                </div>
+                            </div>
+
+                            <p class="orbit-footer">Hover over icons to inspect details</p>
+                        </div>
                     </div>
-                </div>
 
-                <div id="service-intro-right" class="scroll-element right">
-                    <div class="orbit-col">
-                        <div class="orbit-header">
-                            <h3>Services</h3>
-                            <p id="service-desc">Cooperative assistance, transit &amp; care</p>
-                        </div>
-
-                        <div class="orbit-circle">
-                            <div class="orbit-glow"></div>
-                            <div class="orbit-pulse-ring"></div>
-                            <div class="orbit-dashed-ring" style="animation-duration: 50s;"></div>
-
-                            <div id="service-orbit-ring" class="orbit-ring">
-
-                                <div class="orbit-icon-wrap" style="top:15%; left:50%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Savings & Credit', 'Cooperative savings accounts & micro-financing')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Savings &amp; Loans</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:32.5%; left:80.3%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Member Help', 'Welfare benefits, medical aid & guidance')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Member Support</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7-7h7m-7 0a5 5 0 11-10 0 5 5 0 0110 0z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:67.5%; left:80.3%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Transit Shuttle', 'Safe, accessible community shuttle services')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Transit Shuttle</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:85%; left:50%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Home Care', 'Professional patient & elderly welfare assistance')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Bee Home Cares</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:67.5%; left:19.7%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Branch Offices', 'Locate regional branch & support centers')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Branch Offices</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="orbit-icon-wrap" style="top:32.5%; left:19.7%;">
-                                    <div class="orbit-icon" onmouseover="updateCenterLabel('service', 'Savings Card', 'Direct debit, deposits & card payments')" onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                        <span class="orbit-tooltip">Coop Cash Card</span>
-                                        <div class="orbit-icon-btn">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
+                    <div id="service-intro-right" class="scroll-element right">
+                        <div class="orbit-col">
+                            <div class="orbit-header">
+                                <h3>Services</h3>
+                                <p id="service-desc">Cooperative assistance, transit &amp; care</p>
                             </div>
 
-                            <div class="orbit-center">
-                                <span id="service-center-title" class="orbit-center-title">Services</span>
-                                <span class="orbit-center-divider"></span>
-                                <span class="orbit-center-sub">Cooperative</span>
-                            </div>
-                        </div>
+                            <div class="orbit-circle">
+                                <div class="orbit-glow"></div>
+                                <div class="orbit-pulse-ring"></div>
+                                <div class="orbit-dashed-ring" style="animation-duration: 50s;"></div>
 
-                        <p class="orbit-footer">Hover over icons to inspect details</p>
+                                <div id="service-orbit-ring" class="orbit-ring">
+
+                                    <div class="orbit-icon-wrap" style="top:15%; left:50%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Savings & Credit', 'Cooperative savings accounts & micro-financing')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Savings &amp; Loans</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:32.5%; left:80.3%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Member Help', 'Welfare benefits, medical aid & guidance')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Member Support</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M14.121 14.121L19 19m-7-7h7m-7 0a5 5 0 11-10 0 5 5 0 0110 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:67.5%; left:80.3%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Transit Shuttle', 'Safe, accessible community shuttle services')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Transit Shuttle</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:85%; left:50%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Home Care', 'Professional patient & elderly welfare assistance')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Bee Home Cares</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:67.5%; left:19.7%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Branch Offices', 'Locate regional branch & support centers')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Branch Offices</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="orbit-icon-wrap" style="top:32.5%; left:19.7%;">
+                                        <div class="orbit-icon"
+                                            onmouseover="updateCenterLabel('service', 'Savings Card', 'Direct debit, deposits & card payments')"
+                                            onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
+                                            <span class="orbit-tooltip">Coop Cash Card</span>
+                                            <div class="orbit-icon-btn">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="orbit-center">
+                                    <span id="service-center-title" class="orbit-center-title">Services</span>
+                                    <span class="orbit-center-divider"></span>
+                                    <span class="orbit-center-sub">Cooperative</span>
+                                </div>
+                            </div>
+
+                            <p class="orbit-footer">Hover over icons to inspect details</p>
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <div class="orbit-showcase-footer">

@@ -42,7 +42,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/home-img2.png" alt="Mission">
+                    <img src="../IMAGES/home-img2.png" alt="Mission" class="parallax-img">
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/aboutus-img1.png" alt="Vision">
+                    <img src="../IMAGES/aboutus-img1.png" alt="Vision" class="parallax-img">
                 </div>
             </div>
 
@@ -88,7 +88,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/aboutus-img2.png" alt="Core Values">
+                    <img src="../IMAGES/aboutus-img2.png" alt="Core Values" class="parallax-img">
                 </div>
             </div>
         </section>
@@ -166,26 +166,26 @@
                 <div class="awards-grid" data-animate="fade-in">
 
                     <div class="award-card">
-                        <img src="../IMAGES/award1.png" alt="Award 1">
+                        <img src="../IMAGES/award1.png" alt="Award 1" class="parallax-img">
                         <h3>TOP EMPLOYER PARTNER AWARDEE OF 2025</h3>
                         <p>City Government of Malabon</p>
                         <p>October 17, 2025</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award2.png" alt="Award 2">
+                        <img src="../IMAGES/award2.png" alt="Award 2" class="parallax-img">
                         <h3>GENDER AND DEVELOPMENT COMMITTEE PROJECT "KAMUSTA KA, KAI BEEGAN?"</h3>
                         <p>May 30, 2025</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award3.png" alt="Award 3">
+                        <img src="../IMAGES/award3.png" alt="Award 3" class="parallax-img">
                         <h3>BRIGADA ESKWELA 2024: Bayanihan para sa MATATAG na Paaralan</h3>
                         <p>July 22-27, 2024</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award4.png" alt="Award 4">
+                        <img src="../IMAGES/award4.png" alt="Award 4" class="parallax-img">
                         <h3>OUTSTANDING COOPERATIVE</h3>
                         <p>November 19, 2021</p>
                     </div>
@@ -235,12 +235,12 @@
 
         <section class="officers">
             <div class="officers-container">
-                <img src="../IMAGES/team-img1.1.png" alt="Officers Image 1" data-animate="fade-in">
-                <img src="../IMAGES/team-img2.1.png" alt="Officers Image 2" data-animate="fade-in">
-                <img src="../IMAGES/team-img3.png" alt="Officers Image 3" data-animate="fade-in">
-                <img src="../IMAGES/team-img4.png" alt="Officers Image 4" data-animate="fade-in">
-                <img src="../IMAGES/team-img5.png" alt="Officers Image 5" data-animate="fade-in">
-                <img src="../IMAGES/team-img6.png" alt="Officers Image 6" data-animate="fade-in">
+                <img src="../IMAGES/team-img1.1.png" alt="Officers Image 1" class="parallax-img">
+                <img src="../IMAGES/team-img2.1.png" alt="Officers Image 2" class="parallax-img">
+                <img src="../IMAGES/team-img3.png" alt="Officers Image 3" class="parallax-img">
+                <img src="../IMAGES/team-img4.png" alt="Officers Image 4" class="parallax-img">
+                <img src="../IMAGES/team-img5.png" alt="Officers Image 5" class="parallax-img">
+                <img src="../IMAGES/team-img6.png" alt="Officers Image 6" class="parallax-img">
             </div>
         </section>
     </section>
@@ -268,22 +268,22 @@
                 <div class="community-gallery">
 
                     <div class="community-item" data-animate="slide-left">
-                        <img src="../IMAGES/aboutus-community1.png" alt="Community 1" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community1.png" alt="Community 1" class="parallax-img" onclick="openPopup(this)">
                         <h3>TAGUMPAY NG PROYEKTONG "KAMUSTA KA, KAIBEEGAN?"</h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-right">
-                        <img src="../IMAGES/aboutus-community2.png" alt="Community 2" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community2.png" alt="Community 2" class="parallax-img" onclick="openPopup(this)">
                         <h3>PAGTATAPOS NG PROGRAMANG BEE LUSOG 2025 </h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-left">
-                        <img src="../IMAGES/aboutus-community3.png" alt="Community 3" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community3.png" alt="Community 3" class="parallax-img" onclick="openPopup(this)">
                         <h3>TAGUMPAY NG PROYEKTONG "TULOY ANG PAG-AARAL MATAPOS ANG #CARINA2024"</h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-right">
-                        <img src="../IMAGES/aboutus-community4.png" alt="Community 4" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community4.png" alt="Community 4" class="parallax-img" onclick="openPopup(this)">
                         <h3>PAGHAKBANG SA PAG-ASA: TAGUMPAY NG PROYEKTONG "SAPIN SA PAA"</h3>
                     </div>
 
