@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,13 +10,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
-
-    <!-- CRITICAL: inline copy of the loader CSS from home.css, so the   -->
-    <!-- loader paints on the very first frame instead of waiting on a   -->
-    <!-- network round-trip for home.css. This is a verbatim duplicate — -->
-    <!-- the animation/markup/behavior are unchanged. If you ever edit   -->
-    <!-- the "HOME LOADING SCREEN" block in home.css, mirror the change  -->
-    <!-- here too. -->
     <style>
         body.loading {
             overflow: hidden;
@@ -483,7 +481,7 @@
 
             </section>
             <!-- MANPOWER REQUEST -->
-            <section class="manpower-section">
+            <section class="manpower-section" data-no-snap>
 
                 <div class="manpower-container" data-animate="fade-in">
                     <h2>Manpower Request</h2>
@@ -502,7 +500,7 @@
             </section>
 
             <!-- CONTENT 4 - ABOUT US -->
-            <section class="about">
+            <section class="about" data-no-snap>
                 <div class="about-container">
                     <h2 data-animate="fade-in">ABOUT US</h2>
 
@@ -723,13 +721,28 @@
         function initOrbit(ring) {
             if (!ring) return null;
 
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // If reduced motion is preferred, disable animation
+            if (prefersReducedMotion) {
+                return {
+                    pauseFor(ms) { /* No-op */ }
+                };
+            }
+
             const icons = ring.querySelectorAll('.orbit-icon');
             let angle = 0;
             let paused = false;
             let resumeTimer = null;
 
-            // Slower auto-rotate speed on smaller/mobile viewports (deg/sec)
-            const speed = () => (window.innerWidth < 1024 ? 360 / 36 : 360 / 24);
+            // Enhanced speed function with subtle variation for more natural feel
+            const speed = () => {
+                const baseSpeed = window.innerWidth < 1024 ? 360 / 36 : 360 / 24; // 10°/sec mobile, 15°/sec desktop
+                // Add subtle variation to prevent mechanical feel
+                const timeFactor = Math.sin(Date.now() * 0.0001) * 0.2; // Very subtle oscillation
+                return baseSpeed * (1 + timeFactor);
+            };
 
             let lastTime = performance.now();
             function tick(now) {
@@ -752,11 +765,14 @@
                 circle.addEventListener('mouseleave', () => { paused = false; });
             }
 
+            // Enhanced pause function with easing
             return {
                 pauseFor(ms) {
                     paused = true;
                     clearTimeout(resumeTimer);
-                    resumeTimer = setTimeout(() => { paused = false; }, ms);
+                    resumeTimer = setTimeout(() => {
+                        paused = false;
+                    }, ms);
                 }
             };
         }
