@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,13 +10,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bee Home Labor Multipurpose Cooperative</title>
-
-    <!-- CRITICAL: inline copy of the loader CSS from home.css, so the   -->
-    <!-- loader paints on the very first frame instead of waiting on a   -->
-    <!-- network round-trip for home.css. This is a verbatim duplicate — -->
-    <!-- the animation/markup/behavior are unchanged. If you ever edit   -->
-    <!-- the "HOME LOADING SCREEN" block in home.css, mirror the change  -->
-    <!-- here too. -->
     <style>
         body.loading {
             overflow: hidden;
@@ -483,7 +481,7 @@
 
             </section>
             <!-- MANPOWER REQUEST -->
-            <section class="manpower-section">
+            <section class="manpower-section" data-no-snap>
 
                 <div class="manpower-container" data-animate="fade-in">
                     <h2>Manpower Request</h2>
@@ -502,7 +500,7 @@
             </section>
 
             <!-- CONTENT 4 - ABOUT US -->
-            <section class="about">
+            <section class="about" data-no-snap>
                 <div class="about-container">
                     <h2 data-animate="fade-in">ABOUT US</h2>
 
