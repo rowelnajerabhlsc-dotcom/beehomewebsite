@@ -803,3 +803,82 @@ section {
         font-size: 16px;
     }
 }
+
+/* PARALLAX EFFECTS */
+.parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Hero sections with parallax */
+.about-hero {
+    background-attachment: fixed !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    height: 400px; /* Increased height for better parallax effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Darker overlay for better text readability */
+.about-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 109, 42, 0.4); /* Darker green overlay for better contrast */
+    z-index: 0;
+}
+
+.about-hero h1 {
+    position: relative;
+    z-index: 1;
+    color: #FFF82E; /* Yellow color for better contrast against dark overlay */
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Parallax effect for images */
+.parallax-img {
+    transform: translateZ(0);
+    will-change: transform;
+    transition: transform 0.3s ease-out;
+}
+
+/* Subtle parallax movement for content images */
+.about-image img,
+.award-card img,
+.community-item img,
+.officers-container img {
+    transition: transform 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .about-hero {
+        height: 300px;
+    }
+
+    .about-hero h1 {
+        font-size: 28px;
+    }
+
+    /* Disable parallax on mobile for performance */
+    .about-hero {
+        background-attachment: scroll !important;
+    }
+
+    .parallax-img {
+        transform: none !important;
+    }
+}
