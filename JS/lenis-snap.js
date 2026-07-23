@@ -30,6 +30,9 @@ import Snap from "https://esm.sh/lenis/snap";
         return;
     }
 
+    // Check for reduced motion preference
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var targets = document.querySelectorAll("[data-lenis-snap]");
 
     if (!targets.length) {
@@ -56,9 +59,11 @@ import Snap from "https://esm.sh/lenis/snap";
         return;
     }
 
+    // Enhanced snap configuration with better easing and reduced motion support
     var snap = new Snap(window.lenis, {
-        type: "proximity",
-        duration: 0.6,
+        type: prefersReducedMotion ? "inherent" : "lock", // Use inherent (no animation) for reduced motion, lock for firmer snapping
+        duration: prefersReducedMotion ? 0 : 0.8, // Disable duration for reduced motion, slightly longer for natural feel
+        easing: prefersReducedMotion ? null : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) // Custom easing function
     });
 
     // The element Lenis is actually driving. `.scroll-container` for pages
@@ -105,4 +110,16 @@ import Snap from "https://esm.sh/lenis/snap";
 
     setSnapPoints();
     window.addEventListener("resize", setSnapPoints);
+
+    // Also update snap points when reduced motion preference changes
+    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function(e) {
+        // Update snap configuration based on new preference
+        prefersReducedMotion = e.matches;
+        snap.options.type = prefersReducedMotion ? "inherent" : "lock";
+        snap.options.duration = prefersReducedMotion ? 0 : 0.8;
+        snap.options.easing = prefersReducedMotion ? null : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+
+        // Reapply snap points with new settings
+        setSnapPoints();
+    });
 })();

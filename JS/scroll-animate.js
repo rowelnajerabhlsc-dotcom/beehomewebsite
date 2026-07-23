@@ -17,6 +17,9 @@
 (function () {
     "use strict";
 
+    // Check for reduced motion preference
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var targets = document.querySelectorAll('[data-animate]');
     if (!targets.length) return;
 
@@ -24,6 +27,20 @@
 
     var observer = new IntersectionObserver(
         function (entries) {
+            // Skip animation if reduced motion is preferred
+            if (prefersReducedMotion) {
+                // Make elements visible immediately without animation
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        // Remove the data-attribute to prevent JS from trying to animate
+                        entry.target.removeAttribute('data-animate');
+                    }
+                });
+                return;
+            }
+
+            // Normal animation behavior
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('in-view');

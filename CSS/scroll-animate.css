@@ -1,4 +1,4 @@
-/*------------Basic Animation--------------*/
+/*------------Enhanced Animation--------------*/
 
 /* Any element with data-animate starts hidden until JS marks it .in-view */
 [data-animate] {
@@ -7,8 +7,16 @@
 
 [data-animate].in-view {
     animation-duration: 0.6s;
-    animation-timing-function: ease-out;
+    animation-timing-function: var(--animate-ease-out, cubic-bezier(0.25, 0.46, 0.45, 0.94));
     animation-fill-mode: forwards;
+}
+
+/* Reduced motion support - disable animations when preferred */
+@media (prefers-reduced-motion: reduce) {
+    [data-animate].in-view {
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
 /* Pick the keyframe based on the attribute's value */
@@ -89,4 +97,11 @@
     100% {
         opacity: 1;
     }
+}
+
+/* Define CSS variables for easy theme override */
+:root {
+    --animate-ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --animate-ease-in-out: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    --animate-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 }

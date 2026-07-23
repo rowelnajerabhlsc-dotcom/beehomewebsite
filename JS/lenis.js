@@ -24,8 +24,25 @@
         return;
     }
 
+    // Check for reduced motion preference
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var LENIS_OPTS = {
-        lerp: 0.12,
+        // Adaptive lerp: base value increases with scroll velocity for more responsive feel
+        lerp: function () {
+            // Base lerp value
+            var baseLerp = 0.1;
+
+            // If reduced motion is preferred, use even smoother (lower) lerp
+            if (prefersReducedMotion) {
+                return 0.05;
+            }
+
+            // Increase responsiveness based on velocity (capped)
+            // Note: We'll need to update this dynamically in the raf loop
+            var velocityBoost = Math.min(Math.abs(this.velocity ? this.velocity.y : 0) * 0.003, 0.1);
+            return Math.min(baseLerp + velocityBoost, 0.2);
+        },
         smoothWheel: true,
         touchMultiplier: 1.5,
     };
@@ -78,6 +95,14 @@
 
     // Drive the rAF loop. One loop per page, lives until the page unloads.
     function raf(time) {
+        // Update adaptive lerp based on current velocity
+        if (lenis && typeof lenis.options.lerp === 'function') {
+            // Create a temporary options object to calculate the current lerp value
+            var tempOpts = Object.assign({}, LENIS_OPTS);
+            tempOpts.lerp = lenis.options.lerp.call(lenis); // Call the lerp function with lenis context
+            lenis.options.lerp = tempOpts.lerp;
+        }
+
         lenis.raf(time);
         window.requestAnimationFrame(raf);
     }

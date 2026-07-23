@@ -721,13 +721,28 @@ if (session_status() === PHP_SESSION_NONE) {
         function initOrbit(ring) {
             if (!ring) return null;
 
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // If reduced motion is preferred, disable animation
+            if (prefersReducedMotion) {
+                return {
+                    pauseFor(ms) { /* No-op */ }
+                };
+            }
+
             const icons = ring.querySelectorAll('.orbit-icon');
             let angle = 0;
             let paused = false;
             let resumeTimer = null;
 
-            // Slower auto-rotate speed on smaller/mobile viewports (deg/sec)
-            const speed = () => (window.innerWidth < 1024 ? 360 / 36 : 360 / 24);
+            // Enhanced speed function with subtle variation for more natural feel
+            const speed = () => {
+                const baseSpeed = window.innerWidth < 1024 ? 360 / 36 : 360 / 24; // 10°/sec mobile, 15°/sec desktop
+                // Add subtle variation to prevent mechanical feel
+                const timeFactor = Math.sin(Date.now() * 0.0001) * 0.2; // Very subtle oscillation
+                return baseSpeed * (1 + timeFactor);
+            };
 
             let lastTime = performance.now();
             function tick(now) {
@@ -750,11 +765,14 @@ if (session_status() === PHP_SESSION_NONE) {
                 circle.addEventListener('mouseleave', () => { paused = false; });
             }
 
+            // Enhanced pause function with easing
             return {
                 pauseFor(ms) {
                     paused = true;
                     clearTimeout(resumeTimer);
-                    resumeTimer = setTimeout(() => { paused = false; }, ms);
+                    resumeTimer = setTimeout(() => {
+                        paused = false;
+                    }, ms);
                 }
             };
         }
