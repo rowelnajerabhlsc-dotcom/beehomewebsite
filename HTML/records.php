@@ -168,6 +168,7 @@ $result = $conn->query("
         u.id,
         u.username,
         u.email,
+        u.role,
         p.batching_id,
         p.fname, p.mname, p.lname,
         p.department, p.position,
@@ -295,13 +296,17 @@ $result = $conn->query("
             <td><?= htmlspecialchars($row['contact_number']); ?></td>
 
             <td>
-                <a href="?edit=<?= (int)$row['id']; ?>">
-                    <button class="action-btn edit">Edit</button>
-                </a>
+                <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
+                    <a href="?edit=<?= (int)$row['id']; ?>">
+                        <button class="action-btn edit">Edit</button>
+                    </a>
 
-                <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
-                    <button class="action-btn delete">Delete</button>
-                </a>
+                    <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
+                        <button class="action-btn delete">Delete</button>
+                    </a>
+                <?php else: ?>
+                    <span style="color:#999;">No access</span>
+                <?php endif; ?>
             </td>
         </tr>
         <?php endwhile; ?>
