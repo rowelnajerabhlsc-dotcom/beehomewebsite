@@ -1,12 +1,10 @@
 <?php
 session_start();
 include "config.php";
+include "permissions.php";
 
 /* ACCESS CONTROL */
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] != 3 && $_SESSION['role'] != 4)) {
-    header("Location: home.php");
-    exit();
-}
+require_role(3); // must be at least Manager to reach this page
 
 /* =========================================================
    HANDLE EDIT (POST) — update user and profile, then back to list
@@ -15,9 +13,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['edit'])) {
 
     $user_id = (int) $_GET['edit'];
 
+    /* ROLE-BASED TARGET CHECK */
+    $target_role = get_user_role_by_id($conn, $user_id);
+    if ($target_role === null || !can_manage_target($_SESSION['role'], $target_role)) {
+        header("Location: /records");
+        exit();
+    }
+
     $username       = $_POST['username'];
     $email          = $_POST['email'];
     $role           = $_POST['role'];
+
+    /* PREVENT PRIVILEGE ESCALATION VIA FORM */
+    if ($_SESSION['role'] == 3 && $role >= 3) {
+        header("Location: /records");
+        exit();
+    }
+
     $fname          = $_POST['fname'];
     $mname          = $_POST['mname'];
     $lname          = $_POST['lname'];
@@ -80,6 +92,14 @@ if (isset($_GET['delete'])) {
     $del_id = (int) $_GET['delete'];
 
     if ($del_id !== (int) $_SESSION['user_id']) {
+
+        /* ROLE-BASED TARGET CHECK */
+        $target_role = get_user_role_by_id($conn, $del_id);
+        if ($target_role === null || !can_manage_target($_SESSION['role'], $target_role)) {
+            header("Location: /records");
+            exit();
+        }
+
         $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
         $stmt->bind_param("i", $del_id);
         $stmt->execute();
@@ -99,6 +119,13 @@ $edit_row = null;
 if (isset($_GET['edit'])) {
     $editing = true;
     $user_id = (int) $_GET['edit'];
+
+    /* ROLE-BASED TARGET CHECK — block viewing the edit modal too */
+    $target_role = get_user_role_by_id($conn, $user_id);
+    if ($target_role === null || !can_manage_target($_SESSION['role'], $target_role)) {
+        header("Location: /records");
+        exit();
+    }
 
     $stmt = $conn->prepare("
         SELECT
