@@ -3,6 +3,10 @@ session_start();
 include "config.php";
 include "permissions.php";
 
+// TEMP DEBUG - remove after testing
+echo "Session role: " . var_export($_SESSION['role'] ?? 'not set', true) . "<br>";
+echo "Target user_id: " . var_export($_GET['id'] ?? 'not set', true) . "<br>";
+
 /* ACCESS CONTROL */
 require_role(3); // must be at least Manager to reach this page
 
