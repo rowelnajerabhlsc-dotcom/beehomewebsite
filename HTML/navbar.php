@@ -121,11 +121,15 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                     <a href="/change_password">Change Password</a>
 
-                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 3 || $_SESSION['role'] == 4)): ?>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] >= 3): ?>
 
                         <a href="/records">Records</a>
 
                         <a href="/manpower-request-logs">Manpower Request Logs</a>
+
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 4): ?>
 
                         <a href="/generate_reg_link">Generate Registration Link</a>
 
