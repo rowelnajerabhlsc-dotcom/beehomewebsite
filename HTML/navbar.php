@@ -121,7 +121,7 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                     <a href="/change_password">Change Password</a>
 
-                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 3 || $_SESSION['role'] == 4)): ?>
+                    <?php if (is_manager_or_admin()): ?>
 
                         <a href="/records">Records</a>
 

@@ -1,5 +1,6 @@
 <?php
 include "config.php";
+include "permissions.php";
 
 // ❌ Not logged in
 if (!isset($_SESSION['user_id'])) {

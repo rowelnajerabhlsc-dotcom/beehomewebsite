@@ -2,15 +2,13 @@
 session_start();
 require "config.php";
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once "permissions.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// --- Gate: only roles 3 and 4 (same gate used elsewhere in navbar.php) ---
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], [3, 4], true)) {
-    header("Location: /login");
-    exit();
-}
+/* ACCESS CONTROL - Require Admin role (4) only */
+require_role(4); // Only Administrators can generate registration links
 
 $generatedLink = null;
 $emailSent     = false;
