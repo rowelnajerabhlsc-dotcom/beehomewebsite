@@ -48,7 +48,7 @@
     <section class="contact-cta-section">
         <div class="contact-cta">
             <p>For more questions, please contact us</p>
-            <?php include "footer.php"; ?>
+            <a href="/contact" class="cta-btn">Click Here</a>
         </div>
     </section>
 

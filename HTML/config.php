@@ -73,4 +73,16 @@ $reg_mail_config = [
     'from_email'=> getenv('REG_MAIL_FROM')      ?: 'registration@beehome.ph',
     'from_name' => getenv('REG_MAIL_FROM_NAME') ?: 'Bee Home Labor Multipurpose Cooperative',
 ];
+
+/* ============================================================
+   Google Sheets — Help Desk import
+   ============================================================ */
+$google_service_account_path = getenv('GOOGLE_SERVICE_ACCOUNT_PATH')
+    ?: '/home/kwchy8j4554l/google-service-account.json';
+
+$google_sheet_id = getenv('GOOGLE_SHEET_ID')
+    ?: '1xgb7YmI2KPWMHQ7Tf-14U1O5U5FsKE4-_yXBGBDn6Y4'; 
+
+$google_sheet_range = getenv('GOOGLE_SHEET_RANGE')
+    ?: 'Form Responses 1!A2:N';
 ?>
