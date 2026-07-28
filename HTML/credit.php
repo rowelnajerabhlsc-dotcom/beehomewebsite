@@ -72,7 +72,7 @@ include "auth_check.php";
 <section class="contact-cta-section">
     <div class="contact-cta">
         <p>For more questions, please contact us</p>
-        <a href="../HTML/contact.html" class="cta-btn">Click Here</a>
+        <?php include "footer.php"; ?>
     </div>
 </section>
 
