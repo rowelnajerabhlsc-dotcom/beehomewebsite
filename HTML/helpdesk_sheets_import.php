@@ -70,10 +70,14 @@ function importNewSubmissionsFromSheet(mysqli $conn): array {
     // Existing sheet_row_number values already imported, so we never
     // duplicate a case for the same row.
     $existing = [];
-    $existingRes = $conn->query("SELECT sheet_row_number FROM helpdesk_cases");
+    $stmt = $conn->prepare("SELECT sheet_row_number FROM helpdesk_cases");
+    $stmt->execute();
+    $existingRes = $stmt->get_result();
     while ($r = $existingRes->fetch_assoc()) {
         $existing[(int)$r['sheet_row_number']] = true;
     }
+    $existingRes->free();
+    $stmt->close();
 
     // Range starts at row 2 (header skipped), so row index 0 in $rows = sheet row 2.
     $startRow = 2;

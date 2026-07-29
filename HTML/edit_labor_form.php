@@ -8,8 +8,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 2 && $_SESSION['role'] != 
 }
 
 /* GET CURRENT LINK */
-$result = mysqli_query($conn, "SELECT * FROM labor_form LIMIT 1");
-$form = mysqli_fetch_assoc($result);
+$stmt = $conn->prepare("SELECT * FROM labor_form LIMIT 1");
+$stmt->execute();
+$result = $stmt->get_result();
+$form = $result->fetch_assoc();
+$stmt->close();
 
 /* UPDATE */
 if (isset($_POST['update'])) {
@@ -19,6 +22,7 @@ if (isset($_POST['update'])) {
     $stmt = $conn->prepare("UPDATE labor_form SET link=? WHERE id=?");
     $stmt->bind_param("si", $link, $form['id']);
     $stmt->execute();
+    $stmt->close();
 
     header("Location: labor.php");
     exit();
@@ -29,7 +33,7 @@ if (isset($_POST['update'])) {
 <html>
 <head>
     <title>Edit Link</title>
-    
+
     <link rel="stylesheet" href="../CSS/credit.css">
 
         <style>

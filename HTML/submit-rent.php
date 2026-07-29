@@ -58,8 +58,11 @@ if (!$fromValid || !$untilValid || $fromDate < $today || $untilDate < $fromDate)
 }
 
 // ---- CHECK VEHICLE AVAILABILITY (server-side, since JS can be bypassed) ----
-$vehicleResult = $conn->query("SELECT COALESCE(SUM(quantity), 0) AS total FROM vehicles");
+$vehicleStmt = $conn->prepare("SELECT COALESCE(SUM(quantity), 0) AS total FROM vehicles");
+$vehicleStmt->execute();
+$vehicleResult = $vehicleStmt->get_result();
 $totalVehicles = $vehicleResult ? (int) $vehicleResult->fetch_assoc()['total'] : 0;
+$vehicleStmt->close();
 
 if ($totalVehicles <= 0) {
     error_log('Rent form submission blocked: no vehicles configured in vehicles table.');

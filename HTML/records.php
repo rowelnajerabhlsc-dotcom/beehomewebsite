@@ -163,7 +163,7 @@ if (isset($_GET['edit'])) {
 /* =========================================================
    LIST DATA
    ========================================================= */
-$result = $conn->query("
+$stmt = $conn->prepare("
     SELECT
         u.id,
         u.username,
@@ -177,6 +177,8 @@ $result = $conn->query("
     LEFT JOIN user_profiles p ON u.id = p.user_id
     ORDER BY u.id ASC
 ");
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>

@@ -19,11 +19,9 @@ if ($conn->connect_error) {
 }
 
 /* FETCH REQUESTS */
-$result = $conn->query("
-    SELECT *
-    FROM manpower_requests
-    ORDER BY id DESC
-");
+$stmt = $conn->prepare("SELECT * FROM manpower_requests ORDER BY id DESC");
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>

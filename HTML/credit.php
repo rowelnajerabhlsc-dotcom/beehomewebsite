@@ -1,7 +1,7 @@
-<?php 
+<?php
 session_start();
-include "auth_check.php"; 
-?>  
+include "auth_check.php";
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,9 +30,11 @@ include "auth_check.php";
     <div class="credit-forms">
 
     <?php
-    $result = mysqli_query($conn, "SELECT * FROM credit_forms");
+    $stmt = $conn->prepare("SELECT * FROM credit_forms");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    while ($row = mysqli_fetch_assoc($result)) {
+    while ($row = $result->fetch_assoc()) {
     ?>
 
         <div class="form-card">
@@ -54,7 +56,7 @@ include "auth_check.php";
                     <br><br>
                     <a href="edit_form?id=<?php echo $row['id']; ?>" class="edit-btn">
                         Edit Link
-                    </a> 
+                    </a>
                 <?php } ?>
 
             </div>
@@ -62,7 +64,11 @@ include "auth_check.php";
 
     <?php } ?>
 
-    </div>
+    <?php
+    $stmt->close();
+    ?>
+
+</div>
 </section>
 
 <?php include "consumer_assistance_section.php"; ?>

@@ -5,8 +5,11 @@ include "config.php";
 
 
 /*  GET CURRENT LABOR FORM LINK */
-$result = mysqli_query($conn, "SELECT * FROM labor_form LIMIT 1");
-$form = mysqli_fetch_assoc($result);
+$stmt = $conn->prepare("SELECT * FROM labor_form LIMIT 1");
+$stmt->execute();
+$result = $stmt->get_result();
+$form = $result->fetch_assoc();
+$stmt->close();
 ?>  
 
 
@@ -145,7 +148,7 @@ $form = mysqli_fetch_assoc($result);
 
     <!--  EDIT BUTTON (RECRUITMENT ONLY) -->
     <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 2 || $_SESSION['role'] == 4)) { ?>
-        <a href="edit_labor_form.php" class="edit-btn">Edit Link</a>
+        <a href="edit_labor_form" class="edit-btn">Edit Link</a>
     <?php } ?>
 
     <a href="javascript:history.back()" class="btn-back">Back to Services</a>
