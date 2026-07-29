@@ -69,12 +69,7 @@ include "auth_check.php";
     <a href="javascript:history.back()" class="btn-back">Back to Services</a>
 </div>
 
-<section class="contact-cta-section">
-    <div class="contact-cta">
-        <p>For more questions, please contact us</p>
-        <?php include "footer.php"; ?>
-    </div>
-</section>
+<?php include "consumer_assistance_section.php"; ?>
 
 <?php include "footer.php"; ?>
 

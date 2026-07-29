@@ -37,6 +37,8 @@ $nav_pages = [
     '/HTML/records.php' => 'profile',
     '/manpower-request-logs' => 'profile',
     '/HTML/manpower-request-logs.php' => 'profile',
+    '/helpdesk_dashboard' => 'profile',
+    '/HTML/helpdesk_dashboard.php' => 'profile',
 ];
 
 $active_page = $nav_pages[$current_page] ?? '';
@@ -126,6 +128,8 @@ $active_page = $nav_pages[$current_page] ?? '';
                         <a href="/records">Records</a>
 
                         <a href="/manpower-request-logs">Manpower Request Logs</a>
+
+                        <a href="/helpdesk_dashboard">Consumer Assistance Dashboard</a>
 
                     <?php endif; ?>
 

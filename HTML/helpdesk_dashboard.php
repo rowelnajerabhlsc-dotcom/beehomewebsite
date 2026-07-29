@@ -453,7 +453,7 @@ async function openCase(caseId) {
     overlay.classList.add('active');
 
     try {
-        const res = await fetch(`helpdesk_case_detail.php?id=${caseId}`);
+        const res = await fetch(`/HTML/helpdesk_case_detail.php?id=${caseId}`);
         const data = await res.json();
         if (!data.ok) {
             modalBody.innerHTML = `<div class="hd-modal-msg error">${data.error || 'Could not load this ticket.'}</div>`;
@@ -530,7 +530,7 @@ function showMsg(text, isError) {
 async function saveDraft() {
     const fields = collectEditableFields();
     try {
-        const res = await fetch('helpdesk_case_save.php', {
+        const res = await fetch('/HTML/helpdesk_case_save.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ case_id: currentCaseId, editable_fields: fields })
@@ -547,7 +547,7 @@ async function submitCase() {
     if (!confirm('Send this email to the member now?')) return;
 
     try {
-        const res = await fetch('helpdesk_case_submit.php', {
+        const res = await fetch('/HTML/helpdesk_case_submit.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ case_id: currentCaseId, editable_fields: fields })
