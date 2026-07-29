@@ -65,11 +65,11 @@ include "auth_check.php";
     </div>
 </section>
 
+<?php include "consumer_assistance_section.php"; ?>
+
 <div class="page-buttons">
     <a href="javascript:history.back()" class="btn-back">Back to Services</a>
 </div>
-
-<?php include "consumer_assistance_section.php"; ?>
 
 <?php include "footer.php"; ?>
 
