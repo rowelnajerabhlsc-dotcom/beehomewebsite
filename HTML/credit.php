@@ -52,7 +52,7 @@ include "auth_check.php";
                 <!-- ✅ EDIT BUTTON (ONLY ACCOUNTING + MANAGER) -->
                 <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 1 || $_SESSION['role'] == 4)) { ?>
                     <br><br>
-                    <a href="edit_form.php?id=<?php echo $row['id']; ?>" class="edit-btn">
+                    <a href="edit_form?id=<?php echo $row['id']; ?>" class="edit-btn">
                         Edit Link
                     </a> 
                 <?php } ?>
@@ -66,10 +66,6 @@ include "auth_check.php";
 </section>
 
 <?php include "consumer_assistance_section.php"; ?>
-
-<div class="page-buttons">
-    <a href="javascript:history.back()" class="btn-back">Back to Services</a>
-</div>
 
 <?php include "footer.php"; ?>
 
