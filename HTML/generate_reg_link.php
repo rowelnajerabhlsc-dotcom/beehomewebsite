@@ -50,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $emailSentTo = $recipient;
                 // Link consumed once emailed — same one-time model as the
                 // existing register_process.php burn.
-                burnToken($conn, $token);
             } else {
                 // SMTP failure also burns the token: admin must click
                 // "Generate New Link" again to get a fresh one.
