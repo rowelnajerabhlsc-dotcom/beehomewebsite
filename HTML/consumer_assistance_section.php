@@ -37,7 +37,7 @@
                 </div>
                 <div class="cah-step-label">Step 2</div>
                 <h3>Nabubuksan ang case mo</h3>
-                <p>You'll get a reference number so you can track your concern from our end.</p>
+                <p>"We'll assign a reference number to your concern so our team can monitor its progress."</p>
             </div>
 
             <div class="cah-step-connector" aria-hidden="true"></div>
