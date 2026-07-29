@@ -15,13 +15,21 @@
  *   date received, reference number, request type, concern summary
  */
 
+/**
+ * Fixed contact details shown on every draft — not editable per-case.
+ * Update these two constants if the CAT's contact info ever changes.
+ */
+const HELPDESK_FIXED_CONTACT_PERSON = 'BH CAT';
+const HELPDESK_FIXED_CONTACT_INFO   = '09XX-XXX-XXXX';
+
+/**
+ * Fields an admin actually chooses per case. staff_name is auto-filled
+ * from the logged-in session at save/submit time, not typed by hand.
+ */
 function defaultEditableFields(): array {
     return [
         'classification' => 'Simple',
-        'sla_days'       => '15',
-        'contact_person' => '',
-        'contact_info'   => '',
-        'staff_name'     => '',
+        'sla_days'       => 15,
     ];
 }
 
@@ -33,14 +41,14 @@ function renderCaseEmailBody(array $case, array $fields): string {
     $ref           = $case['reference_number'] ?? '';
     $summary       = $case['request_details'] ?? '';
 
-    $classification = $fields['classification'];
+    $classification = ($fields['classification'] === 'Complex') ? 'Complex' : 'Simple';
     $checkSimple  = ($classification === 'Simple')  ? '[x]' : '[ ]';
     $checkComplex = ($classification === 'Complex') ? '[x]' : '[ ]';
 
-    $slaDays       = $fields['sla_days'];
-    $contactPerson = $fields['contact_person'];
-    $contactInfo   = $fields['contact_info'];
-    $staffName     = $fields['staff_name'];
+    $slaDays       = (int)($fields['sla_days'] ?? 15);
+    $contactPerson = $fields['contact_person'] ?? HELPDESK_FIXED_CONTACT_PERSON;
+    $contactInfo   = $fields['contact_info']   ?? HELPDESK_FIXED_CONTACT_INFO;
+    $staffName     = $fields['staff_name']     ?? '';
 
     return <<<TEXT
 BEE HOME LABOR MULTIPURPOSE COOPERATIVE
@@ -84,7 +92,11 @@ TEXT;
  * logs the auto-generation in the audit trail.
  */
 function generateInitialDraft(mysqli $conn, int $caseId, array $case): void {
-    $fields = defaultEditableFields();
+    $fields = array_merge(defaultEditableFields(), [
+        'contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
+        'contact_info'   => HELPDESK_FIXED_CONTACT_INFO,
+        'staff_name'     => '',
+    ]);
     $body   = renderCaseEmailBody($case, $fields);
     $subject = "Acknowledgement of Your Request — {$case['reference_number']}";
     $fieldsJson = json_encode($fields, JSON_UNESCAPED_UNICODE);

@@ -312,6 +312,53 @@ $cases = $result->fetch_all(MYSQLI_ASSOC);
             font-size: 0.9em;
         }
 
+        .hd-field-group {
+            margin-bottom: 4px;
+        }
+
+        .hd-field-group label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .hd-radio-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .hd-radio-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .hd-radio-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .hd-editable-fields input[type="number"] {
+            max-width: 140px;
+        }
+
+        .hd-fixed-value {
+            background: var(--bg-light);
+            border: 1px dashed var(--border-soft);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.9em;
+            color: #5a6b60;
+        }
+
         .hd-modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -423,7 +470,7 @@ $cases = $result->fetch_all(MYSQLI_ASSOC);
 
 <!-- ================= Modal ================= -->
 <div class="hd-modal-overlay" id="hdModalOverlay">
-    <div class="hd-modal" id="hdModal">
+    <div class="hd-modal" id="hdModal" data-lenis-prevent>
         <div id="hdModalBody">Loading…</div>
     </div>
 </div>
@@ -441,6 +488,7 @@ function closeModal() {
     overlay.classList.remove('active');
     modalBody.innerHTML = '';
     currentCaseId = null;
+    document.body.style.overflow = '';
 }
 
 overlay.addEventListener('click', (e) => {
@@ -451,6 +499,7 @@ async function openCase(caseId) {
     currentCaseId = caseId;
     modalBody.innerHTML = 'Loading…';
     overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 
     try {
         const res = await fetch(`/HTML/helpdesk_case_detail.php?id=${caseId}`);
@@ -459,20 +508,20 @@ async function openCase(caseId) {
             modalBody.innerHTML = `<div class="hd-modal-msg error">${data.error || 'Could not load this ticket.'}</div>`;
             return;
         }
-        renderModal(data.case, data.draft);
+        renderModal(data.case, data.draft, {
+            current_user_name: data.current_user_name,
+            fixed_contact_person: data.fixed_contact_person,
+            fixed_contact_info: data.fixed_contact_info
+        });
     } catch (err) {
         modalBody.innerHTML = '<div class="hd-modal-msg error">Connection error. Please try again.</div>';
     }
 }
 
-function renderModal(c, draft) {
+function renderModal(c, draft, meta) {
     const fields = (draft && draft.editable_fields) ? draft.editable_fields : {};
-    const fieldRows = Object.keys(fields).length
-        ? Object.entries(fields).map(([key, val]) => `
-            <label for="ef_${key}">${key.replace(/_/g, ' ')}</label>
-            <textarea id="ef_${key}" data-field="${key}" rows="3">${escapeHtml(val)}</textarea>
-        `).join('')
-        : '<p style="color:#888; font-size:0.85em;">No editable fields defined for this draft yet.</p>';
+    const classification = fields.classification === 'Complex' ? 'Complex' : 'Simple';
+    const slaDays = fields.sla_days || 15;
 
     modalBody.innerHTML = `
         <h2>${escapeHtml(c.reference_number)}</h2>
@@ -500,7 +549,44 @@ Type: ${escapeHtml(c.request_type)}
 
         <div class="hd-modal-section">
             <h3>Editable Fields</h3>
-            <div class="hd-editable-fields">${fieldRows}</div>
+            <div class="hd-editable-fields">
+
+                <div class="hd-field-group">
+                    <label>Classification</label>
+                    <div class="hd-radio-row">
+                        <label class="hd-radio-option">
+                            <input type="radio" name="ef_classification" value="Simple" ${classification === 'Simple' ? 'checked' : ''}>
+                            Simple
+                        </label>
+                        <label class="hd-radio-option">
+                            <input type="radio" name="ef_classification" value="Complex" ${classification === 'Complex' ? 'checked' : ''}>
+                            Complex
+                        </label>
+                    </div>
+                </div>
+
+                <div class="hd-field-group">
+                    <label for="ef_sla_days">Timeline (SLA) — days</label>
+                    <input type="number" id="ef_sla_days" min="1" step="1" value="${escapeHtml(String(slaDays))}"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="hd-field-group">
+                    <label>Staff Name (auto-filled)</label>
+                    <div class="hd-fixed-value">${escapeHtml(meta.current_user_name || 'Unknown user')}</div>
+                </div>
+
+                <div class="hd-field-group">
+                    <label>Contact Person (fixed)</label>
+                    <div class="hd-fixed-value">${escapeHtml(meta.fixed_contact_person)}</div>
+                </div>
+
+                <div class="hd-field-group">
+                    <label>Contact Number (fixed)</label>
+                    <div class="hd-fixed-value">${escapeHtml(meta.fixed_contact_info)}</div>
+                </div>
+
+            </div>
         </div>
 
         <div id="hdModalMsg" class="hd-modal-msg"></div>
@@ -514,11 +600,9 @@ Type: ${escapeHtml(c.request_type)}
 }
 
 function collectEditableFields() {
-    const fields = {};
-    document.querySelectorAll('[data-field]').forEach(el => {
-        fields[el.dataset.field] = el.value;
-    });
-    return fields;
+    const classification = document.querySelector('input[name="ef_classification"]:checked')?.value || 'Simple';
+    const slaDays = parseInt(document.getElementById('ef_sla_days')?.value, 10) || 1;
+    return { classification, sla_days: slaDays };
 }
 
 function showMsg(text, isError) {

@@ -1,6 +1,7 @@
 <?php
 require "config.php";
 require_once "permissions.php";
+require_once "helpdesk_draft_generator.php";
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] < 3) {
@@ -46,4 +47,11 @@ if ($draftRow) {
     ];
 }
 
-echo json_encode(['ok' => true, 'case' => $case, 'draft' => $draft]);
+echo json_encode([
+    'ok' => true,
+    'case' => $case,
+    'draft' => $draft,
+    'current_user_name' => $_SESSION['username'] ?? '',
+    'fixed_contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
+    'fixed_contact_info' => HELPDESK_FIXED_CONTACT_INFO,
+]);

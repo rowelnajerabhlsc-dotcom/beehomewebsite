@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
 
 $input = json_decode(file_get_contents('php://input'), true);
 $caseId = (int)($input['case_id'] ?? 0);
-$fields = $input['editable_fields'] ?? [];
+$clientFields = $input['editable_fields'] ?? [];
 $userId = (int)$_SESSION['user_id'];
 $role   = (int)$_SESSION['role'];
 
@@ -21,6 +21,23 @@ if ($caseId <= 0) {
     echo json_encode(['ok' => false, 'error' => 'Invalid ticket.']);
     exit();
 }
+
+/* Only classification and sla_days are ever taken from the client.
+   staff_name and contact details are set server-side, never trusted
+   from the request body. */
+$classification = ($clientFields['classification'] ?? '') === 'Complex' ? 'Complex' : 'Simple';
+$slaDays = (int)($clientFields['sla_days'] ?? 15);
+if ($slaDays < 1) { $slaDays = 1; }
+
+$staffName = $_SESSION['username'] ?? '';
+
+$fields = [
+    'classification' => $classification,
+    'sla_days'       => $slaDays,
+    'contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
+    'contact_info'   => HELPDESK_FIXED_CONTACT_INFO,
+    'staff_name'     => $staffName,
+];
 
 $stmt = $conn->prepare("SELECT * FROM helpdesk_cases WHERE id = ?");
 $stmt->bind_param("i", $caseId);
@@ -45,8 +62,8 @@ if (empty($case['member_email']) || !filter_var($case['member_email'], FILTER_VA
 /* Merge admin-edited fields into the template to produce the final body. */
 $finalBody = renderCaseEmailBody($case, $fields);
 
-if (empty($fields['staff_name']) || empty($fields['contact_person']) || empty($fields['contact_info'])) {
-    echo json_encode(['ok' => false, 'error' => 'Please fill in staff name and contact details before sending.']);
+if (empty($staffName)) {
+    echo json_encode(['ok' => false, 'error' => 'Could not identify the logged-in staff member. Please log in again.']);
     exit();
 }
 
