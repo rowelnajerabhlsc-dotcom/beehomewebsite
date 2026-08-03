@@ -133,6 +133,8 @@ if ($params) {
 }
 $stmt->execute();
 $result = $stmt->get_result();
+$requests = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
 /* =========================================================
    FLEET DATA
@@ -290,7 +292,7 @@ function would_exceed_capacity($conn, $id, $fromDate, $untilDate, $totalVehicles
             <th>Submitted</th>
             <th>Actions</th>
         </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
+        <?php foreach ($requests as $row): ?>
         <tr>
             <td><?= (int)$row['id']; ?></td>
             <td><?= htmlspecialchars($row['business_name']); ?></td>
@@ -332,7 +334,7 @@ function would_exceed_capacity($conn, $id, $fromDate, $untilDate, $totalVehicles
                 <?php endif; ?>
             </td>
         </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
     </table>
 </div>
 
