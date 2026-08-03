@@ -215,7 +215,7 @@ function is_manager_or_admin() {
     .warn-badge {
         display: inline-block; margin-top: 4px; padding: 3px 8px; border-radius: 50px;
         background: #fff0e0; color: #a15c00; font-size: 0.75em; font-weight: 600;
-    }
+    } 
     .error-banner {
         background: #fdeaea; border: 1px solid #a12626; color: #a12626;
         padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-weight: 600;
