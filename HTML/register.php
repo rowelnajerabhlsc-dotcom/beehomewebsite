@@ -9,7 +9,7 @@ require "reg_token_check.php"; // gates access — exits with unable_to_register
     <title>Register</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
-
+    <link rel="icon" href="IMAGES/logo.png">
     <style>
         .alert {
             padding: 10px;

@@ -13,6 +13,7 @@ if (isset($_SESSION['must_login'])) {
     <title>Login</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="icon" href="IMAGES/logo.png">
 </head>
 <body>
 

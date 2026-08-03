@@ -1,4 +1,12 @@
-<?php session_start(); ?>
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (isset($_SESSION['user_id'])) {
+    header('Location: /');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 

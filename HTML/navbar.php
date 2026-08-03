@@ -81,8 +81,10 @@ $active_page = $nav_pages[$current_page] ?? '';
         <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products &
                 Services</a></li>
 
-        <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower
-                Request</a></li>
+        <?php if (!isset($_SESSION['user_id'])): ?>
+            <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower
+                    Request</a></li>
+        <?php endif; ?>
 
         <!-- Membership -->
         <li>
