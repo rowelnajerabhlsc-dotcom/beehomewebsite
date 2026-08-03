@@ -31,6 +31,20 @@ $stmt = $conn->prepare(
 $stmt->bind_param("ii", $per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
+
+/* ---- TEMP DEBUG: remove once row count is confirmed ---- */
+if (isset($_GET['debug'])) {
+    echo "<pre>";
+    echo "total_rows (COUNT query): " . $total_rows . "\n";
+    echo "total_pages: " . $total_pages . "\n";
+    echo "page: " . $page . " | offset: " . $offset . " | per_page: " . $per_page . "\n";
+    echo "result->num_rows (this page): " . $result->num_rows . "\n";
+    $check = $conn->query("SELECT COUNT(*) c FROM manpower_requests");
+    echo "raw COUNT(*) direct query: " . $check->fetch_assoc()['c'] . "\n";
+    echo "connected database: " . $conn->query("SELECT DATABASE() d")->fetch_assoc()['d'] . "\n";
+    echo "</pre>";
+}
+/* ---------------------------------------------------------- */
 ?>
 
 <!DOCTYPE html>
@@ -44,6 +58,36 @@ $result = $stmt->get_result();
 <link rel="stylesheet" href="../CSS/home.css">
 <link rel="stylesheet" href="../CSS/manpower-request-logs.css">
 <link rel="icon" href="IMAGES/logo.png">
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        margin: 24px 0;
+        flex-wrap: wrap;
+    }
+    .pagination .page-link {
+        display: inline-block;
+        padding: 8px 14px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .pagination .page-link:hover {
+        background-color: #f0f0f0;
+    }
+    .pagination .page-link.active {
+        background-color: #333;
+        color: #fff;
+        border-color: #333;
+        font-weight: bold;
+    }
+</style>
 
 </head>
 <body>
