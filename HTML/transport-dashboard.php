@@ -227,28 +227,34 @@ function would_exceed_capacity($conn, $id, $fromDate, $untilDate, $totalVehicles
         </tr>
         <?php foreach ($vehicles as $v): ?>
         <tr>
-            <form method="POST">
-                <td>
-                    <input type="hidden" name="vehicle_action" value="update">
-                    <input type="hidden" name="vehicle_id" value="<?= (int)$v['id']; ?>">
-                    <input type="text" name="name" value="<?= htmlspecialchars($v['name']); ?>" required style="width:90%;">
-                </td>
-                <td><input type="number" name="quantity" min="0" value="<?= (int)$v['quantity']; ?>" required style="width:70px;"></td>
-                <td>
-                    <button type="submit" class="action-btn approve">Save</button>
-            </form>
-            <form method="POST" style="display:inline;" onsubmit="return confirm('Remove this vehicle type?')">
-                <input type="hidden" name="vehicle_action" value="delete">
-                <input type="hidden" name="vehicle_id" value="<?= (int)$v['id']; ?>">
-                    <button type="submit" class="action-btn delete">Delete</button>
-                </td>
-            </form>
+            <td>
+                <input type="text" name="name" form="vform-<?= (int)$v['id']; ?>" value="<?= htmlspecialchars($v['name']); ?>" required style="width:90%;">
+            </td>
+            <td>
+                <input type="number" name="quantity" form="vform-<?= (int)$v['id']; ?>" min="0" value="<?= (int)$v['quantity']; ?>" required style="width:70px;">
+            </td>
+            <td>
+                <button type="submit" form="vform-<?= (int)$v['id']; ?>" class="action-btn approve">Save</button>
+                <button type="submit" form="vdelform-<?= (int)$v['id']; ?>" class="action-btn delete">Delete</button>
+            </td>
         </tr>
         <?php endforeach; ?>
         <?php if (empty($vehicles)): ?>
         <tr><td colspan="3" style="color:#999;">No vehicle types configured yet.</td></tr>
         <?php endif; ?>
     </table>
+
+    <?php foreach ($vehicles as $v): ?>
+        <form id="vform-<?= (int)$v['id']; ?>" method="POST" style="display:none;">
+            <input type="hidden" name="vehicle_action" value="update">
+            <input type="hidden" name="vehicle_id" value="<?= (int)$v['id']; ?>">
+        </form>
+        <form id="vdelform-<?= (int)$v['id']; ?>" method="POST" style="display:none;"
+              onsubmit="return confirm('Remove this vehicle type?')">
+            <input type="hidden" name="vehicle_action" value="delete">
+            <input type="hidden" name="vehicle_id" value="<?= (int)$v['id']; ?>">
+        </form>
+    <?php endforeach; ?>
 
     <form method="POST" style="display:flex; gap:8px; align-items:center;">
         <input type="hidden" name="vehicle_action" value="add">
