@@ -1,25 +1,34 @@
 <?php
 session_start();
-include "config.php";
+include "config.php";       // provides $conn (mysqli)
 include "permissions.php";
 
 /* ACCESS CONTROL - Require at least Manager role */
 require_role(3);
 
-/* DATABASE CONNECTION */
-$host = "localhost:3306";
-$user = "kwchy8j4554l";
-$password = "Be3home@2026";
-$database = "beehome";
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+$per_page = 10;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $per_page;
 
-$conn = new mysqli($host, $user, $password, $database);
+/* Total row count (for total pages) */
+$count_result = $conn->query("SELECT COUNT(*) AS total FROM manpower_requests");
+$total_rows   = $count_result ? (int)$count_result->fetch_assoc()['total'] : 0;
+$total_pages  = max(1, (int)ceil($total_rows / $per_page));
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+/* Clamp page to valid range in case of a stale/manual ?page= value */
+if ($page > $total_pages) {
+    $page   = $total_pages;
+    $offset = ($page - 1) * $per_page;
 }
 
-/* FETCH REQUESTS */
-$stmt = $conn->prepare("SELECT * FROM manpower_requests ORDER BY id DESC");
+/* FETCH REQUESTS (paginated) */
+$stmt = $conn->prepare(
+    "SELECT * FROM manpower_requests ORDER BY id DESC LIMIT ? OFFSET ?"
+);
+$stmt->bind_param("ii", $per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -51,37 +60,40 @@ $result = $stmt->get_result();
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Company</th>
+                    <th>Business Name</th>
+                    <th>Contact Person</th>
+                    <th>Position (Contact)</th>
                     <th>Email</th>
-                    <th>Phone</th>
-                    <th>Position</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Duration</th>
-                    <th>Workers Requested</th>
-                    <th>Rate</th>
-                    <th>Total</th>
-                    <th>Status</th>
+                    <th>Telephone</th>
+                    <th>Fax</th>
+                    <th>Website</th>
+                    <th>Requested Position</th>
+                    <th># Required</th>
+                    <th>Job Description</th>
+                    <th>Place of Assignment</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
+                <?php if ($result->num_rows === 0): ?>
                 <tr>
-                    <td><?= $row['id']; ?></td>
-                    <td><?= htmlspecialchars($row['name']); ?></td>
-                    <td><?= htmlspecialchars($row['company']); ?></td>
-                    <td><?= htmlspecialchars($row['email']); ?></td>
-                    <td><?= htmlspecialchars($row['phone']); ?></td>
+                    <td colspan="12" style="text-align:center;">No manpower requests found.</td>
+                </tr>
+                <?php else: ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= (int)$row['id']; ?></td>
+                    <td><?= htmlspecialchars($row['business_name']); ?></td>
+                    <td><?= htmlspecialchars($row['contact_person']); ?></td>
                     <td><?= htmlspecialchars($row['position']); ?></td>
-                    <td><?= htmlspecialchars($row['start_date']); ?></td>
-                    <td><?= htmlspecialchars($row['end_date']); ?></td>
-                    <td><?= htmlspecialchars($row['duration']); ?></td>
-                    <td><?= htmlspecialchars($row['workers_requested']); ?></td>
-                    <td><?= htmlspecialchars($row['rate']); ?></td>
-                    <td><?= htmlspecialchars($row['total']); ?></td>
-                    <td><?= htmlspecialchars($row['status']); ?></td>
+                    <td><?= htmlspecialchars($row['email']); ?></td>
+                    <td><?= htmlspecialchars($row['telephone']); ?></td>
+                    <td><?= htmlspecialchars($row['fax']); ?></td>
+                    <td><?= htmlspecialchars($row['website']); ?></td>
+                    <td><?= htmlspecialchars($row['req_position']); ?></td>
+                    <td><?= (int)$row['number_required']; ?></td>
+                    <td><?= nl2br(htmlspecialchars($row['job_description'])); ?></td>
+                    <td><?= nl2br(htmlspecialchars($row['assignment_place'])); ?></td>
                     <td>
                         <?php if (is_manager_or_admin()): ?>
                         <a href="delete-manpower.php?id=<?= (int)$row['id']; ?>"
@@ -92,8 +104,30 @@ $result = $stmt->get_result();
                     </td>
                 </tr>
                 <?php endwhile; ?>
+                <?php endif; ?>
             </tbody>
         </table>
+
+        <?php if ($total_pages > 1): ?>
+        <div class="pagination">
+
+            <?php if ($page > 1): ?>
+                <a href="?page=<?= $page - 1 ?>" class="page-link">&laquo; Prev</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="?page=<?= $i ?>"
+                   class="page-link <?= $i === $page ? 'active' : '' ?>">
+                   <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="?page=<?= $page + 1 ?>" class="page-link">Next &raquo;</a>
+            <?php endif; ?>
+
+        </div>
+        <?php endif; ?>
 
     </div>
 
@@ -107,5 +141,6 @@ $result = $stmt->get_result();
 </html>
 
 <?php
+$stmt->close();
 $conn->close();
 ?>

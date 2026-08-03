@@ -127,7 +127,7 @@ if ($stmt->execute()) {
 
     echo "<script>
         alert('Manpower request submitted successfully!');
-        window.location.href = '/manpower_request.php';
+        window.location.href = '/manpower_request';
     </script>";
 
 } else {
