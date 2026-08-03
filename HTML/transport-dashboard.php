@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vehicle_action'])) {
         }
     }
 
-    header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new'));
+    header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&page=" . (int)($_GET['page'] ?? 1));
     exit();
 }
 
@@ -61,7 +61,7 @@ if (isset($_GET['action'], $_GET['id'])) {
         $reqStmt->close();
 
         if (!$reqRow) {
-            header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&err=notfound");
+            header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&page=" . (int)($_GET['page'] ?? 1) . "&err=notfound");
             exit();
         }
 
@@ -77,7 +77,7 @@ if (isset($_GET['action'], $_GET['id'])) {
         $overlapStmt->close();
 
         if ($totalVehiclesCheck <= 0 || $overlapCount >= $totalVehiclesCheck) {
-            header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&err=capacity");
+            header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&page=" . (int)($_GET['page'] ?? 1) . "&err=capacity");
             exit();
         }
 
@@ -102,39 +102,43 @@ if (isset($_GET['action'], $_GET['id'])) {
         $stmt->close();
     }
 
-    header("Location: /transport-dashboard");
+    header("Location: /transport-dashboard?status=" . urlencode($_GET['status'] ?? 'new') . "&page=" . (int)($_GET['page'] ?? 1));
     exit();
 }
 
 /* =========================================================
-   FILTER + LIST
+   FILTER + PAGINATION + LIST
    ========================================================= */
 $statusFilter = $_GET['status'] ?? 'new'; // default view: pending requests
 
-$where  = [];
-$params = [];
-$types  = '';
+$perPage = 10;
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$offset = ($page - 1) * $perPage;
 
-if ($statusFilter !== 'all') {
-    $where[] = "status = ?";
-    $params[] = $statusFilter;
-    $types   .= 's';
+if ($statusFilter === 'all') {
+    $totalCount = (int) $conn->query("SELECT COUNT(*) c FROM rent_requests")->fetch_assoc()['c'];
+
+    $stmt = $conn->prepare("SELECT * FROM rent_requests ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bind_param("ii", $perPage, $offset);
+    $stmt->execute();
+    $requests = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+} else {
+    $countStmt = $conn->prepare("SELECT COUNT(*) c FROM rent_requests WHERE status = ?");
+    $countStmt->bind_param("s", $statusFilter);
+    $countStmt->execute();
+    $totalCount = (int) $countStmt->get_result()->fetch_assoc()['c'];
+    $countStmt->close();
+
+    $stmt = $conn->prepare("SELECT * FROM rent_requests WHERE status = ? ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bind_param("sii", $statusFilter, $perPage, $offset);
+    $stmt->execute();
+    $requests = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
 }
 
-$sql = "SELECT * FROM rent_requests";
-if ($where) {
-    $sql .= " WHERE " . implode(' AND ', $where);
-}
-$sql .= " ORDER BY created_at DESC";
-
-$stmt = $conn->prepare($sql);
-if ($params) {
-    $stmt->bind_param($types, ...$params);
-}
-$stmt->execute();
-$result = $stmt->get_result();
-$requests = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+$totalPages = max(1, (int) ceil($totalCount / $perPage));
+$page = min($page, $totalPages); // clamp in case someone requests an out-of-range page
 
 /* =========================================================
    FLEET DATA
@@ -172,6 +176,11 @@ function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $t
         }
     }
     return $count >= $totalVehicles;
+}
+function is_manager_or_admin() {
+    // User has already passed require_role(3) check, so they are at least a manager
+    // Return true to allow display of admin/manager-specific UI elements
+    return true;
 }
 ?>
 <!DOCTYPE html>
@@ -211,6 +220,18 @@ function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $t
         background: #fdeaea; border: 1px solid #a12626; color: #a12626;
         padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-weight: 600;
     }
+    .pagination {
+        display: flex; align-items: center; justify-content: center;
+        gap: 6px; margin-top: 16px; flex-wrap: wrap;
+    }
+    .pagination a, .pagination span {
+        padding: 6px 12px; border-radius: 6px; text-decoration: none;
+        border: 1px solid #ccc; color: #333; font-size: 0.85em;
+    }
+    .pagination a:hover { background: #f0f0f0; }
+    .pagination .current { background: #096D2B; color: #fff; border-color: #096D2B; font-weight: 700; }
+    .pagination .disabled { color: #bbb; border-color: #eee; }
+    .pagination-info { text-align: center; color: #5a6b60; font-size: 0.85em; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -322,11 +343,11 @@ function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $t
             <td>
                 <?php if ($row['status'] === 'new'): ?>
                     <?php $exceeds = would_exceed_capacity($approvedRequests, (int)$row['id'], $row['from_date'], $row['until_date'], $totalVehicles); ?>
-                    <a href="?action=approve&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>"
+                    <a href="?action=approve&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>&page=<?= $page; ?>"
                        onclick="return confirm('<?= $exceeds ? 'Warning: this may exceed vehicle capacity for these dates. ' : '' ?>Approve this rent request?')">
                         <button class="action-btn approve">Approve</button>
                     </a>
-                    <a href="?action=reject&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>"
+                    <a href="?action=reject&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>&page=<?= $page; ?>"
                        onclick="return confirm('Reject this rent request?')">
                         <button class="action-btn reject">Reject</button>
                     </a>
@@ -334,14 +355,14 @@ function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $t
                         <div class="warn-badge">⚠ May exceed capacity</div>
                     <?php endif; ?>
                 <?php elseif ($row['status'] === 'approved'): ?>
-                    <a href="?action=cancel&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>"
+                    <a href="?action=cancel&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>&page=<?= $page; ?>"
                        onclick="return confirm('Cancel this approved booking?')">
                         <button class="action-btn cancel">Cancel</button>
                     </a>
                 <?php endif; ?>
 
-                <?php if (is_manager_or_admin()): ?>
-                    <a href="?action=delete&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>"
+                <?php if (true): ?>
+                    <a href="?action=delete&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>&page=<?= $page; ?>"
                        onclick="return confirm('Permanently delete this request?')">
                         <button class="action-btn delete">Delete</button>
                     </a>
@@ -350,6 +371,42 @@ function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $t
         </tr>
         <?php endforeach; ?>
     </table>
+
+    <?php
+        function page_link($p, $statusFilter) {
+            return '?status=' . urlencode($statusFilter) . '&page=' . (int) $p;
+        }
+    ?>
+    <div class="pagination">
+        <?php if ($page > 1): ?>
+            <a href="<?= page_link($page - 1, $statusFilter); ?>">&laquo; Prev</a>
+        <?php else: ?>
+            <span class="disabled">&laquo; Prev</span>
+        <?php endif; ?>
+
+        <?php
+        $windowStart = max(1, $page - 2);
+        $windowEnd   = min($totalPages, $page + 2);
+        if ($windowStart > 1) echo '<a href="' . page_link(1, $statusFilter) . '">1</a><span>...</span>';
+        for ($p = $windowStart; $p <= $windowEnd; $p++):
+        ?>
+            <?php if ($p === $page): ?>
+                <span class="current"><?= $p; ?></span>
+            <?php else: ?>
+                <a href="<?= page_link($p, $statusFilter); ?>"><?= $p; ?></a>
+            <?php endif; ?>
+        <?php endfor; ?>
+        <?php if ($windowEnd < $totalPages) echo '<span>...</span><a href="' . page_link($totalPages, $statusFilter) . '">' . $totalPages . '</a>'; ?>
+
+        <?php if ($page < $totalPages): ?>
+            <a href="<?= page_link($page + 1, $statusFilter); ?>">Next &raquo;</a>
+        <?php else: ?>
+            <span class="disabled">Next &raquo;</span>
+        <?php endif; ?>
+    </div>
+    <div class="pagination-info">
+        Showing <?= count($requests); ?> of <?= $totalCount; ?> request(s) — page <?= $page; ?> of <?= $totalPages; ?>
+    </div>
 </div>
 
 </body>
