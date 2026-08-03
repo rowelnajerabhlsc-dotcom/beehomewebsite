@@ -143,20 +143,34 @@ $vehicles = $conn->query("SELECT * FROM vehicles ORDER BY name ASC")->fetch_all(
 $totalVehicles = 0;
 foreach ($vehicles as $v) { $totalVehicles += (int) $v['quantity']; }
 
+
+$approvedRequests = [];
+if ($statusFilter === 'new' || $statusFilter === 'all') {
+    $approvedStmt = $conn->query("SELECT id, from_date, until_date FROM rent_requests WHERE status = 'approved'");
+    $approvedRequests = $approvedStmt->fetch_all(MYSQLI_ASSOC);
+    $approvedStmt->close();
+}
+
 /* =========================================================
    CAPACITY WARNING per row (only meaningful for pending requests):
    would approving this request exceed capacity for any date it covers?
    ========================================================= */
-function would_exceed_capacity($conn, $id, $fromDate, $untilDate, $totalVehicles) {
-    if ($totalVehicles <= 0) return true;
-    $stmt = $conn->prepare(
-        "SELECT COUNT(*) c FROM rent_requests
-         WHERE status = 'approved' AND id != ? AND from_date <= ? AND until_date >= ?"
-    );
-    $stmt->bind_param("iss", $id, $untilDate, $fromDate);
-    $stmt->execute();
-    $count = (int) $stmt->get_result()->fetch_assoc()['c'];
-    $stmt->close();
+function would_exceed_capacity($approvedRequests, $id, $fromDate, $untilDate, $totalVehicles) {
+    if ($totalVehicles <= 0) {
+        return true;
+    }
+    $count = 0;
+    foreach ($approvedRequests as $appr) {
+        if ((int)$appr['id'] === (int)$id) {
+            continue;
+        }
+        // Check if the approved request overlaps with the request in question
+        // Overlap: [from_date, until_date] overlaps with [$fromDate, $untilDate]
+        // Condition: approved.from_date <= $untilDate && approved.until_date >= $fromDate
+        if ($appr['from_date'] <= $untilDate && $appr['until_date'] >= $fromDate) {
+            $count++;
+        }
+    }
     return $count >= $totalVehicles;
 }
 ?>
@@ -307,7 +321,7 @@ function would_exceed_capacity($conn, $id, $fromDate, $untilDate, $totalVehicles
             <td><?= htmlspecialchars($row['created_at']); ?></td>
             <td>
                 <?php if ($row['status'] === 'new'): ?>
-                    <?php $exceeds = would_exceed_capacity($conn, (int)$row['id'], $row['from_date'], $row['until_date'], $totalVehicles); ?>
+                    <?php $exceeds = would_exceed_capacity($approvedRequests, (int)$row['id'], $row['from_date'], $row['until_date'], $totalVehicles); ?>
                     <a href="?action=approve&id=<?= (int)$row['id']; ?>&status=<?= urlencode($statusFilter); ?>"
                        onclick="return confirm('<?= $exceeds ? 'Warning: this may exceed vehicle capacity for these dates. ' : '' ?>Approve this rent request?')">
                         <button class="action-btn approve">Approve</button>
