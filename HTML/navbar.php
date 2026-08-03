@@ -133,20 +133,6 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                         <a href="/dashboard">Dashboard</a>
 
-                        <a href="/records">Records</a>
-
-                        <a href="/manpower-request-logs">Manpower Request Logs</a>
-
-                        <a href="/helpdesk_dashboard">Consumer Assistance Dashboard</a>
-
-                        <a href="/transport-dashboard">Transport Requests</a>
-
-                    <?php endif; ?>
-
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 4): ?>
-
-                        <a href="/generate_reg_link">Generate Registration Link</a>
-
                     <?php endif; ?>
 
                     <a href="/logout">Logout</a>
