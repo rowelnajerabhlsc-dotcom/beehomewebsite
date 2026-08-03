@@ -47,6 +47,30 @@ $manpowerTrend  = monthly_counts($conn, 'manpower_requests', 'created_at');
 $helpdeskTrend  = monthly_counts($conn, 'helpdesk_cases', 'created_at');
 $transportTrend = monthly_counts($conn, 'rent_requests', 'created_at');
 
+/* Build one sorted, deduplicated month axis, then fill each dataset
+   against it (0 where a module had no activity that month). This keeps
+   json_encode() emitting real arrays (not objects with gapped keys)
+   and keeps every dataset correctly aligned to the same labels. */
+$allMonths = array_unique(array_merge(
+    array_keys($manpowerTrend),
+    array_keys($helpdeskTrend),
+    array_keys($transportTrend)
+));
+sort($allMonths);
+$allMonths = array_values($allMonths);
+
+function align_to_months(array $trend, array $months): array {
+    $out = [];
+    foreach ($months as $m) {
+        $out[] = $trend[$m] ?? 0;
+    }
+    return $out;
+}
+
+$manpowerTrendAligned  = align_to_months($manpowerTrend, $allMonths);
+$helpdeskTrendAligned  = align_to_months($helpdeskTrend, $allMonths);
+$transportTrendAligned = align_to_months($transportTrend, $allMonths);
+
 /* =========================================================
    STATUS BREAKDOWNS
    ========================================================= */
@@ -246,11 +270,11 @@ const trendCtx = document.getElementById('trendChart');
 new Chart(trendCtx, {
     type: 'line',
     data: {
-        labels: <?= json_encode(array_unique(array_merge(array_keys($manpowerTrend), array_keys($helpdeskTrend), array_keys($transportTrend)))); ?>,
+        labels: <?= json_encode($allMonths); ?>,
         datasets: [
-            { label: 'Manpower', data: <?= json_encode(array_values($manpowerTrend)); ?>, borderColor: '#096D2B', backgroundColor: 'rgba(9,109,43,0.1)', tension: 0.3 },
-            { label: 'Helpdesk', data: <?= json_encode(array_values($helpdeskTrend)); ?>, borderColor: '#1c5a99', backgroundColor: 'rgba(28,90,153,0.1)', tension: 0.3 },
-            { label: 'Transport', data: <?= json_encode(array_values($transportTrend)); ?>, borderColor: '#a15c00', backgroundColor: 'rgba(161,92,0,0.1)', tension: 0.3 }
+            { label: 'Manpower', data: <?= json_encode($manpowerTrendAligned); ?>, borderColor: '#096D2B', backgroundColor: 'rgba(9,109,43,0.1)', tension: 0.3 },
+            { label: 'Helpdesk', data: <?= json_encode($helpdeskTrendAligned); ?>, borderColor: '#1c5a99', backgroundColor: 'rgba(28,90,153,0.1)', tension: 0.3 },
+            { label: 'Transport', data: <?= json_encode($transportTrendAligned); ?>, borderColor: '#a15c00', backgroundColor: 'rgba(161,92,0,0.1)', tension: 0.3 }
         ]
     },
     options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
