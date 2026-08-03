@@ -47,7 +47,7 @@ if (isset($_SESSION['user_id'])) {
 
         <h2>Manpower Request Form</h2>
 
-        <form action="submit-manpower.php" method="POST">
+        <form action="submit-manpower" method="POST">
 
             <div class="form-grid">
 
