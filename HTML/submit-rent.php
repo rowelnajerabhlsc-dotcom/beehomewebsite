@@ -71,7 +71,7 @@ if ($totalVehicles <= 0) {
 
 $checkStmt = $conn->prepare(
     "SELECT COUNT(*) AS cnt FROM rent_requests
-     WHERE status != 'cancelled' AND from_date <= ? AND until_date >= ?"
+     WHERE status = 'approved' AND from_date <= ? AND until_date >= ?"
 );
 $checkStmt->bind_param('ss', $untilDate, $fromDate);
 $checkStmt->execute();

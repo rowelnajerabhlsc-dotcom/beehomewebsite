@@ -9,6 +9,26 @@
   <link rel="stylesheet" href="../CSS/navbar.css">
   <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
   <link rel="stylesheet" href="../CSS/rent_request.css">
+  <style>
+    .legend-swatch.legend-pending {
+      background: repeating-linear-gradient(45deg, #d99a00, #d99a00 4px, #fff3d6 4px, #fff3d6 8px);
+      border: 1px solid #d99a00;
+    }
+    .day-cell.has-pending {
+      position: relative;
+    }
+    .day-cell.has-pending::after {
+      content: "";
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d99a00;
+    }
+  </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -115,6 +135,10 @@
         <div class="legend-item">
           <span class="legend-swatch legend-low"></span>
           <span class="legend-label">Last vehicle available</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-pending"></span>
+          <span class="legend-label">Pending requests (awaiting approval)</span>
         </div>
       </div>
     </section>
@@ -414,8 +438,10 @@
         const fromInput = document.getElementById('fromDate');
         const untilInput = document.getElementById('untilDate');
 
-        // Map of "YYYY-MM-DD" -> number of bookings covering that date.
+        // Map of "YYYY-MM-DD" -> number of APPROVED bookings covering that date (these block capacity).
         let dateCounts = new Map();
+        // Map of "YYYY-MM-DD" -> number of PENDING (awaiting approval) requests covering that date (info only).
+        let pendingCounts = new Map();
         // Total vehicles available for rent (sum of all vehicle quantities).
         let totalVehicles = 0;
 
@@ -452,6 +478,12 @@
           return remaining === 1;
         }
 
+        // A date has pending (not-yet-approved) requests — shown for info only,
+        // never blocks selection since only approved bookings count toward capacity.
+        function hasPending(dateKey) {
+          return (pendingCounts.get(dateKey) || 0) > 0;
+        }
+
         // True if ANY date within [fromStr, untilStr] is fully booked.
         function isRangeFullyBooked(fromStr, untilStr) {
           return expandRange(fromStr, untilStr).some(isFullyBooked);
@@ -473,6 +505,7 @@
             const data = await response.json();
             console.log('[availability] parsed data:', data);
             const counts = new Map();
+            const pending = new Map();
 
             (data.bookings || []).forEach(({ from, until }) => {
               expandRange(from, until).forEach(key => {
@@ -480,11 +513,19 @@
               });
             });
 
+            (data.pendingBookings || []).forEach(({ from, until }) => {
+              expandRange(from, until).forEach(key => {
+                pending.set(key, (pending.get(key) || 0) + 1);
+              });
+            });
+
             dateCounts = counts;
+            pendingCounts = pending;
             totalVehicles = Number(data.totalVehicles) || 0;
           } catch (error) {
             console.warn('[availability] failed to load booking data:', error);
             dateCounts = new Map();
+            pendingCounts = new Map();
             totalVehicles = 0;
           }
         }
@@ -521,6 +562,7 @@
             const dateKey = toDateKey(year, month, day);
             const fullyBooked = isFullyBooked(dateKey);
             const lowAvailability = isLowAvailability(dateKey);
+            const pending = hasPending(dateKey);
 
             if (fullyBooked) {
               dayCell.classList.add("booked");
@@ -530,6 +572,12 @@
               dayCell.classList.add("low-availability");
               dayCell.style.backgroundColor = "#e6c200";
               dayCell.title = "Only 1 vehicle remaining";
+            }
+
+            if (pending) {
+              dayCell.classList.add("has-pending");
+              const pendingNote = "Has request(s) pending approval";
+              dayCell.title = dayCell.title ? `${dayCell.title} \u2014 ${pendingNote}` : pendingNote;
             }
 
             if (cellDate < today) {

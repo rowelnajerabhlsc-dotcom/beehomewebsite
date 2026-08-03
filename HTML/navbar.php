@@ -39,6 +39,10 @@ $nav_pages = [
     '/HTML/manpower-request-logs.php' => 'profile',
     '/helpdesk_dashboard' => 'profile',
     '/HTML/helpdesk_dashboard.php' => 'profile',
+    '/dashboard' => 'profile',
+    '/HTML/dashboard.php' => 'profile',
+    '/transport-dashboard' => 'profile',
+    '/HTML/transport-dashboard.php' => 'profile',
 ];
 
 $active_page = $nav_pages[$current_page] ?? '';
@@ -127,11 +131,15 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] >= 3): ?>
 
+                        <a href="/dashboard">Dashboard</a>
+
                         <a href="/records">Records</a>
 
                         <a href="/manpower-request-logs">Manpower Request Logs</a>
 
                         <a href="/helpdesk_dashboard">Consumer Assistance Dashboard</a>
+
+                        <a href="/transport-dashboard">Transport Requests</a>
 
                     <?php endif; ?>
 
