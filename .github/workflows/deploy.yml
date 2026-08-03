@@ -22,5 +22,3 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         server-dir: ./public_html/
-        exclude: |
-          vendor/**
