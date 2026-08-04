@@ -103,14 +103,7 @@ while ($row = $lockoutTrend->fetch_assoc()) {
    against it (0 where a module had no activity that month). This keeps
    json_encode() emitting real arrays (not objects with gapped keys)
    and keeps every dataset correctly aligned to the same labels. */
-$allMonths = array_unique(array_merge(
-    array_keys($manpowerTrend),
-    array_keys($helpdeskTrend),
-    array_keys($transportTrend),
-    array_keys($loginTrendData),
-    array_keys($logoutTrendData),
-    array_keys($lockoutTrendData)
-));
+$allMonths = array_unique([...array_keys($manpowerTrend), ...array_keys($helpdeskTrend), ...array_keys($transportTrend), ...array_keys($loginTrendData), ...array_keys($logoutTrendData), ...array_keys($lockoutTrendData)]);
 sort($allMonths);
 $allMonths = array_values($allMonths);
 
@@ -182,61 +175,14 @@ if ($isAdmin) {
     );
     $adminData['auditLog'] = $auditRes ? $auditRes->fetch_all(MYSQLI_ASSOC) : [];
 
-    // Recent login activity (last 20 login/logout/lockout events) - with search and pagination
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    if ($page < 1) $page = 1;
-    $limit = 10;
-    $offset = ($page - 1) * $limit;
-
-    // Build WHERE clause for search
-    $where = '';
-    $params = [];
-    $types = '';
-    if ($search !== '') {
-        $where = "WHERE (u.username LIKE ? OR ul.email LIKE ?)";
-        $searchTerm = "%" . $search . "%";
-        $params = [$searchTerm, $searchTerm];
-        $types = 'ss';
-    }
-
-    // Count total rows
-    $countQuery = "SELECT COUNT(*) as total FROM user_logs ul LEFT JOIN users u ON u.id = ul.user_id $where";
-    $countStmt = $conn->prepare($countQuery);
-    if ($search !== '') {
-        $countStmt->bind_param($types, ...$params);
-    }
-    $countStmt->execute();
-    $countResult = $countStmt->get_result();
-    $countRow = $countResult->fetch_assoc();
-    $totalRows = $countRow['total'];
-    $totalPages = (int)ceil($totalRows / $limit);
-    $countStmt->close();
-
-    // Get paginated data
-    $dataQuery = "SELECT ul.event_type, ul.email, ul.ip_address, ul.created_at, u.username
-                 FROM user_logs ul
-                 LEFT JOIN users u ON u.id = ul.user_id
-                 $where
-                 ORDER BY ul.created_at DESC
-                 LIMIT ? OFFSET ?";
-    $dataStmt = $conn->prepare($dataQuery);
-    if ($search !== '') {
-        $types_with_limit = $types . 'ii';
-        $params_with_limit = array_merge($params, [$limit, $offset]);
-        $dataStmt->bind_param($types_with_limit, ...$params_with_limit);
-    } else {
-        $dataStmt->bind_param('ii', $limit, $offset);
-    }
-    $dataStmt->execute();
-    $recentActivityRes = $dataStmt->get_result();
-    $adminData['recentActivity'] = [];
-    if ($recentActivityRes) {
-        while ($row = $recentActivityRes->fetch_assoc()) {
-            $adminData['recentActivity'][] = $row;
-        }
-    }
-    $dataStmt->close();
+    // Recent login activity (last 20 login/logout/lockout events)
+    $recentActivityRes = $conn->query(
+        "SELECT ul.event_type, ul.email, ul.ip_address, ul.created_at, u.username
+         FROM user_logs ul
+         LEFT JOIN users u ON ul.user_id = u.id
+         ORDER BY ul.created_at DESC LIMIT 20"
+    );
+    $adminData['recentActivity'] = $recentActivityRes ? $recentActivityRes->fetch_all(MYSQLI_ASSOC) : [];
 }
 
 $conn->close();
@@ -289,7 +235,7 @@ $conn->close();
 
     .page-loader {
         text-align: center; color: var(--primary); font-weight: 600;
-        padding = 40px 0;
+        padding: 40px 0;
     }
     .page-content {
         background: #fff; border: 1px solid var(--border-soft); border-radius: 10px;
@@ -349,12 +295,12 @@ $conn->close();
     <div id="dashboardHome">
         <div class="kpi-grid">
             <div class="kpi-card"><div class="num"><?= $kpi['employees']; ?></div><div class="label">Total Employees</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div
-            <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div
-            <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div
-            <div class="kpi-card"><div class="num"><?= $kpi['logins_today']; ?></div><div class="label">Logins Today</div></div
-            <div class="kpi-card"><div class="num"><?= $kpi['logouts_today']; ?></div><div class="label">Logouts Today</div></div
-            <div class="kpi-card"><div class="num"><?= $kpi['lockouts_today']; ?></div><div class="label">Lockouts Today</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['logins_today']; ?></div><div class="label">Logins Today</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['logouts_today']; ?></div><div class="label">Logouts Today</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['lockouts_today']; ?></div><div class="label">Lockouts Today</div></div>
         </div>
 
         <div class="chart-grid">
@@ -410,16 +356,9 @@ $conn->close();
                     <td><?= htmlspecialchars($log['reference_number'] ?? '—'); ?></td>
                 </tr>
                 <?php endforeach; ?>
-            </table
+            </table>
 
             <h2 style="margin-top:20px;">Recent User Login Activity</h2>
-            <div style="margin-bottom: 10px;">
-                <form method="GET" style="display: flex; gap: 10px; align-items: center;">
-                    <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search by name or email" style="padding: 8px; width: 200px;">
-                    <button type="submit" style="padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
-                    <input type="hidden" name="page" value="1">
-                </form>
-            </div>
             <table>
                 <tr><th>Date</th><th>Event Type</th><th>User/Email</th><th>IP Address</th></tr>
                 <?php foreach ($adminData['recentActivity'] as $activity): ?>
@@ -439,22 +378,6 @@ $conn->close();
                 </tr>
                 <?php endforeach; ?>
             </table>
-            <div style="margin-top: 10px; text-align: center; color: #5a6b60; font-size: 0.9em;">
-                Showing <?= (($page-1)*$limit + 1) ?> to <?= min($page*$limit, $totalRows) ?> of <?= $totalRows ?> entries
-            </div>
-            <div style="margin-top: 10px; text-align: center;">
-                <?php if ($totalPages > 1): ?>
-                    <div>
-                        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                            <?php if ($p == $page): ?>
-                                <span style="margin: 0 5px; padding: 5px 10px; background: var(--primary); color: white; border-radius: 4px;"><?= $p ?></span>
-                            <?php else: ?>
-                                <a href="?search=<?= urlencode($search) ?>&page=<?= $p ?>" style="margin: 0 5px; padding: 5px 10px; background: #f0f0f0; border-radius: 4px; text-decoration: none;"><?= $p ?></a>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
         </div>
         <?php endif; ?>
 
@@ -555,7 +478,7 @@ new Chart(document.getElementById('roleChart'), {
     type: 'pie',
     data: {
         labels: <?= json_encode(array_keys($adminData['roleBreakdown'])); ?>,
-        datasets: [{ data: <?= json_encode(array_values($adminData['roleBreakdown'])); ?>, backgroundColor: ['#eef7ee','#eaf3fd','#fff6e0','#fdeaea'] }}
+        datasets: [{ data: <?= json_encode(array_values($adminData['roleBreakdown'])); ?>, backgroundColor: ['#eef7ee','#eaf3fd','#fff6e0','#fdeaea'] }]
     },
     options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
 });
