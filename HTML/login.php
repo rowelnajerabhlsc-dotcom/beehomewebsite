@@ -31,7 +31,7 @@ $lastLoginDisplay = isset($_COOKIE['last_login_time'])
 
 <?php include "navbar.php"; ?>
 
-<div class="auth-container">
+<div class="auth-container" style="min-height: 100dvh;">
     <div class="auth-card">
         <h1>Login</h1>
 
