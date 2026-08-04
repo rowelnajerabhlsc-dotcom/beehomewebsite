@@ -161,8 +161,19 @@ $conn->close();
     .quick-links a {
         background: var(--primary); color: #fff; text-decoration: none;
         padding: 10px 18px; border-radius: 50px; font-size: 0.9em; font-weight: 600;
+        border: 2px solid transparent;
     }
     .quick-links a:hover { background: var(--secondary); }
+    .quick-links a.ql-tab.active { background: #fff; color: var(--primary); border-color: var(--primary); }
+
+    .page-loader {
+        text-align: center; color: var(--primary); font-weight: 600;
+        padding: 40px 0;
+    }
+    .page-content {
+        background: #fff; border: 1px solid var(--border-soft); border-radius: 10px;
+        padding: 4px; box-shadow: var(--shadow); overflow: auto;
+    }
 
     .chart-grid {
         display: grid;
@@ -197,17 +208,21 @@ $conn->close();
     <h1>Dashboard</h1>
     <div class="dash-subtitle">Overview across Manpower, Consumer Assistance, and Transport</div>
 
-    <div class="quick-links">
-        <a href="/records">Records</a>
-        <a href="/manpower-request-logs">Manpower Logs</a>
-        <a href="/helpdesk_dashboard">Consumer Assistance</a>
-        <a href="/transport-dashboard">Transport Requests</a>
+    <div class="quick-links" id="quickLinks">
+        <a href="#" class="ql-tab active" data-target="dashboardHome">Dashboard</a>
+        <a href="/records" class="ql-tab" data-target="records">Records</a>
+        <a href="/manpower-request-logs" class="ql-tab" data-target="manpower-request-logs">Manpower Logs</a>
+        <a href="/helpdesk_dashboard" class="ql-tab" data-target="helpdesk_dashboard">Consumer Assistance</a>
+        <a href="/transport-dashboard" class="ql-tab" data-target="transport-dashboard">Transport Requests</a>
         <?php if ($isAdmin): ?>
-            <a href="/generate_reg_link">Generate Registration Link</a>
+            <a href="/generate_reg_link" class="ql-tab" data-target="generate_reg_link">Generate Registration Link</a>
         <?php endif; ?>
     </div>
 
-    <div class="kpi-grid">
+    <div id="pageLoader" class="page-loader" style="display:none;">Loading…</div>
+    <div id="pageContent" class="page-content" style="display:none;"></div>
+
+    <div id="dashboardHome">
         <div class="kpi-card"><div class="num"><?= $kpi['employees']; ?></div><div class="label">Total Employees</div></div>
         <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div>
         <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div>
@@ -262,6 +277,8 @@ $conn->close();
         </table>
     </div>
     <?php endif; ?>
+
+    </div><!-- /dashboardHome -->
 
 </div>
 
@@ -329,6 +346,75 @@ new Chart(document.getElementById('regChart'), {
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 <?php endif; ?>
+</script>
+
+<script>
+(function () {
+    const tabs = document.querySelectorAll('#quickLinks .ql-tab');
+    const dashboardHome = document.getElementById('dashboardHome');
+    const pageContent = document.getElementById('pageContent');
+    const pageLoader = document.getElementById('pageLoader');
+
+    function setActive(tab) {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+    }
+
+    function showDashboard() {
+        dashboardHome.style.display = '';
+        pageContent.style.display = 'none';
+        pageLoader.style.display = 'none';
+        pageContent.innerHTML = '';
+    }
+
+    async function loadPage(url, tab) {
+        dashboardHome.style.display = 'none';
+        pageContent.style.display = 'none';
+        pageLoader.style.display = '';
+
+        try {
+            const res = await fetch(url, { credentials: 'same-origin' });
+            if (!res.ok) throw new Error('Request failed: ' + res.status);
+            const html = await res.text();
+
+            pageContent.innerHTML = html;
+            pageLoader.style.display = 'none';
+            pageContent.style.display = '';
+
+            // Re-run any <script> tags injected via innerHTML (they don't execute by default).
+            pageContent.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                oldScript.replaceWith(newScript);
+            });
+        } catch (err) {
+            pageLoader.style.display = 'none';
+            pageContent.style.display = '';
+            pageContent.innerHTML = '<p style="padding:20px;color:#a12626;">Couldn\'t load this page (' + err.message + '). <a href="' + url + '">Open it directly instead</a>.</p>';
+        }
+
+        setActive(tab);
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = tab.getAttribute('href');
+
+            if (tab.dataset.target === 'dashboardHome') {
+                showDashboard();
+                setActive(tab);
+                return;
+            }
+
+            loadPage(url, tab);
+        });
+    });
+})();
 </script>
 
 </body>
