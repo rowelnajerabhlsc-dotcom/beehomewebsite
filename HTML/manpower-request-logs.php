@@ -87,6 +87,38 @@ if (isset($_GET['debug'])) {
         border-color: #333;
         font-weight: bold;
     }
+
+    /* Keep the table compact/scannable; full record is shown in the
+       View modal instead of cramming long text into every row */
+    .logs-container {
+        overflow-x: auto;
+    }
+    .logs-container td.truncate {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .actions-cell {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .modal-box dl {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        row-gap: 10px;
+        column-gap: 12px;
+    }
+    .modal-box dt {
+        font-weight: bold;
+        color: #555;
+    }
+    .modal-box dd {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
 </style>
 
 </head>
@@ -106,14 +138,10 @@ if (isset($_GET['debug'])) {
                     <th>ID</th>
                     <th>Business Name</th>
                     <th>Contact Person</th>
-                    <th>Position (Contact)</th>
                     <th>Email</th>
                     <th>Telephone</th>
-                    <th>Fax</th>
-                    <th>Website</th>
                     <th>Requested Position</th>
                     <th># Required</th>
-                    <th>Job Description</th>
                     <th>Place of Assignment</th>
                     <th>Actions</th>
                 </tr>
@@ -121,28 +149,40 @@ if (isset($_GET['debug'])) {
             <tbody>
                 <?php if ($result->num_rows === 0): ?>
                 <tr>
-                    <td colspan="12" style="text-align:center;">No manpower requests found.</td>
+                    <td colspan="9" style="text-align:center;">No manpower requests found.</td>
                 </tr>
                 <?php else: ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
                     <td><?= (int)$row['id']; ?></td>
-                    <td><?= htmlspecialchars($row['business_name']); ?></td>
-                    <td><?= htmlspecialchars($row['contact_person']); ?></td>
-                    <td><?= htmlspecialchars($row['position']); ?></td>
-                    <td><?= htmlspecialchars($row['email']); ?></td>
+                    <td class="truncate"><?= htmlspecialchars($row['business_name']); ?></td>
+                    <td class="truncate"><?= htmlspecialchars($row['contact_person']); ?></td>
+                    <td class="truncate"><?= htmlspecialchars($row['email']); ?></td>
                     <td><?= htmlspecialchars($row['telephone']); ?></td>
-                    <td><?= htmlspecialchars($row['fax']); ?></td>
-                    <td><?= htmlspecialchars($row['website']); ?></td>
-                    <td><?= htmlspecialchars($row['req_position']); ?></td>
+                    <td class="truncate"><?= htmlspecialchars($row['req_position']); ?></td>
                     <td><?= (int)$row['number_required']; ?></td>
-                    <td><?= nl2br(htmlspecialchars($row['job_description'])); ?></td>
-                    <td><?= nl2br(htmlspecialchars($row['assignment_place'])); ?></td>
-                    <td>
+                    <td class="truncate"><?= htmlspecialchars($row['assignment_place']); ?></td>
+                    <td class="actions-cell">
+                        <button type="button"
+                                class="btn-view"
+                                data-id="<?= (int)$row['id']; ?>"
+                                data-business_name="<?= htmlspecialchars($row['business_name']); ?>"
+                                data-contact_person="<?= htmlspecialchars($row['contact_person']); ?>"
+                                data-position="<?= htmlspecialchars($row['position']); ?>"
+                                data-email="<?= htmlspecialchars($row['email']); ?>"
+                                data-telephone="<?= htmlspecialchars($row['telephone']); ?>"
+                                data-fax="<?= htmlspecialchars($row['fax']); ?>"
+                                data-website="<?= htmlspecialchars($row['website']); ?>"
+                                data-req_position="<?= htmlspecialchars($row['req_position']); ?>"
+                                data-number_required="<?= (int)$row['number_required']; ?>"
+                                data-job_description="<?= htmlspecialchars($row['job_description']); ?>"
+                                data-assignment_place="<?= htmlspecialchars($row['assignment_place']); ?>">
+                            View
+                        </button>
                         <?php if (is_manager_or_admin()): ?>
                         <a href="delete-manpower.php?id=<?= (int)$row['id']; ?>"
                            onclick="return confirm('Delete this manpower request?')">
-                            <button class="action-btn delete">Delete</button>
+                            <button type="button" class="btn-delete">Delete</button>
                         </a>
                         <?php endif; ?>
                     </td>
@@ -177,8 +217,75 @@ if (isset($_GET['debug'])) {
 
 </div>
 
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewModalOverlay">
+    <div class="modal-box">
+        <h2>Manpower Request Details</h2>
+        <dl>
+            <dt>ID</dt><dd id="vm-id"></dd>
+            <dt>Business Name</dt><dd id="vm-business_name"></dd>
+            <dt>Contact Person</dt><dd id="vm-contact_person"></dd>
+            <dt>Position (Contact)</dt><dd id="vm-position"></dd>
+            <dt>Email</dt><dd id="vm-email"></dd>
+            <dt>Telephone</dt><dd id="vm-telephone"></dd>
+            <dt>Fax</dt><dd id="vm-fax"></dd>
+            <dt>Website</dt><dd id="vm-website"></dd>
+            <dt>Requested Position</dt><dd id="vm-req_position"></dd>
+            <dt># Required</dt><dd id="vm-number_required"></dd>
+            <dt>Job Description</dt><dd id="vm-job_description"></dd>
+            <dt>Place of Assignment</dt><dd id="vm-assignment_place"></dd>
+        </dl>
+        <button type="button" class="close-btn" id="vm-close">Close</button>
+    </div>
+</div>
+
 <script>
-// JavaScript for modals and interactivity would go here
+(function () {
+    var overlay = document.getElementById('viewModalOverlay');
+    var pageContent = document.getElementById('page-content');
+    var closeBtn = document.getElementById('vm-close');
+
+    var fields = [
+        'id', 'business_name', 'contact_person', 'position', 'email',
+        'telephone', 'fax', 'website', 'req_position', 'number_required',
+        'job_description', 'assignment_place'
+    ];
+
+    function openModal(dataset) {
+        fields.forEach(function (key) {
+            var el = document.getElementById('vm-' + key);
+            var value = dataset[key];
+            el.textContent = (value === undefined || value === '') ? '—' : value;
+        });
+        overlay.style.display = 'flex';
+        pageContent.classList.add('blur-background');
+    }
+
+    function closeModal() {
+        overlay.style.display = 'none';
+        pageContent.classList.remove('blur-background');
+    }
+
+    document.querySelectorAll('.btn-view').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            openModal(btn.dataset);
+        });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+
+    // Close when clicking the dimmed backdrop (not the modal box itself)
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.style.display === 'flex') {
+            closeModal();
+        }
+    });
+})();
 </script>
 
 </body>
