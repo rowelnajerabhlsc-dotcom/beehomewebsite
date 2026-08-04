@@ -31,17 +31,17 @@ if (isset($_GET['id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        header("Location: manpower-request-logs.php");
+        header("Location: /manpower-request-logs");
         exit();
     } else {
         $_SESSION['error'] = "Error deleting record: " . $stmt->error;
-        header("Location: manpower-request-logs.php");
+        header("Location: /manpower-request-logs");
         exit();
     }
 
     $stmt->close();
 } else {
-    header("Location: manpower-request-logs.php");
+    header("Location: /manpower-request-logs");
     exit();
 }
 

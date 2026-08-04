@@ -180,7 +180,7 @@ if (isset($_GET['debug'])) {
                             View
                         </button>
                         <?php if (($_SESSION['role'] ?? 0) >= 3): ?>
-                        <a href="delete-manpower.php?id=<?= (int)$row['id']; ?>"
+                        <a href="/delete-manpower?id=<?= (int)$row['id']; ?>"
                            onclick="return confirm('Delete this manpower request?')">
                             <button type="button" class="btn-delete">Delete</button>
                         </a>
