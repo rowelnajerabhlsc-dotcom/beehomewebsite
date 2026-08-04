@@ -167,22 +167,9 @@ if ($isAdmin) {
     $regExpired = $conn->query("SELECT COUNT(*) c FROM reg_tokens WHERE used=0 AND expires_at < NOW()")->fetch_assoc()['c'];
     $adminData['regTokens'] = ['total' => $regTotal, 'used' => $regUsed, 'expired' => $regExpired, 'active' => $regTotal - $regUsed - $regExpired];
 
-    $auditRes = $conn->query(
-        "SELECT a.action, a.user_role, a.created_at, c.reference_number
-         FROM helpdesk_audit_log a
-         LEFT JOIN helpdesk_cases c ON a.case_id = c.id
-         ORDER BY a.created_at DESC LIMIT 15"
-    );
-    $adminData['auditLog'] = $auditRes ? $auditRes->fetch_all(MYSQLI_ASSOC) : [];
-
-    // Recent login activity (last 20 login/logout/lockout events)
-    $recentActivityRes = $conn->query(
-        "SELECT ul.event_type, ul.email, ul.ip_address, ul.created_at, u.username
-         FROM user_logs ul
-         LEFT JOIN users u ON ul.user_id = u.id
-         ORDER BY ul.created_at DESC LIMIT 20"
-    );
-    $adminData['recentActivity'] = $recentActivityRes ? $recentActivityRes->fetch_all(MYSQLI_ASSOC) : [];
+    // Recent Helpdesk Audit Activity and Recent User Login Activity are now
+    // loaded live via dashboard_activity_api.php (search + pagination),
+    // so no need to pull them server-side here.
 }
 
 $conn->close();
@@ -268,6 +255,23 @@ $conn->close();
     .event-type-login-success { color: #28a745; font-weight: bold; }
     .event-type-logout { color: #6c757d; font-style: italic; }
     .event-type-lockout { color: #dc3545; font-weight: bold; }
+
+    .table-search {
+        width: 100%; max-width: 420px; padding: 8px 12px; margin-top: 4px;
+        border: 1px solid var(--border-soft); border-radius: 6px; font-size: 0.9em;
+    }
+    .table-search:focus { outline: none; border-color: var(--primary); }
+
+    .pagination {
+        display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center;
+    }
+    .pagination button {
+        border: 1px solid var(--border-soft); background: #fff; color: var(--primary);
+        border-radius: 6px; padding: 6px 12px; font-size: 0.85em; cursor: pointer;
+    }
+    .pagination button:hover:not(:disabled) { background: var(--primary); color: #fff; }
+    .pagination button:disabled { opacity: 0.4; cursor: default; }
+    .pagination button.active { background: var(--primary); color: #fff; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -347,37 +351,28 @@ $conn->close();
 
             <h2 style="margin-top:20px;">Recent Helpdesk Audit Activity</h2>
             <table>
-                <tr><th>Date</th><th>Action</th><th>Role</th><th>Reference</th></tr>
-                <?php foreach ($adminData['auditLog'] as $log): ?>
-                <tr>
-                    <td><?= htmlspecialchars($log['created_at']); ?></td>
-                    <td><?= htmlspecialchars($log['action']); ?></td>
-                    <td><?= htmlspecialchars($log['user_role']); ?></td>
-                    <td><?= htmlspecialchars($log['reference_number'] ?? '—'); ?></td>
-                </tr>
-                <?php endforeach; ?>
+                <thead><tr><th>Date</th><th>Action</th><th>Role</th><th>Reference</th></tr></thead>
+                <tbody id="auditLogBody">
+                    <tr><td colspan="4">Loading…</td></tr>
+                </tbody>
             </table>
+            <div class="pagination" id="auditLogPagination"></div>
 
             <h2 style="margin-top:20px;">Recent User Login Activity</h2>
+            <input
+                type="text"
+                id="loginActivitySearch"
+                class="table-search"
+                placeholder="Search by email, username, IP, or event type…"
+                autocomplete="off"
+            >
             <table>
-                <tr><th>Date</th><th>Event Type</th><th>User/Email</th><th>IP Address</th></tr>
-                <?php foreach ($adminData['recentActivity'] as $activity): ?>
-                <tr>
-                    <td><?= htmlspecialchars($activity['created_at']); ?></td>
-                    <td class="event-type-<?= htmlspecialchars($activity['event_type']); ?>">
-                        <?= htmlspecialchars(ucfirst(str_replace('_', ' ', $activity['event_type']))); ?>
-                    </td>
-                    <td>
-                        <?php if (!empty($activity['username'])): ?>
-                            <?= htmlspecialchars($activity['username']); ?> (<?= htmlspecialchars($activity['email']); ?>)
-                        <?php else: ?>
-                            <?= htmlspecialchars($activity['email']); ?> (unknown user)
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($activity['ip_address'] ?? '—'); ?></td>
-                </tr>
-                <?php endforeach; ?>
+                <thead><tr><th>Date</th><th>Event Type</th><th>User/Email</th><th>IP Address</th></tr></thead>
+                <tbody id="loginActivityBody">
+                    <tr><td colspan="4">Loading…</td></tr>
+                </tbody>
             </table>
+            <div class="pagination" id="loginActivityPagination"></div>
         </div>
         <?php endif; ?>
 
@@ -496,6 +491,125 @@ new Chart(document.getElementById('regChart'), {
 });
 <?php endif; ?>
 
+</script>
+
+<script>
+(function () {
+    const auditBody = document.getElementById('auditLogBody');
+    const loginBody = document.getElementById('loginActivityBody');
+
+    // Only present for admins — bail otherwise.
+    if (!auditBody && !loginBody) {
+        return;
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
+
+    function renderPagination(container, page, totalPages, onPageClick) {
+        container.innerHTML = '';
+        if (totalPages <= 1) {
+            return;
+        }
+
+        function makeButton(label, targetPage, disabled, active) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = label;
+            btn.disabled = disabled;
+            if (active) btn.classList.add('active');
+            btn.addEventListener('click', () => onPageClick(targetPage));
+            return btn;
+        }
+
+        container.appendChild(makeButton('« Prev', page - 1, page <= 1, false));
+
+        for (let p = 1; p <= totalPages; p++) {
+            container.appendChild(makeButton(String(p), p, false, p === page));
+        }
+
+        container.appendChild(makeButton('Next »', page + 1, page >= totalPages, false));
+    }
+
+    /* ---------- Recent Helpdesk Audit Activity (pagination only) ---------- */
+    function loadAudit(page) {
+        fetch('dashboard_activity_api.php?type=audit&page=' + encodeURIComponent(page), { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    auditBody.innerHTML = '<tr><td colspan="4">' + escapeHtml(data.error) + '</td></tr>';
+                    return;
+                }
+                auditBody.innerHTML = data.rows.length
+                    ? data.rows.map(log => `
+                        <tr>
+                            <td>${escapeHtml(log.created_at)}</td>
+                            <td>${escapeHtml(log.action)}</td>
+                            <td>${escapeHtml(log.user_role)}</td>
+                            <td>${escapeHtml(log.reference_number ?? '—')}</td>
+                        </tr>`).join('')
+                    : '<tr><td colspan="4">No records found.</td></tr>';
+                renderPagination(document.getElementById('auditLogPagination'), data.page, data.totalPages, loadAudit);
+            })
+            .catch(() => {
+                auditBody.innerHTML = '<tr><td colspan="4">Couldn\'t load audit activity.</td></tr>';
+            });
+    }
+
+    /* ---------- Recent User Login Activity (search, live, + pagination) ---------- */
+    let loginSearchTerm = '';
+    let debounceTimer = null;
+
+    function loadLoginActivity(page) {
+        const params = new URLSearchParams({ type: 'logins', page: page, search: loginSearchTerm });
+        fetch('dashboard_activity_api.php?' + params.toString(), { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    loginBody.innerHTML = '<tr><td colspan="4">' + escapeHtml(data.error) + '</td></tr>';
+                    return;
+                }
+                loginBody.innerHTML = data.rows.length
+                    ? data.rows.map(activity => {
+                        const userCell = activity.username
+                            ? `${escapeHtml(activity.username)} (${escapeHtml(activity.email)})`
+                            : `${escapeHtml(activity.email)} (unknown user)`;
+                        const eventLabel = escapeHtml((activity.event_type || '').replace(/_/g, ' '))
+                            .replace(/^./, c => c.toUpperCase());
+                        return `
+                            <tr>
+                                <td>${escapeHtml(activity.created_at)}</td>
+                                <td class="event-type-${escapeHtml(activity.event_type)}">${eventLabel}</td>
+                                <td>${userCell}</td>
+                                <td>${escapeHtml(activity.ip_address ?? '—')}</td>
+                            </tr>`;
+                    }).join('')
+                    : '<tr><td colspan="4">No matching records.</td></tr>';
+                renderPagination(document.getElementById('loginActivityPagination'), data.page, data.totalPages, loadLoginActivity);
+            })
+            .catch(() => {
+                loginBody.innerHTML = '<tr><td colspan="4">Couldn\'t load login activity.</td></tr>';
+            });
+    }
+
+    const searchInput = document.getElementById('loginActivitySearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimer);
+            const value = this.value;
+            debounceTimer = setTimeout(() => {
+                loginSearchTerm = value;
+                loadLoginActivity(1); // any new search starts back at page 1
+            }, 300); // debounce so it's not firing a request per keystroke
+        });
+    }
+
+    if (auditBody) loadAudit(1);
+    if (loginBody) loadLoginActivity(1);
+})();
 </script>
 
 <script>
