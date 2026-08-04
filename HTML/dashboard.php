@@ -536,7 +536,7 @@ new Chart(document.getElementById('regChart'), {
 
     /* ---------- Recent Helpdesk Audit Activity (pagination only) ---------- */
     function loadAudit(page) {
-        fetch('/dashboard_activity_api.php?type=audit&page=' + encodeURIComponent(page), { credentials: 'same-origin' })
+        fetch('/dashboard_activity_api?type=audit&page=' + encodeURIComponent(page), { credentials: 'same-origin' })
             .then(res => {
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 return res.json();
@@ -569,7 +569,7 @@ new Chart(document.getElementById('regChart'), {
 
     function loadLoginActivity(page) {
         const params = new URLSearchParams({ type: 'logins', page: page, search: loginSearchTerm });
-        fetch('/dashboard_activity_api.php?' + params.toString(), { credentials: 'same-origin' })
+        fetch('/dashboard_activity_api?' + params.toString(), { credentials: 'same-origin' })
             .then(res => {
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 return res.json();
