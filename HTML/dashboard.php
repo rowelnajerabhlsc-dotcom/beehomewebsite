@@ -27,6 +27,20 @@ $kpi['transport_pending'] = $conn->query(
     "SELECT COUNT(*) c FROM rent_requests WHERE status='new'"
 )->fetch_assoc()['c'];
 
+// Today's login/logout/lockout counts
+$today = date('Y-m-d');
+$kpi['logins_today'] = $conn->query(
+    "SELECT COUNT(*) c FROM user_logs WHERE event_type = 'login_success' AND DATE(created_at) = '$today'"
+)->fetch_assoc()['c'];
+
+$kpi['logouts_today'] = $conn->query(
+    "SELECT COUNT(*) c FROM user_logs WHERE event_type = 'logout' AND DATE(created_at) = '$today'"
+)->fetch_assoc()['c'];
+
+$kpi['lockouts_today'] = $conn->query(
+    "SELECT COUNT(*) c FROM user_logs WHERE event_type = 'lockout' AND DATE(created_at) = '$today'"
+)->fetch_assoc()['c'];
+
 /* =========================================================
    TRENDS: last 6 months, per module
    ========================================================= */
@@ -47,6 +61,44 @@ $manpowerTrend  = monthly_counts($conn, 'manpower_requests', 'created_at');
 $helpdeskTrend  = monthly_counts($conn, 'helpdesk_cases', 'created_at');
 $transportTrend = monthly_counts($conn, 'rent_requests', 'created_at');
 
+// Login/logout/lockout trends
+// Fix the above - need to use proper SQL
+$loginTrend = $conn->query(
+    "SELECT DATE_FORMAT(created_at, '%Y-%m') ym, COUNT(*) c
+     FROM user_logs
+     WHERE event_type = 'login_success'
+     AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+     GROUP BY ym ORDER BY ym ASC"
+);
+$loginTrendData = [];
+while ($row = $loginTrend->fetch_assoc()) {
+    $loginTrendData[$row['ym']] = (int) $row['c'];
+}
+
+$logoutTrend = $conn->query(
+    "SELECT DATE_FORMAT(created_at, '%Y-%m') ym, COUNT(*) c
+     FROM user_logs
+     WHERE event_type = 'logout'
+     AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+     GROUP BY ym ORDER BY ym ASC"
+);
+$logoutTrendData = [];
+while ($row = $logoutTrend->fetch_assoc()) {
+    $logoutTrendData[$row['ym']] = (int) $row['c'];
+}
+
+$lockoutTrend = $conn->query(
+    "SELECT DATE_FORMAT(created_at, '%Y-%m') ym, COUNT(*) c
+     FROM user_logs
+     WHERE event_type = 'lockout'
+     AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+     GROUP BY ym ORDER BY ym ASC"
+);
+$lockoutTrendData = [];
+while ($row = $lockoutTrend->fetch_assoc()) {
+    $lockoutTrendData[$row['ym']] = (int) $row['c'];
+}
+
 /* Build one sorted, deduplicated month axis, then fill each dataset
    against it (0 where a module had no activity that month). This keeps
    json_encode() emitting real arrays (not objects with gapped keys)
@@ -54,7 +106,10 @@ $transportTrend = monthly_counts($conn, 'rent_requests', 'created_at');
 $allMonths = array_unique(array_merge(
     array_keys($manpowerTrend),
     array_keys($helpdeskTrend),
-    array_keys($transportTrend)
+    array_keys($transportTrend),
+    array_keys($loginTrendData),
+    array_keys($logoutTrendData),
+    array_keys($lockoutTrendData)
 ));
 sort($allMonths);
 $allMonths = array_values($allMonths);
@@ -70,6 +125,9 @@ function align_to_months(array $trend, array $months): array {
 $manpowerTrendAligned  = align_to_months($manpowerTrend, $allMonths);
 $helpdeskTrendAligned  = align_to_months($helpdeskTrend, $allMonths);
 $transportTrendAligned = align_to_months($transportTrend, $allMonths);
+$loginTrendAligned     = align_to_months($loginTrendData, $allMonths);
+$logoutTrendAligned    = align_to_months($logoutTrendData, $allMonths);
+$lockoutTrendAligned   = align_to_months($lockoutTrendData, $allMonths);
 
 /* =========================================================
    STATUS BREAKDOWNS
@@ -89,6 +147,13 @@ $manpowerByPosition = [];
 $res = $conn->query("SELECT req_position, COUNT(*) c FROM manpower_requests GROUP BY req_position ORDER BY c DESC LIMIT 6");
 while ($row = $res->fetch_assoc()) {
     $manpowerByPosition[$row['req_position']] = (int) $row['c'];
+}
+
+// Event type breakdown for user_logs
+$eventTypeBreakdown = [];
+$res = $conn->query("SELECT event_type, COUNT(*) c FROM user_logs GROUP BY event_type");
+while ($row = $res->fetch_assoc()) {
+    $eventTypeBreakdown[$row['event_type']] = (int) $row['c'];
 }
 
 /* =========================================================
@@ -116,6 +181,60 @@ if ($isAdmin) {
          ORDER BY a.created_at DESC LIMIT 15"
     );
     $adminData['auditLog'] = $auditRes ? $auditRes->fetch_all(MYSQLI_ASSOC) : [];
+
+    // Recent login activity (last 20 login/logout/lockout events) - with search and pagination
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    if ($page < 1) $page = 1;
+    $limit = 10;
+    $offset = ($page - 1) * $limit;
+
+    // Build WHERE clause for search
+    $where = '';
+    $params = [];
+    $types = '';
+    if ($search !== '') {
+        $where = "WHERE (u.username LIKE ? OR ul.email LIKE ?)";
+        $searchTerm = "%" . $search . "%";
+        $params = [$searchTerm, $searchTerm, $limit, $offset];
+        $types = 'ssii';
+    }
+
+    // Count total rows
+    $countQuery = "SELECT COUNT(*) as total FROM user_logs ul LEFT JOIN users u ON u.id = ul.user_id $where";
+    $countStmt = $conn->prepare($countQuery);
+    if ($search !== '') {
+        $countStmt->bind_param($types, ...$params);
+    }
+    $countStmt->execute();
+    $countResult = $countStmt->get_result();
+    $countRow = $countResult->fetch_assoc();
+    $totalRows = $countRow['total'];
+    $totalPages = (int)ceil($totalRows / $limit);
+    $countStmt->close();
+
+    // Get paginated data
+    $dataQuery = "SELECT ul.event_type, ul.email, ul.ip_address, ul.created_at, u.username
+                 FROM user_logs ul
+                 LEFT JOIN users u ON u.id = ul.user_id
+                 $where
+                 ORDER BY ul.created_at DESC
+                 LIMIT ? OFFSET ?";
+    $dataStmt = $conn->prepare($dataQuery);
+    if ($search !== '') {
+        $dataStmt->bind_param($types, ...$params);
+    } else {
+        $dataStmt->bind_param('ii', $limit, $offset);
+    }
+    $dataStmt->execute();
+    $recentActivityRes = $dataStmt->get_result();
+    $adminData['recentActivity'] = [];
+    if ($recentActivityRes) {
+        while ($row = $recentActivityRes->fetch_assoc()) {
+            $adminData['recentActivity'][] = $row;
+        }
+    }
+    $dataStmt->close();
 }
 
 $conn->close();
@@ -198,6 +317,9 @@ $conn->close();
     table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 10px; }
     th, td { padding: 8px; border: 1px solid #ccc; text-align: left; font-size: 0.85em; }
     th { background: #f4f4f4; }
+    .event-type-login-success { color: #28a745; font-weight: bold; }
+    .event-type-logout { color: #6c757d; font-style: italic; }
+    .event-type-lockout { color: #dc3545; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -206,7 +328,7 @@ $conn->close();
 
 <div class="dash-wrap">
     <h1>Dashboard</h1>
-    <div class="dash-subtitle">Overview across Manpower, Consumer Assistance, and Transport</div>
+    <div class="dash-subtitle">Overview across Manpower, Consumer Assistance, Transport, and User Activity</div>
 
     <div class="quick-links" id="quickLinks">
         <a href="#" class="ql-tab active" data-target="dashboardHome">Dashboard</a>
@@ -223,60 +345,116 @@ $conn->close();
     <div id="pageContent" class="page-content" style="display:none;"></div>
 
     <div id="dashboardHome">
-        <div class="kpi-card"><div class="num"><?= $kpi['employees']; ?></div><div class="label">Total Employees</div></div>
-        <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div>
-        <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div>
-        <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div>
-    </div>
-
-    <div class="chart-grid">
-        <div class="chart-card">
-            <h2>Requests Over Time (6mo)</h2>
-            <canvas id="trendChart"></canvas>
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="num"><?= $kpi['employees']; ?></div><div class="label">Total Employees</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['logins_today']; ?></div><div class="label">Logins Today</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['logouts_today']; ?></div><div class="label">Logouts Today</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['lockouts_today']; ?></div><div class="label">Lockouts Today</div></div>
         </div>
-        <div class="chart-card">
-            <h2>Helpdesk Status Breakdown</h2>
-            <canvas id="helpdeskChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h2>Transport Status Breakdown</h2>
-            <canvas id="transportChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h2>Top Requested Manpower Positions</h2>
-            <canvas id="positionChart"></canvas>
-        </div>
-    </div>
-
-    <?php if ($isAdmin): ?>
-    <div class="admin-section">
-        <h2>Admin Only — User & Registration Overview</h2>
 
         <div class="chart-grid">
             <div class="chart-card">
-                <h2>User Role Breakdown</h2>
-                <canvas id="roleChart"></canvas>
+                <h2>Requests Over Time (6mo)</h2>
+                <canvas id="trendChart"></canvas>
             </div>
             <div class="chart-card">
-                <h2>Registration Links</h2>
-                <canvas id="regChart"></canvas>
+                <h2>Helpdesk Status Breakdown</h2>
+                <canvas id="helpdeskChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2>Transport Status Breakdown</h2>
+                <canvas id="transportChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2>Top Requested Manpower Positions</h2>
+                <canvas id="positionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2>User Login Activity (6mo)</h2>
+                <canvas id="loginTrendChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2>Logout/Lockout Trends (6mo)</h2>
+                <canvas id="eventTrendChart"></canvas>
             </div>
         </div>
 
-        <h2 style="margin-top:20px;">Recent Helpdesk Audit Activity</h2>
-        <table>
-            <tr><th>Date</th><th>Action</th><th>Role</th><th>Reference</th></tr>
-            <?php foreach ($adminData['auditLog'] as $log): ?>
-            <tr>
-                <td><?= htmlspecialchars($log['created_at']); ?></td>
-                <td><?= htmlspecialchars($log['action']); ?></td>
-                <td><?= htmlspecialchars($log['user_role']); ?></td>
-                <td><?= htmlspecialchars($log['reference_number'] ?? '—'); ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
-    <?php endif; ?>
+        <?php if ($isAdmin): ?>
+        <div class="admin-section">
+            <h2>Admin Only — User & Registration Overview</h2>
+
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h2>User Role Breakdown</h2>
+                    <canvas id="roleChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h2>Registration Links</h2>
+                    <canvas id="regChart"></canvas>
+                </div>
+            </div>
+
+            <h2 style="margin-top:20px;">Recent Helpdesk Audit Activity</h2>
+            <table>
+                <tr><th>Date</th><th>Action</th><th>Role</th><th>Reference</th></tr>
+                <?php foreach ($adminData['auditLog'] as $log): ?>
+                <tr>
+                    <td><?= htmlspecialchars($log['created_at']); ?></td>
+                    <td><?= htmlspecialchars($log['action']); ?></td>
+                    <td><?= htmlspecialchars($log['user_role']); ?></td>
+                    <td><?= htmlspecialchars($log['reference_number'] ?? '—'); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+
+            <h2 style="margin-top:20px;">Recent User Login Activity</h2>
+            <div style="margin-bottom: 10px;">
+                <form method="GET" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search by name or email" style="padding: 8px; width: 200px;">
+                    <button type="submit" style="padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+                    <input type="hidden" name="page" value="1">
+                </form>
+            </div>
+            <table>
+                <tr><th>Date</th><th>Event Type</th><th>User/Email</th><th>IP Address</th></tr>
+                <?php foreach ($adminData['recentActivity'] as $activity): ?>
+                <tr>
+                    <td><?= htmlspecialchars($activity['created_at']); ?></td>
+                    <td class="event-type-<?= htmlspecialchars($activity['event_type']); ?>">
+                        <?= htmlspecialchars(ucfirst(str_replace('_', ' ', $activity['event_type']))); ?>
+                    </td>
+                    <td>
+                        <?php if (!empty($activity['username'])): ?>
+                            <?= htmlspecialchars($activity['username']); ?> (<?= htmlspecialchars($activity['email']); ?>)
+                        <?php else: ?>
+                            <?= htmlspecialchars($activity['email']); ?> (unknown user)
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($activity['ip_address'] ?? '—'); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+            <div style="margin-top: 10px; text-align: center; color: #5a6b60; font-size: 0.9em;">
+                Showing <?= (($page-1)*$limit + 1) ?> to <?= min($page*$limit, $totalRows) ?> of <?= $totalRows ?> entries
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <?php if ($totalPages > 1): ?>
+                    <div>
+                        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                            <?php if ($p == $page): ?>
+                                <span style="margin: 0 5px; padding: 5px 10px; background: var(--primary); color: white; border-radius: 4px;"><?= $p ?></span>
+                            <?php else: ?>
+                                <a href="?search=<?= urlencode($search) ?>&page=<?= $p ?>" style="margin: 0 5px; padding: 5px 10px; background: #f0f0f0; border-radius: 4px; text-decoration: none;"><?= $p ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
     </div><!-- /dashboardHome -->
 
@@ -324,6 +502,52 @@ new Chart(document.getElementById('positionChart'), {
     options: { responsive: true, plugins: { legend: { display: false } }, indexAxis: 'y' }
 });
 
+// Login trend chart
+const loginTrendCtx = document.getElementById('loginTrendChart');
+new Chart(loginTrendCtx, {
+    type: 'line',
+    data: {
+        labels: <?= json_encode($allMonths); ?>,
+        datasets: [
+            { label: 'Logins', data: <?= json_encode($loginTrendAligned); ?>, borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.1)', tension: 0.3 },
+            { label: 'Logouts', data: <?= json_encode($logoutTrendAligned); ?>, borderColor: '#6c757d', backgroundColor: 'rgba(108,117,125,0.1)', tension: 0.3 },
+            { label: 'Lockouts', data: <?= json_encode($lockoutTrendAligned); ?>, borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', tension: 0.3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'User Authentication Events (Last 6 Months)' }
+        }
+    }
+});
+
+// Event trend chart (alternative view)
+const eventTrendCtx = document.getElementById('eventTrendChart');
+new Chart(eventTrendCtx, {
+    type: 'bar',
+    data: {
+        labels: <?= json_encode($allMonths); ?>,
+        datasets: [
+            { label: 'Logins', data: <?= json_encode($loginTrendAligned); ?>, backgroundColor: '#28a745' },
+            { label: 'Logouts', data: <?= json_encode($logoutTrendAligned); ?>, backgroundColor: '#6c757d' },
+            { label: 'Lockouts', data: <?= json_encode($lockoutTrendAligned); ?>, backgroundColor: '#dc3545' }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Monthly Authentication Events' }
+        },
+        scales: {
+            x: { stacked: true },
+            y: { stacked: true, beginAtZero: true }
+        }
+    }
+});
+
 <?php if ($isAdmin): ?>
 new Chart(document.getElementById('roleChart'), {
     type: 'pie',
@@ -346,6 +570,7 @@ new Chart(document.getElementById('regChart'), {
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 <?php endif; ?>
+
 </script>
 
 <script>
