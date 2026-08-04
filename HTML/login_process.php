@@ -1,5 +1,6 @@
 <?php
 include "config.php";
+include "log_helper.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -28,6 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    // Remember the attempted email so login.php can show status
+    // (e.g. lockout countdown) tied to this address even before a
+    // successful login exists.
+    $_SESSION['last_attempted_email'] = $email;
+
     // Prepared statement
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -49,6 +55,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['username'] = $row['username'];
             $_SESSION['email'] = $row['email'];
             $_SESSION['role'] = $row['role'];
+
+            // --- Login logging ---
+            $now = date('Y-m-d H:i:s');
+            $_SESSION['login_time'] = $now;
+            $_SESSION['last_login'] = $row['last_login'] ?? null; // previous login, for display
+
+            // Persist to DB (users.last_login + user_logs history row)
+            $update = $conn->prepare("UPDATE users SET last_login = ? WHERE id = ?");
+            if ($update) {
+                $update->bind_param("si", $now, $row['id']);
+                $update->execute();
+                $update->close();
+            }
+            log_user_event($conn, 'login_success', $row['id'], $row['email']);
+
+            // Also drop a cookie so login.php can show "Last login: ..."
+            // on this browser even after the session is destroyed on logout.
+            setcookie('last_login_time', $now, time() + (60 * 60 * 24 * 30), '/');
 
             // Force password change
             if (!empty($row['temp_password'])) {
@@ -81,6 +105,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $_SESSION['login_error'] =
             "Too many failed attempts. Please wait 5 minutes before trying again.";
+
+        // --- Lockout logging ---
+        // user_id is unknown/irrelevant here (could be a bad email), so we
+        // log by the attempted email only.
+        log_user_event($conn, 'lockout', null, $email);
 
     } else {
 
