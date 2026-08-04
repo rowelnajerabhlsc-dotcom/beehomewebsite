@@ -196,8 +196,8 @@ if ($isAdmin) {
     if ($search !== '') {
         $where = "WHERE (u.username LIKE ? OR ul.email LIKE ?)";
         $searchTerm = "%" . $search . "%";
-        $params = [$searchTerm, $searchTerm, $limit, $offset];
-        $types = 'ssii';
+        $params = [$searchTerm, $searchTerm];
+        $types = 'ss';
     }
 
     // Count total rows
@@ -222,7 +222,9 @@ if ($isAdmin) {
                  LIMIT ? OFFSET ?";
     $dataStmt = $conn->prepare($dataQuery);
     if ($search !== '') {
-        $dataStmt->bind_param($types, ...$params);
+        $types_with_limit = $types . 'ii';
+        $params_with_limit = array_merge($params, [$limit, $offset]);
+        $dataStmt->bind_param($types_with_limit, ...$params_with_limit);
     } else {
         $dataStmt->bind_param('ii', $limit, $offset);
     }
@@ -287,7 +289,7 @@ $conn->close();
 
     .page-loader {
         text-align: center; color: var(--primary); font-weight: 600;
-        padding: 40px 0;
+        padding = 40px 0;
     }
     .page-content {
         background: #fff; border: 1px solid var(--border-soft); border-radius: 10px;
@@ -347,12 +349,12 @@ $conn->close();
     <div id="dashboardHome">
         <div class="kpi-grid">
             <div class="kpi-card"><div class="num"><?= $kpi['employees']; ?></div><div class="label">Total Employees</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['logins_today']; ?></div><div class="label">Logins Today</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['logouts_today']; ?></div><div class="label">Logouts Today</div></div>
-            <div class="kpi-card"><div class="num"><?= $kpi['lockouts_today']; ?></div><div class="label">Lockouts Today</div></div>
+            <div class="kpi-card"><div class="num"><?= $kpi['manpower_open']; ?></div><div class="label">Manpower Requests</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['helpdesk_open']; ?></div><div class="label">Open Helpdesk Tickets</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['transport_pending']; ?></div><div class="label">Pending Transport Requests</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['logins_today']; ?></div><div class="label">Logins Today</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['logouts_today']; ?></div><div class="label">Logouts Today</div></div
+            <div class="kpi-card"><div class="num"><?= $kpi['lockouts_today']; ?></div><div class="label">Lockouts Today</div></div
         </div>
 
         <div class="chart-grid">
@@ -408,7 +410,7 @@ $conn->close();
                     <td><?= htmlspecialchars($log['reference_number'] ?? '—'); ?></td>
                 </tr>
                 <?php endforeach; ?>
-            </table>
+            </table
 
             <h2 style="margin-top:20px;">Recent User Login Activity</h2>
             <div style="margin-bottom: 10px;">
@@ -553,7 +555,7 @@ new Chart(document.getElementById('roleChart'), {
     type: 'pie',
     data: {
         labels: <?= json_encode(array_keys($adminData['roleBreakdown'])); ?>,
-        datasets: [{ data: <?= json_encode(array_values($adminData['roleBreakdown'])); ?>, backgroundColor: ['#eef7ee','#eaf3fd','#fff6e0','#fdeaea'] }]
+        datasets: [{ data: <?= json_encode(array_values($adminData['roleBreakdown'])); ?>, backgroundColor: ['#eef7ee','#eaf3fd','#fff6e0','#fdeaea'] }}
     },
     options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
 });
