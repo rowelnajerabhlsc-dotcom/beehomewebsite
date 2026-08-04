@@ -3,6 +3,13 @@ session_start();
 include "config.php";       // provides $conn (mysqli)
 include "permissions.php";
 
+/* ---- TEMP: force PHP to show the real error instead of a silent
+   truncated page. REMOVE once the bug is found. ---- */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 /* ACCESS CONTROL - Require at least Manager role */
 require_role(3);
 
