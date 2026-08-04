@@ -183,8 +183,6 @@ function sendRegLinkEmail(string $link, string $to, mysqli $conn, string $tokenF
 </head>
 <body>
 
-<?php include "navbar.php"; ?>
-
 <div class="auth-container">
     <div class="auth-card">
         <h2>Generate Registration Link</h2>
