@@ -536,8 +536,11 @@ new Chart(document.getElementById('regChart'), {
 
     /* ---------- Recent Helpdesk Audit Activity (pagination only) ---------- */
     function loadAudit(page) {
-        fetch('dashboard_activity_api.php?type=audit&page=' + encodeURIComponent(page), { credentials: 'same-origin' })
-            .then(res => res.json())
+        fetch('/dashboard_activity_api.php?type=audit&page=' + encodeURIComponent(page), { credentials: 'same-origin' })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
             .then(data => {
                 if (data.error) {
                     auditBody.innerHTML = '<tr><td colspan="4">' + escapeHtml(data.error) + '</td></tr>';
@@ -554,8 +557,9 @@ new Chart(document.getElementById('regChart'), {
                     : '<tr><td colspan="4">No records found.</td></tr>';
                 renderPagination(document.getElementById('auditLogPagination'), data.page, data.totalPages, loadAudit);
             })
-            .catch(() => {
-                auditBody.innerHTML = '<tr><td colspan="4">Couldn\'t load audit activity.</td></tr>';
+            .catch(err => {
+                console.error('Audit activity load failed:', err);
+                auditBody.innerHTML = '<tr><td colspan="4">Couldn\'t load audit activity (' + escapeHtml(err.message) + ').</td></tr>';
             });
     }
 
@@ -565,8 +569,11 @@ new Chart(document.getElementById('regChart'), {
 
     function loadLoginActivity(page) {
         const params = new URLSearchParams({ type: 'logins', page: page, search: loginSearchTerm });
-        fetch('dashboard_activity_api.php?' + params.toString(), { credentials: 'same-origin' })
-            .then(res => res.json())
+        fetch('/dashboard_activity_api.php?' + params.toString(), { credentials: 'same-origin' })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
             .then(data => {
                 if (data.error) {
                     loginBody.innerHTML = '<tr><td colspan="4">' + escapeHtml(data.error) + '</td></tr>';
@@ -590,8 +597,9 @@ new Chart(document.getElementById('regChart'), {
                     : '<tr><td colspan="4">No matching records.</td></tr>';
                 renderPagination(document.getElementById('loginActivityPagination'), data.page, data.totalPages, loadLoginActivity);
             })
-            .catch(() => {
-                loginBody.innerHTML = '<tr><td colspan="4">Couldn\'t load login activity.</td></tr>';
+            .catch(err => {
+                console.error('Login activity load failed:', err);
+                loginBody.innerHTML = '<tr><td colspan="4">Couldn\'t load login activity (' + escapeHtml(err.message) + ').</td></tr>';
             });
     }
 
