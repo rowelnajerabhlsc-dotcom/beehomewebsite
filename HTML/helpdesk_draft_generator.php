@@ -4,23 +4,23 @@
  * Builds the acknowledgement-receipt email from case data + editable
  * fields, and creates the initial draft version at import time.
  *
- * Editable fields (admin-filled, blank in the Google Form template):
+ * Editable fields (admin-filled):
  *   classification   - 'Simple' or 'Complex'
  *   sla_days         - number of days for the SLA line
- *   contact_person   - named contact for follow-up
- *   contact_info     - phone/email for follow-up
- *   staff_name       - name of the authorized staff signing the email
+ *
+ * Server-set, not admin-editable:
+ *   staff_name       - name of the logged-in staff member sending the email
+ *   contact_info     - fixed CAT phone/email, from HELPDESK_FIXED_CONTACT_INFO
  *
  * Auto-filled from case data (not editable):
  *   date received, reference number, request type, concern summary
  */
 
 /**
- * Fixed contact details shown on every draft — not editable per-case.
- * Update these two constants if the CAT's contact info ever changes.
+ * Fixed contact detail shown on every draft — not editable per-case.
+ * Update this constant if the CAT's contact info ever changes.
  */
-const HELPDESK_FIXED_CONTACT_PERSON = 'BH CAT';
-const HELPDESK_FIXED_CONTACT_INFO   = '09XX-XXX-XXXX';
+const HELPDESK_FIXED_CONTACT_INFO = '0960-562-6308 / beehomehelpdesk@gmail.com';
 
 /**
  * Fields an admin actually chooses per case. staff_name is auto-filled
@@ -46,7 +46,6 @@ function renderCaseEmailBody(array $case, array $fields): string {
     $checkComplex = ($classification === 'Complex') ? '[x]' : '[ ]';
 
     $slaDays       = (int)($fields['sla_days'] ?? 15);
-    $contactPerson = $fields['contact_person'] ?? HELPDESK_FIXED_CONTACT_PERSON;
     $contactInfo   = $fields['contact_info']   ?? HELPDESK_FIXED_CONTACT_INFO;
     $staffName     = $fields['staff_name']     ?? '';
 
@@ -76,7 +75,6 @@ Proseso ng Pagresolba:
 • Pormal na pagbibigay ng resolusyon.
 
 Para sa anumang katanungan o follow-up, maaari kang makipag-ugnayan sa:
-Contact Person: {$contactPerson}
 Telepono/Email: {$contactInfo}
 
 Maraming salamat sa iyong pagtitiwala sa ating kooperatiba.
@@ -93,7 +91,6 @@ TEXT;
  */
 function generateInitialDraft(mysqli $conn, int $caseId, array $case): void {
     $fields = array_merge(defaultEditableFields(), [
-        'contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
         'contact_info'   => HELPDESK_FIXED_CONTACT_INFO,
         'staff_name'     => '',
     ]);

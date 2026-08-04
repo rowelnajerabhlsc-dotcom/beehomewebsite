@@ -510,7 +510,6 @@ async function openCase(caseId) {
         }
         renderModal(data.case, data.draft, {
             current_user_name: data.current_user_name,
-            fixed_contact_person: data.fixed_contact_person,
             fixed_contact_info: data.fixed_contact_info
         });
     } catch (err) {
@@ -577,12 +576,7 @@ Type: ${escapeHtml(c.request_type)}
                 </div>
 
                 <div class="hd-field-group">
-                    <label>Contact Person (fixed)</label>
-                    <div class="hd-fixed-value">${escapeHtml(meta.fixed_contact_person)}</div>
-                </div>
-
-                <div class="hd-field-group">
-                    <label>Contact Number (fixed)</label>
+                    <label>Contact (fixed)</label>
                     <div class="hd-fixed-value">${escapeHtml(meta.fixed_contact_info)}</div>
                 </div>
 

@@ -34,7 +34,6 @@ $staffName = $_SESSION['username'] ?? '';
 $fields = [
     'classification' => $classification,
     'sla_days'       => $slaDays,
-    'contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
     'contact_info'   => HELPDESK_FIXED_CONTACT_INFO,
     'staff_name'     => $staffName,
 ];

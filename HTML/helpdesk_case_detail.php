@@ -52,6 +52,5 @@ echo json_encode([
     'case' => $case,
     'draft' => $draft,
     'current_user_name' => $_SESSION['username'] ?? '',
-    'fixed_contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
     'fixed_contact_info' => HELPDESK_FIXED_CONTACT_INFO,
 ]);

@@ -29,7 +29,6 @@ if ($slaDays < 1) { $slaDays = 1; }
 $fields = [
     'classification' => $classification,
     'sla_days'       => $slaDays,
-    'contact_person' => HELPDESK_FIXED_CONTACT_PERSON,
     'contact_info'   => HELPDESK_FIXED_CONTACT_INFO,
     'staff_name'     => $_SESSION['username'] ?? '',
 ];
