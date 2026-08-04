@@ -3,13 +3,6 @@ session_start();
 include "config.php";       // provides $conn (mysqli)
 include "permissions.php";
 
-/* ---- TEMP: force PHP to show the real error instead of a silent
-   truncated page. REMOVE once the bug is found. ---- */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-
 /* ACCESS CONTROL - Require at least Manager role */
 require_role(3);
 
@@ -186,7 +179,7 @@ if (isset($_GET['debug'])) {
                                 data-assignment_place="<?= htmlspecialchars($row['assignment_place']); ?>">
                             View
                         </button>
-                        <?php if (is_manager_or_admin()): ?>
+                        <?php if (($_SESSION['role'] ?? 0) >= 3): ?>
                         <a href="delete-manpower.php?id=<?= (int)$row['id']; ?>"
                            onclick="return confirm('Delete this manpower request?')">
                             <button type="button" class="btn-delete">Delete</button>
