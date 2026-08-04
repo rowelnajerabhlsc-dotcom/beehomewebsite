@@ -236,8 +236,6 @@ function is_manager_or_admin() {
 </head>
 <body>
 
-<?php include "navbar.php"; ?>
-
 <?php if (($_GET['err'] ?? '') === 'capacity'): ?>
 <div class="table-container" style="padding-bottom:0;">
     <div class="error-banner">

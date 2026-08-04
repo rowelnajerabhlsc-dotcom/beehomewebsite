@@ -52,8 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<?php include "navbar.php"; ?>
-
 <div class="auth-container">
     <div class="auth-card">
         <h2>Generate Registration Link</h2>

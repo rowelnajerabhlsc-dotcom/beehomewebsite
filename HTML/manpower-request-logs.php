@@ -126,8 +126,6 @@ if (isset($_GET['debug'])) {
 
 <div id="page-content">
 
-    <?php include "navbar.php"; ?>
-
     <div class="logs-container">
 
         <h2>Manpower Request Logs</h2>

@@ -396,9 +396,7 @@ $cases = $result->fetch_all(MYSQLI_ASSOC);
     </style>
 </head>
 <body>
-
-<?php include "navbar.php"; ?>
-
+    
 <div class="hd-wrap">
     <h1>Consumer Assistance Dashboard</h1>
     <p class="hd-subtitle">Member requests imported from Google Forms, ready for review.</p>

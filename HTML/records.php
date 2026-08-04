@@ -265,8 +265,6 @@ $result = $stmt->get_result();
 </head>
 <body>
 
-<?php include "navbar.php"; ?>
-
 <div class="table-container">
 
     <h2>Employee Records</h2>
