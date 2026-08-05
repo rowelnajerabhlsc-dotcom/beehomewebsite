@@ -3,6 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Timezone for date/time functions. Adjust as needed for the server's location.
+date_default_timezone_set('Asia/Manila');
+
 /* ============================================================
    Load private env-style secrets from outside the web root.
    File Manager -> Home (/home/kwchy8j4554l/secrets.php) — one
