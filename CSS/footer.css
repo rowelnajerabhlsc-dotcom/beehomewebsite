@@ -109,23 +109,58 @@
     margin-right: 10px;
 }
 
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 767px) {
+/* ---------- TABLET (1024px and below) ---------- */
+/* At this width the container's flex-wrap was already silently
+   reflowing into an uneven 2-line wrap (left column dropping alone,
+   middle/right doubling up unevenly). Make that intentional: address
+   info gets its own full-width row up top, nav + contact sit side by
+   side underneath in two even columns. */
+@media (max-width: 1024px) {
     .footer {
-        padding: 50px 6%;
+        padding: 60px 6%;
     }
 
     .footer-container {
+        row-gap: 30px;
+    }
+
+    .footer-left {
+        flex: 1 1 100%;
+    }
+
+    .footer-middle,
+    .footer-right {
+        flex: 1 1 45%;
+    }
+}
+
+/* ---------- MOBILE (767px and below) ---------- */
+@media (max-width: 767px) {
+    .footer {
+        padding: 45px 8%;
+    }
+
+    /* Single centered column reads much better than left-aligned
+       text on a narrow screen, and matches how the rest of the site
+       centers content on mobile. */
+    .footer-container {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
+        align-items: center;
+        text-align: center;
+        gap: 32px;
     }
 
     .footer-left,
     .footer-middle,
     .footer-right {
         flex: 1 1 100%;
-        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .footer-logo {
+        width: 64px;
+        margin: 0 auto 12px;
+        display: block;
     }
 
     .footer-left h3,
@@ -133,12 +168,58 @@
     .footer-right h3 {
         font-size: 16px;
     }
+
+    .footer-left p {
+        max-width: 320px;
+        margin: 5px auto;
+    }
+
+    .footer-middle ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Center the icon + label pairs instead of left-hugging them */
+    .footer-right p,
+    .footer-right a {
+        justify-content: center;
+    }
 }
 
+/* ---------- SMALL MOBILE (480px and below) ---------- */
 @media (max-width: 480px) {
+    .footer {
+        padding: 35px 8%;
+    }
+
+    .footer-container {
+        gap: 26px;
+    }
+
+    .footer-logo {
+        width: 52px;
+    }
+
+    .footer-left h3,
+    .footer-middle h3,
+    .footer-right h3 {
+        font-size: 15px;
+    }
+
     .footer-left p,
     .footer-middle ul li a,
     .footer-right p {
-        font-size: 13px;
+        font-size: 12.5px;
+    }
+
+    .footer-icon {
+        width: 16px;
+        margin-right: 8px;
+    }
+
+    .footer-middle ul li,
+    .footer-right p {
+        margin-bottom: 8px;
     }
 }

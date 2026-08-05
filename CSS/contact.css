@@ -9,7 +9,6 @@ body {
     overflow-x: hidden;
 }
 
-
 /* DROPDOWN ITEMS */
 .dropdown-menu li {
     margin: 0;
@@ -40,46 +39,6 @@ html {
 section {
     scroll-margin-top: 120px; /* adjust depending on navbar height */
 }
-
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-
-    .nav-links {
-        position: absolute;
-        right: 0;
-        top: 70px;
-        background-color: #096D2B;
-        width: 100%;
-        flex-direction: column;
-        text-align: center;
-        display: none;
-    }
-
-    .nav-links li {
-        margin: 15px 0;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .menu-toggle {
-        display: flex;
-    }
-
-    .dropdown-menu {
-        position: static;
-        display: none;
-        background: #0c8a36;
-    }
-
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-}
-
-
 
 /* ------------------------------------------------------ */
 
@@ -115,17 +74,6 @@ section {
     font-weight: bold;
     z-index: 1;
     letter-spacing: 3px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .contact-hero {
-        height: 180px;
-    }
-
-    .contact-hero h1 {
-        font-size: 28px;
-    }
 }
 
 /* ------------------------------------------------------ */
@@ -220,36 +168,7 @@ section {
     width: 120px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-    .contact-container {
-        flex-direction: column;
-    }
-
-    .contact-map-wrapper,
-    .contact-info {
-        flex: 100%;
-    }
-
-    .contact-map {
-        height: 400px;
-    }
-
-    .map-toolbar button {
-        min-width: 120px;
-        padding: 10px 20px;
-    }
-
-    .route-info {
-        text-align: left;
-        flex: 0 0 auto;
-        margin-top: 4px;
-    }
-}
-
-
 /* ------------------------------------------------------ */
-
 
 /* FAQ SECTION */
 .faq {
@@ -308,16 +227,218 @@ section {
     margin-top: 10px;
 }
 
-
+/* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
 
+/* ============================================================ */
+/* RESPONSIVE — Tablet (1024px down), Mobile (767px down),
+   Small Mobile (480px down). */
+/* ============================================================ */
 
+/* ---------- TABLET (1024px and below) ---------- */
+@media (max-width: 1024px) {
 
+    .contact-hero h1 {
+        font-size: 46px;
+    }
 
+    .contact {
+        padding: 60px 6%;
+    }
 
+    .contact-container {
+        flex-direction: column;
+    }
 
+    .contact-map-wrapper,
+    .contact-info {
+        flex: 1 1 100%;
+    }
 
-/* ------------------------------------------------------ */
+    .contact-map {
+        height: 420px;
+    }
 
+    .contact-info h2 {
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
 
+    .map-toolbar button {
+        min-width: 120px;
+        padding: 10px 20px;
+    }
+
+    .route-info {
+        text-align: left;
+        flex: 0 0 auto;
+        margin-top: 4px;
+    }
+
+    .faq {
+        padding: 50px 6%;
+    }
+}
+
+/* ---------- MOBILE (767px and below) ---------- */
+@media (max-width: 767px) {
+
+    /* Nav (shared with navbar.css breakpoint) */
+    .nav-links {
+        position: absolute;
+        right: 0;
+        top: 70px;
+        background-color: #096D2B;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        display: none;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        position: static;
+        display: none;
+        background: #0c8a36;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Hero */
+    .contact-hero {
+        height: 180px;
+    }
+
+    .contact-hero h1 {
+        font-size: 26px;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    /* Contact section */
+    .contact {
+        padding: 50px 6%;
+    }
+
+    .contact-container {
+        gap: 30px;
+    }
+
+    /* Map toolbar: button and status pill were fighting for space
+       in one row on phones — stack them so both are fully readable. */
+    .map-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .map-toolbar button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .route-info {
+        text-align: center;
+        flex: 1 1 auto;
+        margin-top: 0;
+    }
+
+    .contact-map {
+        height: 300px;
+    }
+
+    .contact-info {
+        text-align: center;
+    }
+
+    .contact-info h2 {
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    .contact-info h3 {
+        font-size: 18px;
+    }
+
+    .contact-info p {
+        font-size: 14px;
+    }
+
+    .contact-logo {
+        width: 90px;
+        margin-top: 10px;
+    }
+
+    /* FAQ */
+    .faq {
+        padding: 45px 6%;
+    }
+
+    .faq h2 {
+        font-size: 22px;
+    }
+
+    .faq-question {
+        font-size: 15px;
+        gap: 10px;
+    }
+}
+
+/* ---------- SMALL MOBILE (480px and below) ---------- */
+@media (max-width: 480px) {
+
+    .contact-hero h1 {
+        font-size: 20px;
+    }
+
+    .contact-hero {
+        height: 160px;
+    }
+
+    .contact-map {
+        height: 240px;
+    }
+
+    .contact-info h2 {
+        font-size: 22px;
+    }
+
+    .contact-info h3 {
+        font-size: 16px;
+    }
+
+    .contact-info p {
+        font-size: 13px;
+    }
+
+    .map-toolbar button {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    .route-info {
+        font-size: 12.5px;
+    }
+
+    .faq h2 {
+        font-size: 19px;
+    }
+
+    .faq-question {
+        font-size: 14px;
+    }
+}
