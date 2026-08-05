@@ -1030,9 +1030,16 @@ section[data-no-snap],
     }
 
     .orbit-showcase-grid {
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    #service-intro-left,
+    #service-intro-right {
+        width: 48%;
+        padding: 15px;
+        flex: 0 0 48%;
     }
 
     .services-intro h2 {
