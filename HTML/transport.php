@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Labor - Bee Home Labor Multipurpose Cooperative</title>
+  <title>Transport Operation</title>
   <link rel="stylesheet" href="../CSS/transport.css" />
   <link rel="stylesheet" href="../CSS/navbar.css">
   <link rel="icon" type="image/png" href="../IMAGES/logo.png" />
   <link rel="stylesheet" href="../CSS/rent_request.css">
+  <link rel="stylesheet" href="../CSS/skeleton.css">
   <style>
     .legend-swatch.legend-pending {
       background: repeating-linear-gradient(45deg, #d99a00, #d99a00 4px, #fff3d6 4px, #fff3d6 8px);
+      border: 1px solid #d99a00;
+    }
+    .day-cell.has-pending {
+      position: relative;
+    }
+    .day-cell.has-pending::after {
+      content: "";
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform="translate3d(0, 0, 0)" href="../CSS/rent_request.css">
+  <style>
+    .legend-swatch.legend-pending {
+      -linear -gradient(45deg, #d99a00, #d99a00 4px, #fff3d6 4px, #fff3d6 8px);
       border: 1px solid #d99a00;
     }
     .day-cell.has-pending {
@@ -53,13 +67,13 @@
     <section class="animation-wrapper">
       <div class="animation">
         <div class="mountain-left-wrap scroll-element left">
-          <div class="mountain-left"><img src="../IMAGES/building.png" alt="Building Image" /></div>
+          <div class="mountain-left"><img src="../IMAGES/building.png" data-src="../IMAGES/building.png" alt="Building Image" class="lazy-load" /></div>
         </div>
         <div class="carousel">
           <div class="carousel-track">
             <div class="carousel-slide">
               <div class="transport-info-image">
-                <img src="../IMAGES/transport-img1.png" alt="Transport Image" />
+                <img src="../IMAGES/transport-img1.png" data-src="../IMAGES/transport-img1.png" alt="Transport Image" class="lazy-load" />
               </div>
             </div>
             <div class="carousel-slide">
@@ -79,11 +93,11 @@
               <div id="routes">
                 <div class="route-grid">
                   <p>Malabon - Monumento</p>
-                  <img src="../IMAGES/ROUTE(m-m).webp" alt="Malabon - Monumento Route">
+                  <img src="../IMAGES/ROUTE(m-m).webp" data-src="../IMAGES/ROUTE(m-m).webp" alt="Malabon - Monumento Route" class="lazy-load">
                 </div>
                 <div class="route-grid">
                   <p>MCU - Divisoria</p>
-                  <img src="../IMAGES/ROUTE(d-m).webp" alt="MCU - Divisoria Route">
+                  <img src="../IMAGES/ROUTE(d-m).webp" data-src="../IMAGES/ROUTE(d-m).webp" alt="MCU - Divisoria Route" class="lazy-load">
                 </div>
               </div>
             </div>
@@ -98,18 +112,18 @@
           <!-- button removed: progression is now scroll-driven, not click-driven -->
         </div>
         <div class="mountain-right-wrap scroll-element right">
-          <div class="mountain-right"><img src="../IMAGES/building.png" alt="Building Image" /></div>
+          <div class="mountain-right"><img src="../IMAGES/building.png" data-src="../IMAGES/building.png" alt="Building Image" class="lazy-load" /></div>
         </div>
-        <div id="road"><img src="../IMAGES/road.jpg" id="srcImage" alt="Road Image" /></div>
+        <div id="road"><img src="../IMAGES/road.jpg" data-src="../IMAGES/road.jpg" id="srcImage" alt="Road Image" class="lazy-load" /></div>
       </div>
     </section>
 
     <!------------------------------RENT HERO--------------------------->
     <section class="calendar hidden" id="hidden-calendar">
       <div class="calendar-header">
-        <button id="prevBtn">&lt;</button>
+        <button id="prevBtn"><</button>
         <h2 id="monthYearDisplay"></h2>
-        <button id="nextBtn">&gt;</button>
+        <button id="nextBtn">></button>
       </div>
       <div class="calendar-grid" id="calendarGrid">
         <!-- Weekday Headers -->
@@ -239,19 +253,26 @@
             </div>
           </div>
 
-        </div>
-        <div class="form-left">
-          <!-- PRIVACY CHECKBOX -->
-          <label>
-            <input type="checkbox" name="privacy_agree" required>
-            I agree with our
-            <span class="privacy-link" onclick="openPrivacyModal()">
-              Confidentiality and Data Privacy Clause
-            </span>
-          </label>
-        </div>
-        <button type="submit">Submit Request</button>
+          <div class="form-left">
+            <!-- PRIVACY CHECKBOX -->
+            <label>
+              <input type="checkbox" name="privacy_agree" required>
+              I agree with our
+              <span class="privacy-link" onclick="openPrivacyModal()">
+                Confidentiality and Data Privacy Clause
+              </span>
+            </label>
+          </div>
+          name="privacy_agree" required>
+              I agree with our
+              <span class="privacy-link" onclick="openPrivacyModal()">
+                Confidentiality and Data Privacy Clause
+              </span>
+            </label>
+          </div>
+          <button type="submit">Submit Request</button>
 
+        </div>
       </form>
 
     </div>
@@ -262,7 +283,7 @@
       style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
       <div class="modal-box" style="background:#fff; border-radius:8px; padding:24px; max-width:420px; width:90%;">
         <h2 id="rentResultTitle">Request Submitted</h2>
-        <div class="modal-content">
+        <div         class="modal-content">
           <p id="rentResultMessage"></p>
         </div>
         <button class="close-btn" onclick="closeRentResultModal()">Close</button>
@@ -474,7 +495,7 @@
 
         function isLowAvailability(dateKey) {
           if (totalVehicles <= 0) return false;
-          const remaining = totalVehicles - (dateCounts.get(dateKey) || 0);
+          const remaining = totalVehicles - (dateCounts.get(dateKeyCounts.get(dateKey) || 0);
           return remaining === 1;
         }
 
@@ -567,7 +588,7 @@
             if (fullyBooked) {
               dayCell.classList.add("booked");
               dayCell.style.backgroundColor = "#0c8a36";
-              dayCell.title = "Fully booked \u2014 no vehicles available";
+              dayCell.title = "Fully booked — no vehicles available";
             } else if (lowAvailability) {
               dayCell.classList.add("low-availability");
               dayCell.style.backgroundColor = "#e6c200";
@@ -577,7 +598,7 @@
             if (pending) {
               dayCell.classList.add("has-pending");
               const pendingNote = "Has request(s) pending approval";
-              dayCell.title = dayCell.title ? `${dayCell.title} \u2014 ${pendingNote}` : pendingNote;
+              dayCell.title = dayCell.title ? `${dayCell.title} — ${pendingNote}` : pendingNote;
             }
 
             if (cellDate < today) {
@@ -662,7 +683,7 @@
 
           if (fromInput.value && isRangeFullyBooked(fromInput.value, this.value)) {
             alert('That date range includes a fully booked date. Please adjust your dates.');
-            this.value = '';
+            untilInput.value = '';
           }
         });
 
@@ -767,6 +788,7 @@
               addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             }
           } catch (error) {
+            alert("Geocode service error: " + error.message);
             addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
           }
         }

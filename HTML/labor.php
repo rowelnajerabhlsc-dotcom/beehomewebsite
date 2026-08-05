@@ -1,8 +1,6 @@
-
 <?php
 session_start();
 include "config.php";
-
 
 /*  GET CURRENT LABOR FORM LINK */
 $stmt = $conn->prepare("SELECT * FROM labor_form LIMIT 1");
@@ -10,9 +8,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 $form = $result->fetch_assoc();
 $stmt->close();
-?>  
 
-
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +19,7 @@ $stmt->close();
     <link rel="stylesheet" href="../CSS/labor.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+    <link rel="stylesheet" href="../CSS/skeleton.css">
 </head>
 <body>
 
@@ -71,15 +69,15 @@ $stmt->close();
                 <li>10-Wheeler Driver</li>
                 <li>Truck Driver</li>
                 <li>Deliver Helper</li>
-            </ul>   
+            </ul>
         </div>
 
         <!-- RIGHT SIDE -->
         <div class="labor-images">
 
             <div class="img-grid">
-                <img src="../IMAGES/labor-img1.png">
-                <img src="../IMAGES/labor-img2.png">
+                <img src="../IMAGES/labor-img1.png" data-src="../IMAGES/labor-img1.png" alt="Labor Image 1" class="lazy-load">
+                <img src="../IMAGES/labor-img2.png" data-src="../IMAGES/labor-img2.png" alt="Labor Image 2" class="lazy-load">
             </div>
 
             <div class="flavor-text">
@@ -89,8 +87,8 @@ $stmt->close();
             </div>
 
             <div class="img-grid">
-                <img src="../IMAGES/labor-img3.png">
-                <img src="../IMAGES/labor-img4.png">
+                <img src="../IMAGES/labor-img3.png" data-src="../IMAGES/labor-img3.png" alt="Labor Image 3" class="lazy-load">
+                <img src="../IMAGES/labor-img4.png" data-src="../IMAGES/labor-img4.png" alt="Labor Image 4" class="lazy-load">
             </div>
 
             <div class="flavor-text">
@@ -167,6 +165,8 @@ function toggleMenu() {
     document.getElementById("navLinks").classList.toggle("active");
 }
 </script>
+
+<script src="../JS/lazy-load.js"></script>
 
 </body>
 </html>

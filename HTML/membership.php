@@ -1,7 +1,6 @@
 <?php
 include "auth_check.php";
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,23 +10,24 @@ include "auth_check.php";
     <link rel="stylesheet" href="../CSS/membership.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+    <link rel="stylesheet" href="../CSS/skeleton.css">
 </head>
 <body>
 
 <?php include "navbar.php"; ?>
 
  <!-- MEMBERSHIP PAGE CONTENTS START HERE -->
-   
+
     <section class="membership-hero">
         <h1>MEMBERSHIP</h1>
     </section>
 
-    
+
     <section class="membership-cards">
 
         <!-- CARD 1 -->
         <div class="member-card">
-            <div class="card-bg" style="background-image: url('../IMAGES/home-img2.png');"></div>
+            <div class="card-bg" style="background-image: url('../IMAGES/home-img2.png');" data-bg="../IMAGES/home-img2.png" class="lazy-bg"></div>
 
             <div class="card-overlay"></div>
 
@@ -50,7 +50,7 @@ include "auth_check.php";
 
         <!-- CARD 2 -->
         <div class="member-card">
-            <div class="card-bg" style="background-image: url('../IMAGES/membership-img3.png');"></div>
+            <div class="card-bg" style="background-image: url('../IMAGES/membership-img3.png');" data-bg="../IMAGES/membership-img3.png" class="lazy-bg"></div>
 
             <div class="card-overlay"></div>
 
@@ -75,15 +75,7 @@ include "auth_check.php";
 
 
 
-
-
-
-
-
-
-
     <?php include "footer.php"; ?>
-
 
 
 <script>
@@ -106,6 +98,8 @@ include "auth_check.php";
             });
         });
 </script>
+
+<script src="../JS/lazy-load.js"></script>
 
 </body>
 </html>

@@ -1,7 +1,6 @@
 <?php
 include "auth_check.php";
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +11,7 @@ include "auth_check.php";
     <link rel="stylesheet" href="../CSS/bee-home-cares.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+    <link rel="stylesheet" href="../CSS/skeleton.css">
 </head>
 
 <body>
@@ -22,7 +22,7 @@ include "auth_check.php";
 
     <section class="hero">
         <div class="hero-text">
-            <img src="../IMAGES/bhcares-logo.png" alt="Bee Home Logo" class="hero-logo">
+            <img src="../IMAGES/bhcares-logo.png" data-src="../IMAGES/bhcares-logo.png" alt="Bee Home Logo" class="hero-logo lazy-load">
             <h1>BEE HOME CARES</h1>
             <h2>
                 A financial assistance given to qualified members in case of hospitalization due to sickness, fire,
@@ -37,7 +37,7 @@ include "auth_check.php";
 
         <div class="cares-box">
             <div class="cares-image">
-                <img src="../IMAGES/bhcares-img1.png" alt="Hospital Assistance">
+                <img src="../IMAGES/bhcares-img1.png" data-src="../IMAGES/bhcares-img1.png" alt="Hospital Assistance" class="lazy-load">
             </div>
 
             <div class="cares-content">
@@ -65,7 +65,7 @@ include "auth_check.php";
 
         <div class="cares-box">
             <div class="cares-image">
-                <img src="../IMAGES/bhcares-img2.png" alt="Fire Assistance">
+                <img src="../IMAGES/bhcares-img2.png" data-src="../IMAGES/bhcares-img2.png" alt="Fire Assistance" class="lazy-load">
             </div>
             <div class="cares-content">
                 <h3>Fire Assistance (Members Only)</h3>
@@ -88,7 +88,7 @@ include "auth_check.php";
 
         <div class="cares-box">
             <div class="cares-image">
-                <img src="../IMAGES/bhcares-img3.png" alt="Burial Assistance">
+                <img src="../IMAGES/bhcares-img3.png" data-src="../IMAGES/bhcares-img3.png" alt="Burial Assistance" class="lazy-load">
             </div>
             <div class="cares-content">
                 <h3>Burial Assistance (Members Only / Immediate Family Members)</h3>
@@ -131,6 +131,8 @@ include "auth_check.php";
             document.getElementById("navLinks").classList.toggle("active");
         }
     </script>
+
+    <script src="../JS/lazy-load.js"></script>
 
 </body>
 

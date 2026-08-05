@@ -12,6 +12,7 @@
     background-color: #096D2B;
     color: white;
     padding: 60px 10%;
+    position: relative;
 }
 
 .footer-container {
@@ -106,7 +107,24 @@
 
 .footer-icon {
     width: 20px;
+    height: 20px;
     margin-right: 10px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.footer-right a:hover .footer-icon {
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+/* BOTTOM: COPYRIGHT */
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 /* ---------- TABLET (1024px and below) ---------- */
@@ -185,6 +203,13 @@
     .footer-right a {
         justify-content: center;
     }
+
+    /* Adjust bottom copyright on mobile */
+    .footer-bottom {
+        margin-top: 30px;
+        padding-top: 15px;
+        font-size: 11px;
+    }
 }
 
 /* ---------- SMALL MOBILE (480px and below) ---------- */
@@ -215,11 +240,19 @@
 
     .footer-icon {
         width: 16px;
+        height: 16px;
         margin-right: 8px;
     }
 
     .footer-middle ul li,
     .footer-right p {
         margin-bottom: 8px;
+    }
+
+    /* Further reduce footer bottom size on very small screens */
+    .footer-bottom {
+        margin-top: 25px;
+        padding-top: 10px;
+        font-size: 11px;
     }
 }

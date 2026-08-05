@@ -55,6 +55,8 @@ $active_page = $nav_pages[$current_page] ?? '';
 <script type="module" src="/JS/lenis-snap.js"></script>
 <link rel="stylesheet" href="/CSS/scroll-animate.css">
 <script defer src="/JS/scroll-animate.js"></script>
+<link rel="stylesheet" href="/CSS/skeleton.css">
+<script defer src="/JS/lazy-load.js"></script>
 
 <nav>
 
@@ -82,8 +84,7 @@ $active_page = $nav_pages[$current_page] ?? '';
             </ul>
         </li>
 
-        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products &
-                Services</a></li>
+        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products & Services</a></li>
 
         <?php if (!isset($_SESSION['user_id'])): ?>
             <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower

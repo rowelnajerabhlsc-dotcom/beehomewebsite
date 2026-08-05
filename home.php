@@ -133,6 +133,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="CSS/skeleton.css">
 </head>
 
 <body class="loading">
@@ -159,7 +160,6 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="lenis-content">
             <section class="hero">
                 <div class="hero-text">
-
                     <h1>WELCOME TO</h1>
 
                     <h2>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h2>
@@ -170,7 +170,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <section class="services-intro">
                 <div class="orbit-showcase-header">
                     <span class="orbit-badge">Our Offerings</span>
-                    <h2>Explore Our Products &amp; Services</h2>
+                    <h2>Explore Our Products & Services</h2>
                     <p class="orbit-showcase-desc">
                         Empowering our cooperative community with nourishing farm essentials and reliable household
                         welfare programs.
@@ -182,7 +182,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <div class="orbit-col">
                             <div class="orbit-header">
                                 <h3>Products</h3>
-                                <p id="product-desc">Fresh groceries, essentials &amp; more</p>
+                                <p id="product-desc">Fresh groceries, essentials & more</p>
                             </div>
 
                             <div class="orbit-circle">
@@ -286,7 +286,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <div class="orbit-col">
                             <div class="orbit-header">
                                 <h3>Services</h3>
-                                <p id="service-desc">Cooperative assistance, transit &amp; care</p>
+                                <p id="service-desc">Cooperative assistance, transit & care</p>
                             </div>
 
                             <div class="orbit-circle">
@@ -300,7 +300,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                         <div class="orbit-icon"
                                             onmouseover="updateCenterLabel('service', 'Savings & Credit', 'Cooperative savings accounts & micro-financing')"
                                             onmouseout="resetCenterLabel('service', 'Services', 'Cooperative assistance, transit & care')">
-                                            <span class="orbit-tooltip">Savings &amp; Loans</span>
+                                            <span class="orbit-tooltip">Savings & Loans</span>
                                             <div class="orbit-icon-btn">
                                                 <svg fill="none" stroke="currentColor" stroke-width="2"
                                                     viewBox="0 0 24 24">
@@ -350,7 +350,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                                 <svg fill="none" stroke="currentColor" stroke-width="2"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 001-1h2a1 1 0 001 1v4a1 1 0 001 1m-6 0h6" />
                                                 </svg>
                                             </div>
                                         </div>
@@ -424,27 +424,27 @@ if (session_status() === PHP_SESSION_NONE) {
                     <div class="services-grid">
 
                         <a href="HTML/labor.php" class="service-box link-box">
-                            <img src="../IMAGES/home-logo1.png" alt="Service 1">
+                            <img src="../IMAGES/home-logo1.png" data-src="../IMAGES/home-logo1.png" alt="Service 1" class="lazy-load">
                             <h3>Labor Operation</h3>
                             <p>Providing skilled, well-trained, and disciplined manpower solutions across diverse
                                 industries.</p>
                         </a>
 
                         <a href="HTML/credit.php" class="service-box link-box">
-                            <img src="../IMAGES/home-logo2.png" alt="Service 2">
+                            <img src="../IMAGES/home-logo2.png" data-src="../IMAGES/home-logo2.png" alt="Service 2" class="lazy-load">
                             <h3>Credit Operation</h3>
                             <p>Delivering accessible loan programs and financial support to help members achieve their
                                 goals. (MEMBERS ONLY)</p>
                         </a>
 
                         <a href="HTML/transport.php" class="service-box link-box">
-                            <img src="../IMAGES/home-logo3.png" alt="Service 3">
+                            <img src="../IMAGES/home-logo3.png" data-src="../IMAGES/home-logo3.png" alt="Service 3" class="lazy-load">
                             <h3>Transport Operation</h3>
                             <p>Providing safe, reliable, and efficient transportation services for passengers.</p>
                         </a>
 
                         <a href="HTML/products.php" class="service-box link-box">
-                            <img src="../IMAGES/home-logo4.png" alt="Service 4">
+                            <img src="../IMAGES/home-logo4.png" data-src="../IMAGES/home-logo4.png" alt="Service 4" class="lazy-load">
                             <h3>More Services</h3>
                             <p>Discover more services offered by Bee Home.</p>
                         </a>
@@ -494,7 +494,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
                     <a href="HTML/manpower_request.php" class="manpower-btn">
                         MANPOWER REQUEST
-                    </a>
+                    </p>
                 </div>
 
             </section>
@@ -530,19 +530,19 @@ if (session_status() === PHP_SESSION_NONE) {
                     <div class="about-slider" data-animate="fade-in">
 
                         <div class="slides fade">
-                            <img src="../IMAGES/home-img2.png" alt="Slide 1">
+                            <img src="../IMAGES/home-img2.png" data-src="../IMAGES/home-img2.png" alt="Slide 1" class="lazy-load">
                         </div>
 
                         <div class="slides fade">
-                            <img src="../IMAGES/aboutus-img1.png" alt="Slide 2">
+                            <img src="../IMAGES/aboutus-img1.png" data-src="../IMAGES/aboutus-img1.png" alt="Slide 2" class="lazy-load">
                         </div>
 
                         <div class="slides fade">
-                            <img src="../IMAGES/aboutus-img3.png" alt="Slide 3">
+                            <img src="../IMAGES/aboutus-img3.png" data-src="../IMAGES/aboutus-img3.png" alt="Slide 3" class="lazy-load">
                         </div>
 
                         <div class="slides fade">
-                            <img src="../IMAGES/aboutus-img4.png" alt="Slide 4">
+                            <img src="../IMAGES/aboutus-img4.png" data-src="../IMAGES/aboutus-img4.png" alt="Slide 4" class="lazy-load">
                         </div>
 
                         <!-- Dots -->
@@ -560,7 +560,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <!-- CONTENT 5 - GROWING COMMUNITY -->
             <section class="hero-two" data-no-snap>
                 <div class="hero-two-content" data-animate="fade-in">
-                    <img src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo">
+                    <img src="../IMAGES/logo.png" data-src="../IMAGES/logo.png" alt="Bee Home Logo" class="hero-two-logo lazy-load">
 
                     <h2>THE GROWING COMMUNITY OF</h2>
                     <h1>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h1>
@@ -585,9 +585,10 @@ if (session_status() === PHP_SESSION_NONE) {
                         <div class="affiliation-left" data-animate="slide-left">
                             <h2>Proud Member of</h2>
                             <div class="affiliation-logos">
-                                <img src="../IMAGES/oc-img.png" alt="Org 1">
-                                <img src="../IMAGES/ocb-img.png" alt="Org 2">
-                                <img src="../IMAGES/logo-cmcdc.png" alt="CMCDC">
+
+                                <img src="../IMAGES/oc-img.png" data-src="../IMAGES/oc-img.png" alt="Org 1" class="lazy-load">
+                                <img src="../IMAGES/ocb-img.png" data-src="../IMAGES/ocb-img.png" alt="Org 2" class="lazy-load">
+                                <img src="../IMAGES/logo-cmcdc.png" data-src="../IMAGES/logo-cmcdc.png" alt="CMCDC" class="lazy-load">
                             </div>
                         </div>
 
@@ -595,13 +596,13 @@ if (session_status() === PHP_SESSION_NONE) {
                         <div class="affiliation-right" data-animate="slide-right">
                             <h2>Affiliation</h2>
                             <div class="proud-logos">
-                                <img src="../IMAGES/logo-cda.png" alt="CDA">
-                                <img src="../IMAGES/logo-dole.png" alt="DOLE">
-                                <img src="../IMAGES/logo-bir.png" alt="BIR">
-                                <img src="../IMAGES/logo-dot.png" alt="DOT">
-                                <img src="../IMAGES/logo-otc.png" alt="OTC">
-                                <img src="../IMAGES/logo-ltfrb.png" alt="LTFRB">
-                                <img src="../IMAGES/LOGO-PESO.png" alt="PESO">
+                                <img src="../IMAGES/logo-cda.png" data-src="../IMAGES/logo-cda.png" alt="CDA" class="lazy-load">
+                                <img src="../IMAGES/logo-dole.png" data-src="../IMAGES/logo-dole.png" alt="DOLE" class="lazy-load">
+                                <img src="../IMAGES/logo-bir.png" data-src="../IMAGES/logo-bir.png" alt="BIR" class="lazy-load">
+                                <img src="../IMAGES/logo-dot.png" data-src="../IMAGES/logo-dot.png" alt="DOT" class="lazy-load">
+                                <img src="../IMAGES/logo-otc.png" data-src="../IMAGES/logo-otc.png" alt="OTC" class="lazy-load">
+                                <img src="../IMAGES/logo-ltfrb.png" data-src="../IMAGES/logo-ltfrb.png" alt="LTFRB" class="lazy-load">
+                                <img src="../IMAGES/LOGO-PESO.png" data-src="../IMAGES/LOGO-PESO.png" alt="PESO" class="lazy-load">
                             </div>
                         </div>
 
@@ -813,6 +814,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
     <script src="JS/home-loader.js?v=loader-fragments-2"></script>
+    <script src="JS/lazy-load.js"></script>
 
 </body>
 

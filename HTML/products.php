@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../CSS/products.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
+    <link rel="stylesheet" href="../CSS/skeleton.css">
 </head>
 
 <body>
@@ -29,20 +30,19 @@
             <div class="products-row" data-animate="slide-left">
                 <!-- LABOR -->
                 <div class="product-box" data-animate="slide-left">
-                    <img src="../IMAGES/product-logo1.png">
+                    <img src="../IMAGES/product-logo1.png" data-src="../IMAGES/product-logo1.png" alt="Labor Operation" class="lazy-load">
                     <h3>LABOR OPERATION</h3>
                     <p>• Human Resources</p>
                     <p>• Job Contracting</p>
                     <p>• Sub Contracting</p>
                     <div class="product-buttons">
                         <a href="../HTML/labor.php" class="btn-green">View More</a>
-                        </a>
                     </div>
                 </div>
 
                 <!-- TRANSPORT -->
                 <div class="product-box" data-animate="slide-left">
-                    <img src="../IMAGES/product-logo3.png">
+                    <img src="../IMAGES/product-logo3.png" data-src="../IMAGES/product-logo3.png" alt="Transport Operation" class="lazy-load">
                     <h3>TRANSPORT OPERATION</h3>
                     <p>• Transport Fleet Management</p>
                     <p>• Other Allied Business</p>
@@ -55,7 +55,7 @@
 
                 <!-- PROPERTY -->
                 <div class="product-box" data-animate="slide-left">
-                    <img src="../IMAGES/product-logo7.png">
+                    <img src="../IMAGES/product-logo7.png" data-src="../IMAGES/product-logo7.png" alt="Property Management" class="lazy-load">
                     <h3>PROPERTY MANAGEMENT</h3>
                     <p>• Canteen Operation</p>
                     <br>
@@ -68,7 +68,7 @@
 
                 <!-- TRAVEL -->
                 <div class="product-box" data-animate="slide-left">
-                    <img src="../IMAGES/product-logo4.png">
+                    <img src="../IMAGES/product-logo4.png" data-src="../IMAGES/product-logo4.png" alt="Travel & Tours" class="lazy-load">
                     <h3>TRAVEL & TOURS</h3>
                     <p>• Coming Soon</p>
                     <br><br>
@@ -85,7 +85,7 @@
             <div class="products-row" data-animate="slide-right">
                 <!-- CREDIT -->
                 <div class="product-box" data-animate="slide-right">
-                    <img src="../IMAGES/product-logo2.png">
+                    <img src="../IMAGES/product-logo2.png" data-src="../IMAGES/product-logo2.png" alt="Credit Operation" class="lazy-load">
                     <h3>CREDIT OPERATION</h3>
                     <p>(FOR MEMBERS ONLY)</p>
                     <p>• Low Interest Rate</p>
@@ -103,7 +103,7 @@
 
                 <!-- RETAIL -->
                 <div class="product-box" data-animate="slide-right">
-                    <img src="../IMAGES/product-logo6.png">
+                    <img src="../IMAGES/product-logo6.png" data-src="../IMAGES/product-logo6.png" alt="Retail Operation" class="lazy-load">
                     <h3>RETAIL OPERATION</h3>
                     <p>(FOR MEMBERS ONLY)</p>
                     <p>• Basic Household Needs</p>
@@ -119,7 +119,7 @@
 
                 <!-- BILLS -->
                 <div class="product-box" data-animate="slide-right">
-                    <img src="../IMAGES/product-logo5.png">
+                    <img src="../IMAGES/product-logo5.png" data-src="../IMAGES/product-logo5.png" alt="Bills Payment" class="lazy-load">
                     <h3>BILLS PAYMENT</h3>
                     <p>• Coming Soon</p>
                     <br><br><br><br>
@@ -139,5 +139,6 @@
     <?php include "footer.php"; ?>
 
 </body>
+<script src="../JS/lazy-load.js"></script>
 
 </html>
