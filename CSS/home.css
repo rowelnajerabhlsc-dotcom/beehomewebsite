@@ -1770,7 +1770,34 @@ body.loading {
     }
 }
 
-/* Tablet-specific base font size */
-@media (min-width: 768px) and (max-width: 1024px) {
-    html { font-size: 110%; }
+/* Service grid adjustments for small tablets and large phones (426px-768px) */
+@media (min-width: 426px) and (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .services-grid .service-box {
+        padding: 40px 20px;
+    }
+
+    .services-grid .service-box img {
+        height: 160px;
+        margin-bottom: 12px;
+    }
+
+    .services-grid .service-box h3 {
+        font-size: 26px;
+        margin-bottom: 8px;
+    }
+
+    .services-grid .service-box p {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .services-desc {
+        font-size: 20px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
