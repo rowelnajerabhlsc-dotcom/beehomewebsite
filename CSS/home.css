@@ -12,7 +12,6 @@ body {
     max-width: 100%;
 }
 
-
 /* DROPDOWN ITEMS */
 .dropdown-menu li {
     margin: 0;
@@ -51,46 +50,6 @@ section[data-no-snap],
 .footer[data-no-snap] {
     scroll-snap-align: none !important;
 }
-
-
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-
-    .nav-links {
-        position: absolute;
-        right: 0;
-        top: 70px;
-        background-color: #096D2B;
-        width: 100%;
-        flex-direction: column;
-        text-align: center;
-        display: none;
-    }
-
-    .nav-links li {
-        margin: 15px 0;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .menu-toggle {
-        display: flex;
-    }
-
-    .dropdown-menu {
-        position: static;
-        display: none;
-        background: #0c8a36;
-    }
-
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-}
-
 
 
 /* ------------------------------------------------------ */
@@ -197,21 +156,6 @@ section[data-no-snap],
     transform: translateY(0);
 }
 
-/* RESPONSIVE TEXT */
-@media (max-width: 768px) {
-    .hero {
-        height: 70vh;
-    }
-
-    .hero-text h1 {
-        font-size: 18px;
-    }
-
-    .hero-text h2 {
-        font-size: 24px;
-    }
-}
-
 
 /* ------------------------------------------------------ */
 
@@ -310,28 +254,7 @@ section[data-no-snap],
     background-color: #096D2B;
 }
 
-
-
 /* Responsive */
-@media (max-width: 768px) {
-    .about {
-        padding: 60px 5%;
-    }
-
-    .about h2 {
-        font-size: 24px;
-    }
-
-    .about p {
-        font-size: 14px;
-    }
-
-    .about-image img {
-        width: 100%;
-    }
-}
-
-
 
 /* ------------------------------------------------------ */
 
@@ -466,30 +389,6 @@ section[data-no-snap],
     transform: translateY(0);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .hero-two {
-        height: auto;
-        padding: 60px 5%;
-    }
-
-    .hero-two h1 {
-        font-size: 24px;
-    }
-
-    .hero-two h2 {
-        font-size: 14px;
-    }
-
-    .hero-two p {
-        font-size: 14px;
-    }
-
-    .hero-two-logo {
-        width: 60px;
-    }
-}
-
 
 /* ------------------------------------------------------ */
 
@@ -599,7 +498,6 @@ section[data-no-snap],
     opacity: 1;
     transform: translateX(0);
 }
-
 
 /*Rotating Graphics*/
 #service-intro-right {
@@ -777,9 +675,7 @@ section[data-no-snap],
     color: #096D2B;
     transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
+    
 }
 
 .orbit-icon-btn svg {
@@ -818,9 +714,7 @@ section[data-no-snap],
     z-index: 2;
     transition: transform 0.4s ease;
     /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
+    
 }
 
 .orbit-center:hover {
@@ -828,9 +722,7 @@ section[data-no-snap],
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     /* Reduced motion support */
-    @media (prefers-reduced-motion: reduce) {
-        transform: none;
-    }
+    
 }
 
 .orbit-center-title {
@@ -863,18 +755,6 @@ section[data-no-snap],
     color: #7c8a80;
     text-align: center;
     margin-top: 2px;
-}
-
-@media (max-width: 900px) {
-    .orbit-circle {
-        width: clamp(220px, 34vw, 280px);
-        height: clamp(220px, 34vw, 280px);
-    }
-
-    .orbit-center {
-        width: clamp(90px, 14vw, 116px);
-        height: clamp(90px, 14vw, 116px);
-    }
 }
 
 /*Services*/
@@ -1012,69 +892,6 @@ section[data-no-snap],
     transform: scale(1.05);
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* TABLET FIRST ENHANCEMENTS - Optimized for tablets and up (768px and wider) */
-@media (min-width: 768px) {
-    /* Ensure orbit showcase displays both orbits side by side on tablets */
-    #service-intro-left,
-    #service-intro-right {
-        width: 50%;
-        padding: 20px;
-        flex: 0 0 50%;
-    }
-
-    .orbit-showcase-grid {
-        justify-content: space-between;
-    }
-
-    /* Enhance tablet readability */
-    .hero-text h2 {
-        font-size: 60px;
-    }
-
-    .services-desc {
-        font-size: 18px;
-    }
-
-    .community-left h2,
-    .community-content h2 {
-        font-size: 48px;
-    }
-}
-
-@media (max-width: 768px) {
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .services-intro {
-        height: auto;
-        padding: 30px 6%;
-    }
-
-    .orbit-showcase-grid {
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
-    }
-
-    #service-intro-left,
-    #service-intro-right {
-        width: 48%;
-        padding: 15px;
-        flex: 0 0 48%;
-    }
-
-    .services-intro h2 {
-        font-size: 26px;
-    }
-}
 
 
 /* ------------------------------------------------------ */
@@ -1087,7 +904,7 @@ section[data-no-snap],
     /* increased vertical spacing */
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
     gap: 80px;
     /* more space between left and right */
 }
@@ -1096,6 +913,13 @@ section[data-no-snap],
 .community-left {
     width: calc(50% - 40px);
     color: #096D2B;
+    /* Flex column so the button lines up at the same height on both
+       sides regardless of how much heading/paragraph text each side
+       has — otherwise the two CTAs end up at different vertical
+       positions and look "uneven" next to each other. */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .community-left h2 {
@@ -1122,6 +946,11 @@ section[data-no-snap],
     overflow: hidden;
     border-radius: 50px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Pushes the button to the bottom of the flex column so it sits
+       level with the button on the opposite side, no matter how long
+       the paragraph above it runs. */
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .community-btn-left::before {
@@ -1160,6 +989,9 @@ section[data-no-snap],
     width: calc(50% - 40px);
     color: #096D2B;
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .community-content h2 {
@@ -1185,6 +1017,8 @@ section[data-no-snap],
     overflow: hidden;
     border-radius: 50px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
+    align-self: flex-end;
 }
 
 .community-btn::before {
@@ -1218,23 +1052,10 @@ section[data-no-snap],
     transform: translateY(0);
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
+/* Community section - two columns for tablets (426px-768px) */
 
-    .community {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .community-left,
-    .community-content {
-        width: 100%;
-        text-align: center;
-    }
-}
 
 /* ------------------------------------------------------ */
-
 
 /* AFFILIATION SECTION */
 /* AFFILIATION SECTION */
@@ -1322,21 +1143,8 @@ section[data-no-snap],
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* RESPONSIVE */
-@media (max-width: 992px) {
-    .affiliation-wrapper {
-        gap: 50px;
-    }
-
-    .affiliation-logos,
-    .proud-logos {
-        justify-content: center;
-    }
-}
-
 
 /* ------------------------------------------------------ */
-
 
 /* FOOTER */
 .footer {
@@ -1440,26 +1248,6 @@ section[data-no-snap],
     margin-right: 10px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .footer-left,
-    .footer-middle,
-    .footer-right {
-        flex: 1 1 100%;
-        margin-bottom: 30px;
-    }
-
-    .footer-left h3,
-    .footer-middle h3,
-    .footer-right h3 {
-        font-size: 16px;
-    }
-}
 
 /* MANPOWER REQUEST SECTION */
 .manpower-section {
@@ -1517,143 +1305,6 @@ section[data-no-snap],
     background: #26a753;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-
-    html,
-    body {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-
-    img,
-    svg,
-    video {
-        max-width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    .hero,
-    .about,
-    .hero-two,
-    .community,
-    .services,
-    .affiliation,
-    .footer,
-    .manpower-section {
-        width: 100%;
-        max-width: 100%;
-        padding-left: 20px;
-        padding-right: 20px;
-        box-sizing: border-box;
-    }
-
-    .hero {
-        height: 60vh;
-    }
-
-    .hero-text,
-    .hero-two-content,
-    .about-container,
-    .services-container,
-    .community-left,
-    .community-content,
-    .affiliation-container,
-    .footer-container,
-    .manpower-container {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    .hero-text {
-        padding: 0 10px;
-    }
-
-    .about,
-    .community,
-    .affiliation,
-    .footer,
-    .manpower-section {
-        padding-top: 60px;
-        padding-bottom: 60px;
-    }
-
-    .community {
-        gap: 40px;
-    }
-
-    .service-box {
-        padding: 30px 20px;
-    }
-
-    .service-box img {
-        height: 160px;
-    }
-
-    .affiliation-logos img,
-    .proud-logos img {
-        width: min(140px, 100%);
-    }
-
-    .hero-btn,
-    .community-btn-left,
-    .community-btn,
-    .manpower-btn {
-        display: inline-block;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        padding-left: 20px;
-        padding-right: 20px;
-        white-space: normal;
-        text-align: center;
-        z-index: 100;
-    }
-
-    .hero-text h1,
-    .hero-text h2,
-    .about h2,
-    .about p,
-    .hero-two h1,
-    .hero-two h2,
-    .hero-two p,
-    .community-left h2,
-    .community-left p,
-    .community-content h2,
-    .community-content p,
-    .services h2,
-    .services-desc,
-    .service-box p,
-    .affiliation h2,
-    .footer-left h3,
-    .footer-left p,
-    .footer-middle ul li a,
-    .footer-right p,
-    .manpower-container h2,
-    .manpower-container p {
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
-
-    .manpower-container {
-        padding: 50px 25px;
-    }
-
-    .manpower-container h2 {
-        font-size: 36px;
-    }
-
-    .manpower-container p {
-        font-size: 16px;
-    }
-
-    .manpower-btn {
-        padding: 15px 35px;
-    }
-}
 
 /* HOME LOADING SCREEN */
 body.loading {
@@ -1760,44 +1411,433 @@ body.loading {
     z-index: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .page-loader {
-        display: none;
-    }
-
-    body.loading {
-        overflow-x: hidden;
-    }
-}
-
 /* Service grid adjustments for small tablets and large phones (426px-768px) */
-@media (min-width: 426px) and (max-width: 768px) {
+
+/* ============================================================ */
+/* RESPONSIVE — restructured into three clear breakpoints:
+   Desktop (default, above) -> Tablet (1024px down) -> Mobile (767px
+   down) -> Small Mobile (480px down). Each block only overrides what
+   actually needs to change at that size, and structural fixes (like
+   the sticky full-height hero/orbit sections not fitting on small
+   screens) are handled here instead of just shrinking font sizes. */
+/* ============================================================ */
+
+/* ---------- TABLET (1024px and below) ---------- */
+@media (max-width: 1024px) {
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .services-grid .service-box {
-        padding: 40px 20px;
+
+    .hero-text h2 {
+        font-size: 56px;
     }
 
-    .services-grid .service-box img {
-        height: 160px;
-        margin-bottom: 12px;
-    }
-
-    .services-grid .service-box h3 {
+    .hero-text h1 {
         font-size: 26px;
-        margin-bottom: 8px;
     }
 
-    .services-grid .service-box p {
+    .about h2 {
+        font-size: 44px;
+    }
+
+    .about p {
+        font-size: 18px;
+    }
+
+    .community-left h2,
+    .community-content h2 {
+        font-size: 44px;
+    }
+
+    .orbit-circle {
+        width: clamp(220px, 26vw, 280px);
+        height: clamp(220px, 26vw, 280px);
+    }
+
+    .orbit-center {
+        width: clamp(90px, 12vw, 116px);
+        height: clamp(90px, 12vw, 116px);
+    }
+
+    /* hero-two: the button's fixed 90px side-padding was made for a
+       wide desktop screen and looks oversized/off-balance once the
+       section narrows down to tablet width. Scale it down and let the
+       content column use the available width more naturally. */
+    .hero-two {
+        padding: 0 6%;
+    }
+
+    .hero-two-content {
+        max-width: 70%;
+    }
+
+    .hero-two h1 {
+        font-size: 36px;
+    }
+
+    .hero-btn {
+        padding: 16px 45px;
+    }
+}
+
+/* ---------- MOBILE (767px and below) ---------- */
+@media (max-width: 767px) {
+
+    html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    img, svg, video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Nav */
+    .nav-links {
+        position: absolute;
+        right: 0;
+        top: 70px;
+        background-color: #096D2B;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        display: none;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        position: static;
+        display: none;
+        background: #0c8a36;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Structural fix: the hero and services-intro sections are pinned
+       to a fixed viewport height (100dvh - 70px) with position: sticky
+       for a scroll-fade desktop effect. On phones this fixed height is
+       too cramped for the stacked mobile content (headline + CTA, or
+       two orbit widgets) and clips it. Let both sections size to their
+       content on mobile instead of a fixed viewport height. */
+    .hero {
+        position: relative;
+        height: auto;
+        min-height: 60vh;
+        padding: 60px 6%;
+    }
+
+    .services-intro {
+        position: relative;
+        height: auto;
+        min-height: 0;
+        padding: 50px 6% 40px;
+    }
+
+    .hero-text h1 {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .hero-text h2 {
+        font-size: 28px;
+        margin-top: 8px;
+    }
+
+    .hero-cta-btn {
+        padding: 13px 30px;
+        margin-top: 24px;
+    }
+
+    /* About */
+    .about {
+        padding: 60px 6%;
+    }
+
+    .about h2 {
+        font-size: 26px;
+    }
+
+    .about p {
         font-size: 15px;
-        line-height: 1.5;
+    }
+
+    /* Second hero / community banner */
+    .hero-two {
+        height: auto;
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 6%;
+    }
+
+    .hero-two-content {
+        max-width: 100%;
+    }
+
+    .hero-two-logo {
+        width: 60px;
+    }
+
+    .hero-two h1 {
+        font-size: 26px;
+    }
+
+    .hero-two h2 {
+        font-size: 14px;
+    }
+
+    .hero-two p {
+        font-size: 14px;
+    }
+
+    .hero-btn {
+        padding: 15px 40px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    /* Products & services orbit showcase — stack instead of squeezing
+       two circles side by side */
+    .orbit-showcase-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    #service-intro-left,
+    #service-intro-right {
+        width: 100%;
+        flex: 0 0 auto;
+        padding: 10px;
+    }
+
+    .services-intro h2 {
+        font-size: 24px;
+    }
+
+    .orbit-showcase-desc {
+        font-size: 13px;
+    }
+
+    .orbit-circle {
+        width: clamp(220px, 55vw, 280px);
+        height: clamp(220px, 55vw, 280px);
+    }
+
+    .orbit-center {
+        width: clamp(90px, 18vw, 110px);
+        height: clamp(90px, 18vw, 110px);
+    }
+
+    /* Services grid */
+    .services {
+        padding: 60px 6%;
+    }
+
+    .services h2 {
+        font-size: 30px;
     }
 
     .services-desc {
-        font-size: 20px;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+        font-size: 15px;
+        margin-bottom: 30px;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-box {
+        padding: 35px 20px;
+    }
+
+    .service-box img {
+        height: 160px;
+    }
+
+    /* Community */
+    .community {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+        padding: 60px 6%;
+    }
+
+    .community-left,
+    .community-content {
+        width: 100%;
+        text-align: center;
+        align-items: center;
+    }
+
+    .community-left h2,
+    .community-content h2 {
+        font-size: 28px;
+    }
+
+    .community-left p,
+    .community-content p {
+        font-size: 15px;
+    }
+
+    .community-btn-left,
+    .community-btn {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px 20px;
+        margin-top: 10px;
+        align-self: center;
+    }
+
+    /* Affiliation */
+    .affiliation {
+        padding: 60px 6%;
+    }
+
+    .affiliation h2 {
+        font-size: 22px;
+    }
+
+    .affiliation-wrapper {
+        gap: 40px;
+    }
+
+    .affiliation-logos img {
+        width: 130px;
+        height: 120px;
+    }
+
+    .proud-logos img {
+        width: 120px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 50px 6%;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .footer-left,
+    .footer-middle,
+    .footer-right {
+        flex: 1 1 100%;
+    }
+
+    .footer-left h3,
+    .footer-middle h3,
+    .footer-right h3 {
+        font-size: 17px;
+    }
+
+    /* Manpower CTA */
+    .manpower-section {
+        padding: 60px 6%;
+        min-height: auto;
+    }
+
+    .manpower-container {
+        padding: 45px 25px;
+    }
+
+    .manpower-container h2 {
+        font-size: 30px;
+    }
+
+    .manpower-container p {
+        font-size: 15px;
+    }
+
+    .manpower-btn {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px 20px;
+    }
+
+    /* Prevent long words from breaking layout on narrow screens */
+    .hero-text h1, .hero-text h2,
+    .about h2, .about p,
+    .hero-two h1, .hero-two h2, .hero-two p,
+    .community-left h2, .community-left p,
+    .community-content h2, .community-content p,
+    .services h2, .services-desc, .service-box p,
+    .affiliation h2,
+    .footer-left h3, .footer-left p, .footer-middle ul li a, .footer-right p,
+    .manpower-container h2, .manpower-container p {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+}
+
+/* ---------- SMALL MOBILE (480px and below) ---------- */
+@media (max-width: 480px) {
+
+    .hero-text h1 {
+        font-size: 15px;
+    }
+
+    .hero-text h2 {
+        font-size: 22px;
+    }
+
+    #service-intro-left,
+    #service-intro-right {
+        padding: 0;
+    }
+
+    .orbit-circle {
+        width: clamp(200px, 62vw, 240px);
+        height: clamp(200px, 62vw, 240px);
+    }
+
+    .orbit-header h3 {
+        font-size: 18px;
+    }
+
+    .orbit-center-title {
+        font-size: 14px;
+    }
+
+    .services h2 {
+        font-size: 24px;
+    }
+
+    .community-left h2,
+    .community-content h2 {
+        font-size: 24px;
+    }
+
+    .affiliation-logos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .affiliation-logos img {
+        width: 100%;
+        height: 100px;
+    }
+
+    .manpower-container h2 {
+        font-size: 24px;
     }
 }
