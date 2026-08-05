@@ -1019,6 +1019,35 @@ section[data-no-snap],
     }
 }
 
+/* TABLET FIRST ENHANCEMENTS - Optimized for tablets and up (768px and wider) */
+@media (min-width: 768px) {
+    /* Ensure orbit showcase displays both orbits side by side on tablets */
+    #service-intro-left,
+    #service-intro-right {
+        width: 50%;
+        padding: 20px;
+        flex: 0 0 50%;
+    }
+
+    .orbit-showcase-grid {
+        justify-content: space-between;
+    }
+
+    /* Enhance tablet readability */
+    .hero-text h2 {
+        font-size: 60px;
+    }
+
+    .services-desc {
+        font-size: 18px;
+    }
+
+    .community-left h2,
+    .community-content h2 {
+        font-size: 48px;
+    }
+}
+
 @media (max-width: 768px) {
     .services-grid {
         grid-template-columns: 1fr;
@@ -1739,4 +1768,9 @@ body.loading {
     body.loading {
         overflow-x: hidden;
     }
+}
+
+/* Tablet-specific base font size */
+@media (min-width: 768px) and (max-width: 1024px) {
+    html { font-size: 110%; }
 }
