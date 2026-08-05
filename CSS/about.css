@@ -9,8 +9,6 @@ body {
     overflow-x: hidden;
 }
 
-
-
 /* DROPDOWN ITEMS */
 .dropdown-menu li {
     margin: 0;
@@ -42,100 +40,46 @@ section {
     scroll-margin-top: 120px; /* adjust depending on navbar height */
 }
 
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-
-    .nav-links {
-        position: absolute;
-        right: 0;
-        top: 70px;
-        background-color: #096D2B;
-        width: 100%;
-        flex-direction: column;
-        text-align: center;
-        display: none;
-    }
-
-    .nav-links li {
-        margin: 15px 0;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .menu-toggle {
-        display: flex;
-    }
-
-    .dropdown-menu {
-        position: static;
-        display: none;
-        background: #0c8a36;
-    }
-
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-}
-
-
-
 /* ------------------------------------------------------ */
 
-/* ABOUTT US PAGE STYLE STARTS HERE */
+/* ABOUT US PAGE STYLE STARTS HERE */
 
-
-/* ABOUT US HERO */
+/* ABOUT US HERO (parallax banner, used for every section's mini-hero) */
 .about-hero {
     width: 100%;
-    height: 200px; /* thin cropped banner */
+    height: 400px;
     background: url('../IMAGES/home-img3.png') no-repeat center center/cover;
+    background-attachment: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Green overlay */
+/* Dark green overlay for text contrast */
 .about-hero::after {
     content: "";
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(9, 109, 42, 0);
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 109, 42, 0.4);
+    z-index: 0;
 }
 
 .about-hero h1 {
     position: relative;
-    color: #096D2B;
+    z-index: 1;
+    color: #FFF82E;
     font-size: 70px;
     font-weight: bold;
     letter-spacing: 3px;
-    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .about-hero {
-        height: 180px;
-    }
-
-    .about-hero h1 {
-        font-size: 28px;
-    }
-}
-
-
 
 /* ------------------------------------------------------ */
-
-
-
 
 .about-section {
   padding: 80px 10%;
@@ -173,22 +117,6 @@ section {
   width: 90%;
   height: auto;
    border: 4px solid #0f7b3f;  
-}
-
-/* 📱 Mobile */
-@media (max-width: 768px) {
-  .about-row {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .about-row.reverse {
-    flex-direction: column;
-  }
-
-  .about-text h3 {
-    font-size: 22px;
-  }
 }
 
 /* ------------------------------------------------------ */
@@ -263,15 +191,6 @@ section {
 .core-item h4 {
   margin-bottom: 10px;
 }
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .mvv-wrapper {
-    flex-direction: column;
-  }
-}
-
-
 
 /* ------------------------------------------------------ */
 
@@ -361,30 +280,6 @@ section {
     line-height: 1.5;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-    .awards-grid {
-        grid-template-columns: 1fr 1fr; /* 2 per row */
-        gap: 20px;
-}
-
-.award-card img {
-        max-height: 250px;
-    }
-}
-
-@media (max-width: 768px) {
-    .awards-grid {
-        grid-template-columns: 1fr; /* 1 per row */
-    }
-
-    .award-card img {
-        max-height: 200px;
-    }
-}
-
-
-
 /* ------------------------------------------------------ */
 
 .officers {
@@ -395,10 +290,10 @@ section {
 
 .officers-container {
     width: 100%;
-    max-width: 1000px;  
-    display: flex;
-    flex-direction: column;
-    gap: 30px; 
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
 }
 
 .officers-container img {
@@ -409,10 +304,7 @@ section {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-
-
 /* ------------------------------------------------------ */
-
 
 .community {
     padding: 80px 10%;
@@ -430,18 +322,18 @@ section {
 }
 
 .community-text h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 28px;
+    margin-bottom: 15px;
     color: #096D2B;
 }
 
 .community-text p {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.7;
     color: #333;
 }
 
-/* GALLERY */
+/* GALLERY GRID */
 .community-gallery {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -450,11 +342,7 @@ section {
 }
 
 .community-gallery img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* GREEN HEADING BELOW */
@@ -471,53 +359,7 @@ section {
     margin: 0;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .community-gallery {
-        grid-template-columns: 1fr;
-    }
-
-    .community-gallery img {
-        height: 220px;
-    }
-}
-
-
-
 /* ------------------------------------------------------ */
-
-
-.community {
-    padding: 80px 10%;
-    background: #f9f9f9;
-}
-
-.community-container {
-    max-width: 1100px;
-    margin: auto;
-}
-
-.community-text {
-    margin-bottom: 40px;
-}
-
-.community-text h2 {
-    font-size: 28px;
-    margin-bottom: 15px;
-    color: #096D2B;
-}
-
-.community-text p {
-    line-height: 1.7;
-    color: #333;
-}
-
-/* GALLERY GRID */
-.community-gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-}
 
 /* EACH ITEM */
 .community-item {
@@ -554,7 +396,6 @@ section {
     text-align: center; 
 }
 
-
 /* IMAGE POPUP OVERLAY */
 .image-popup {
     position: fixed;
@@ -578,7 +419,6 @@ section {
     object-fit: contain;
 }
 
-
 .close-popup {
     position: absolute;
     top: 30px;
@@ -595,31 +435,7 @@ section {
     to {transform: scale(1);}
 }
 
-
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-    .community-gallery {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .community-gallery {
-        grid-template-columns: 1fr; 
-        gap: 20px;
-    }
-
-    .community-item img {
-        height: auto; 
-    }
-}
-
-
-
 /* ------------------------------------------------------ */
-
-
 
 /* FAQ SECTION */
 .faq {
@@ -678,11 +494,7 @@ section {
     margin-top: 10px;
 }
 
-
-
-
 /* ------------------------------------------------------ */
-
 
 /* FOOTER */
 /* FOOTER */
@@ -787,65 +599,12 @@ section {
     margin-right: 10px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .footer-left, .footer-middle, .footer-right {
-        flex: 1 1 100%;
-        margin-bottom: 30px;
-    }
-
-    .footer-left h3, .footer-middle h3, .footer-right h3 {
-        font-size: 16px;
-    }
-}
-
 /* PARALLAX EFFECTS */
 .parallax-bg {
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-}
-
-/* Hero sections with parallax */
-.about-hero {
-    background-attachment: fixed !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    height: 400px; /* Increased height for better parallax effect */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Darker overlay for better text readability */
-.about-hero::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(9, 109, 42, 0.4); /* Darker green overlay for better contrast */
-    z-index: 0;
-}
-
-.about-hero h1 {
-    position: relative;
-    z-index: 1;
-    color: #FFF82E; /* Yellow color for better contrast against dark overlay */
-    font-size: 70px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Parallax effect for images */
@@ -863,22 +622,301 @@ section {
     transition: transform 0.5s ease-out;
 }
 
-/* Responsive adjustments */
+
+/* ============================================================ */
+/* RESPONSIVE — consolidated into three breakpoints: Tablet (1024px
+   down), Mobile (768px down), Small Mobile (480px down). Replaces the
+   many small scattered @media blocks that were spread through the
+   file (several of them duplicating the same .about-hero/.community
+   rules with slightly different values). */
+/* ============================================================ */
+
+/* ---------- TABLET (1024px and below) ---------- */
+@media (max-width: 1024px) {
+
+    .about-hero h1 {
+        font-size: 46px;
+    }
+
+    .about-section {
+        padding: 60px 6%;
+    }
+
+    .about-row {
+        gap: 35px;
+        margin-bottom: 60px;
+    }
+
+    .mvv-section {
+        padding: 60px 6%;
+    }
+
+    .mvv-box h2,
+    .mvv-core h2 {
+        font-size: 32px;
+    }
+
+    .awards-section {
+        padding: 60px 6%;
+    }
+
+    .awards-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .award-card img {
+        max-height: 250px;
+    }
+
+    .officers {
+        padding: 60px 6%;
+    }
+
+    .community {
+        padding: 60px 6%;
+    }
+
+    .community-gallery {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ---------- MOBILE (768px and below) ---------- */
 @media (max-width: 768px) {
+
+    /* Nav (shared with navbar.css breakpoint) */
+    .nav-links {
+        position: absolute;
+        right: 0;
+        top: 70px;
+        background-color: #096D2B;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        display: none;
+    }
+
+    .nav-links li {
+        margin: 15px 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        position: static;
+        display: none;
+        background: #0c8a36;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Hero banner */
     .about-hero {
-        height: 300px;
+        height: 220px;
+        /* Fixed-attachment parallax is expensive and glitchy on mobile
+           browsers (especially iOS Safari) — fall back to a normal
+           scrolling background. */
+        background-attachment: scroll;
     }
 
     .about-hero h1 {
-        font-size: 28px;
+        font-size: 26px;
+        text-align: center;
+        padding: 0 20px;
     }
 
-    /* Disable parallax on mobile for performance */
-    .about-hero {
-        background-attachment: scroll !important;
+    /* About rows: text/image stack, image always below its text */
+    .about-section {
+        padding: 50px 6%;
     }
 
+    .about-row,
+    .about-row.reverse {
+        flex-direction: column;
+        text-align: center;
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .about-text p {
+        font-size: 15px;
+    }
+
+    .about-image img {
+        width: 100%;
+    }
+
+    /* Mission / Vision / Core Values */
+    .mvv-section {
+        padding: 50px 6%;
+    }
+
+    .mvv-wrapper {
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .mvv-box,
+    .mvv-core {
+        padding: 30px 25px;
+    }
+
+    .mvv-box h2,
+    .mvv-core h2 {
+        font-size: 26px;
+    }
+
+    .mvv-box p,
+    .mvv-core p {
+        font-size: 15px;
+    }
+
+    /* Awards */
+    .awards-section {
+        padding: 50px 6%;
+    }
+
+    .awards-title,
+    .awards-bottom-title {
+        font-size: 26px;
+    }
+
+    .awards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .award-card img {
+        max-height: 220px;
+    }
+
+    /* Officers */
+    .officers {
+        padding: 50px 6%;
+    }
+
+    .officers-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Community */
+    .community {
+        padding: 50px 6%;
+    }
+
+    .community-text h2 {
+        font-size: 22px;
+    }
+
+    .community-text p {
+        font-size: 15px;
+    }
+
+    .community-gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .community-item {
+        max-width: 100%;
+    }
+
+    /* FAQ */
+    .faq {
+        padding: 50px 6%;
+    }
+
+    .faq-question {
+        font-size: 15px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 50px 6%;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .footer-left,
+    .footer-middle,
+    .footer-right {
+        flex: 1 1 100%;
+        margin-bottom: 30px;
+    }
+
+    .footer-left h3,
+    .footer-middle h3,
+    .footer-right h3 {
+        font-size: 16px;
+    }
+
+    /* Image popup close button shouldn't crowd the edge on phones */
+    .close-popup {
+        top: 15px;
+        right: 20px;
+        font-size: 32px;
+    }
+
+    /* Parallax movement is a desktop nicety — turn it off on touch
+       screens where it can't be triggered by hover anyway. */
     .parallax-img {
         transform: none !important;
+    }
+}
+
+/* ---------- SMALL MOBILE (480px and below) ---------- */
+@media (max-width: 480px) {
+
+    .about-hero h1 {
+        font-size: 20px;
+    }
+
+    .about-hero {
+        height: 180px;
+    }
+
+    .mvv-box h2,
+    .mvv-core h2 {
+        font-size: 22px;
+    }
+
+    .awards-title,
+    .awards-bottom-title {
+        font-size: 22px;
+    }
+
+    .award-card h3 {
+        font-size: 16px;
+    }
+
+    .community-text h2 {
+        font-size: 18px;
+    }
+
+    .community-item h3 {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .faq h2 {
+        font-size: 20px;
+    }
+
+    .faq-question {
+        font-size: 14px;
     }
 }
