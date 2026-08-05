@@ -61,7 +61,7 @@ function initBackgroundLazyLoading() {
     const bgObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const element = target.target;
+                const element = entry.target;
                 loadBackgroundImage(element);
                 observer.unobserve(element);
             }
@@ -172,7 +172,11 @@ function loadImage(img) {
     // Get the actual src from data-src or src attribute
     const src = img.dataset.src || img.src;
 
-    if (!src) return;
+    if (!src) {
+        // If no src, remove loading state to prevent perpetual skeleton
+        removeLoadingState(img);
+        return;
+    }
 
     // Create image object to preload
     const imgObj = new Image();
@@ -200,11 +204,30 @@ function loadImage(img) {
         }, 50);
     };
     imgObj.onerror = () => {
-        // Handle error - maybe show a fallback or keep skeleton
+        // Handle error - remove loading state to prevent perpetual skeleton
         console.warn(`Failed to load image: ${src}`);
-        // Optionally add error class or fallback
+        removeLoadingState(img);
     };
     imgObj.src = src;
+}
+
+/**
+ * Remove loading state from an image element
+ * Used when there's an error or we need to clean up
+ */
+function removeLoadingState(img) {
+    const wrapper = img.closest('.lazy-load-container');
+    if (wrapper) {
+        // Remove skeleton immediately
+        const skeleton = wrapper.querySelector('.skeleton-loader');
+        if (skeleton) {
+            skeleton.remove();
+        }
+        // Remove loader class from wrapper
+        wrapper.classList.remove('lazy-load-wrapper');
+    }
+    // Remove loaded class from image
+    img.classList.remove('loaded');
 }
 
 /**
@@ -214,12 +237,20 @@ function loadBackgroundImage(element) {
     const bgUrl = element.dataset.bg ||
                   window.getComputedStyle(element).getPropertyValue('background-image');
 
-    if (!bgUrl || bgUrl === 'none') return;
+    if (!bgUrl || bgUrl === 'none') {
+        // If no background URL, remove loading state to prevent perpetual skeleton
+        removeBackgroundLoadingState(element);
+        return;
+    }
 
     // Extract URL from url(...) format if needed
     const cleanUrl = bgUrl.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
 
-    if (!cleanUrl || cleanUrl === 'none') return;
+    if (!cleanUrl || cleanUrl === 'none') {
+        // If no valid URL after cleaning, remove loading state
+        removeBackgroundLoadingState(element);
+        return;
+    }
 
     // Create image object to preload
     const imgObj = new Image();
@@ -229,15 +260,24 @@ function loadBackgroundImage(element) {
 
         // Remove loading state
         setTimeout(() => {
-            element.classList.remove('skeleton-loader');
-            // Remove any skeleton classes
-            element.classList.remove('skeleton-rectangle', 'skeleton-circle', 'skeleton-text');
+            removeBackgroundLoadingState(element);
         }, 300);
     };
     imgObj.onerror = () => {
         console.warn(`Failed to load background image: ${cleanUrl}`);
+        removeBackgroundLoadingState(element);
     };
     imgObj.src = cleanUrl;
+}
+
+/**
+ * Remove loading state from a background element
+ * Used when there's an error or we need to clean up
+ */
+function removeBackgroundLoadingState(element) {
+    element.classList.remove('skeleton-loader');
+    // Remove any skeleton classes
+    element.classList.remove('skeleton-rectangle', 'skeleton-circle', 'skeleton-text');
 }
 
 /**
