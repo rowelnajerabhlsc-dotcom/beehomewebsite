@@ -247,7 +247,7 @@ $conn->close();
         background: #f2f9f3;
         margin-bottom: 28px;
     }
-    .admin-section h2::before { content: "���🔒 "; }
+    .admin-section h2::before { content: "�🔒 "; }
 
     table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 10px; }
     th, td { padding: 8px; border: 1px solid #ccc; text-align: left; font-size: 0.85em; }
@@ -327,42 +327,42 @@ $conn->close();
             <div class="chart-card">
                 <h2>Requests Over Time (6mo)</h2>
                 <button class="export-btn" onclick="exportChart('trendChart', 'Requests Over Time')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="trendChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Helpdesk Status Breakdown</h2>
                 <button class="export-btn" onclick="exportChart('helpdeskChart', 'Helpdesk Status Breakdown')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="helpdeskChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Transport Status Breakdown</h2>
                 <button class="export-btn" onclick="exportChart('transportChart', 'Transport Status Breakdown')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="transportChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Top Requested Manpower Positions</h2>
                 <button class="export-btn" onclick="exportChart('positionChart', 'Top Requested Manpower Positions')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="positionChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>User Login Activity (6mo)</h2>
                 <button class="export-btn" onclick="exportChart('loginTrendChart', 'User Login Activity')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="loginTrendChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Logout/Lockout Trends (6mo)</h2>
                 <button class="export-btn" onclick="exportChart('eventTrendChart', 'Logout/Lockout Trends')">
-                    �� 📥 Export
+                    📥 Export
                 </button>
                 <canvas id="eventTrendChart"></canvas>
             </div>
@@ -376,14 +376,14 @@ $conn->close();
                 <div class="chart-card">
                     <h2>User Role Breakdown</h2>
                     <button class="export-btn" onclick="exportChart('roleChart', 'User Role Breakdown')">
-                        �� 📥 Export
+                        📥 Export
                     </button>
                     <canvas id="roleChart"></canvas>
                 </div>
                 <div class="chart-card">
                     <h2>Registration Links</h2>
                     <button class="export-btn" onclick="exportChart('regChart', 'Registration Links')">
-                        �� 📥 Export
+                        📥 Export
                     </button>
                     <canvas id="regChart"></canvas>
                 </div>
