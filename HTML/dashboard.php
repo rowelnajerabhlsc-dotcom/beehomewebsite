@@ -696,6 +696,11 @@ function exportChart(chartId, chartTitle) {
     const pageContent = document.getElementById('pageContent');
     const pageLoader = document.getElementById('pageLoader');
 
+    // The URL of whatever page is currently loaded into #pageContent.
+    // Embedded forms have no (or a relative) action attribute, so we need
+    // this to know where they actually should submit to.
+    let currentPageUrl = null;
+
     function setActive(tab) {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
@@ -706,6 +711,70 @@ function exportChart(chartId, chartTitle) {
         pageContent.style.display = 'none';
         pageLoader.style.display = 'none';
         pageContent.innerHTML = '';
+        currentPageUrl = null;
+    }
+
+    function runScripts(container) {
+        // Re-run any <script> tags injected via innerHTML (they don't execute by default).
+        container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+        });
+    }
+
+    function wireForms(container, pageUrl) {
+        container.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Resolve the real target: explicit action attribute (relative
+                // or absolute) if present, otherwise the page this form came from.
+                const rawAction = form.getAttribute('action');
+                const targetUrl = rawAction ? new URL(rawAction, pageUrl).href : pageUrl;
+                const method = (form.getAttribute('method') || 'GET').toUpperCase();
+
+                const submitter = e.submitter; // the actual button clicked, so name/value (e.g. "generate") is included
+                const formData = new FormData(form);
+                if (submitter && submitter.name) {
+                    formData.append(submitter.name, submitter.value);
+                }
+
+                pageContent.style.display = 'none';
+                pageLoader.style.display = '';
+
+                try {
+                    let res;
+                    if (method === 'GET') {
+                        const qs = new URLSearchParams(formData).toString();
+                        res = await fetch(targetUrl + (targetUrl.includes('?') ? '&' : '?') + qs, { credentials: 'same-origin' });
+                    } else {
+                        res = await fetch(targetUrl, { method, body: formData, credentials: 'same-origin' });
+                    }
+                    if (!res.ok) throw new Error('Request failed: ' + res.status);
+                    const html = await res.text();
+
+                    // If the endpoint redirected (e.g. to /transport-dashboard after an action),
+                    // res.url reflects the final URL — keep that as the new "page" context.
+                    currentPageUrl = res.url || targetUrl;
+
+                    pageContent.innerHTML = html;
+                    pageLoader.style.display = 'none';
+                    pageContent.style.display = '';
+
+                    runScripts(pageContent);
+                    wireForms(pageContent, currentPageUrl);
+                } catch (err) {
+                    pageLoader.style.display = 'none';
+                    pageContent.style.display = '';
+                    pageContent.innerHTML = '<p style="padding:20px;color:#a12626;">Something went wrong submitting this form (' + err.message + '). <a href="' + targetUrl + '">Open the page directly instead</a>.</p>';
+                }
+            });
+        });
     }
 
     async function loadPage(url, tab) {
@@ -718,20 +787,14 @@ function exportChart(chartId, chartTitle) {
             if (!res.ok) throw new Error('Request failed: ' + res.status);
             const html = await res.text();
 
+            currentPageUrl = res.url || url;
+
             pageContent.innerHTML = html;
             pageLoader.style.display = 'none';
             pageContent.style.display = '';
 
-            // Re-run any <script> tags injected via innerHTML (they don't execute by default).
-            pageContent.querySelectorAll('script').forEach(oldScript => {
-                const newScript = document.createElement('script');
-                if (oldScript.src) {
-                    newScript.src = oldScript.src;
-                } else {
-                    newScript.textContent = oldScript.textContent;
-                }
-                oldScript.replaceWith(newScript);
-            });
+            runScripts(pageContent);
+            wireForms(pageContent, currentPageUrl);
         } catch (err) {
             pageLoader.style.display = 'none';
             pageContent.style.display = '';

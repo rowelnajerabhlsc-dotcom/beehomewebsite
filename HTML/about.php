@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../CSS/about.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" type="image/png" href="../IMAGES/logo.png">
-    <link rel="stylesheet" href="../CSS/skeleton.css">
 </head>
 
 <body>
@@ -43,7 +42,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/home-img2.png" data-src="../IMAGES/home-img2.png" alt="Mission" class="parallax-img lazy-load">
+                    <img src="../IMAGES/home-img2.png" alt="Mission" class="parallax-img">
                 </div>
             </div>
 
@@ -64,7 +63,7 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/aboutus-img1.png" data-src="../IMAGES/aboutus-img1.png" alt="Vision" class="parallax-img lazy-load">
+                    <img src="../IMAGES/aboutus-img1.png" alt="Vision" class="parallax-img">
                 </div>
             </div>
 
@@ -89,10 +88,11 @@
                     </p>
                 </div>
                 <div class="about-image">
-                    <img src="../IMAGES/aboutus-img2.png" data-src="../IMAGES/aboutus-img2.png" alt="Core Values" class="parallax-img lazy-load">
+                    <img src="../IMAGES/aboutus-img2.png" alt="Core Values" class="parallax-img">
                 </div>
             </div>
         </section>
+
     </section>
 
 
@@ -166,26 +166,26 @@
                 <div class="awards-grid" data-animate="fade-in">
 
                     <div class="award-card">
-                        <img src="../IMAGES/award1.png" data-src="../IMAGES/award1.png" alt="Award 1" class="lazy-load">
+                        <img src="../IMAGES/award1.png" alt="Award 1" class="parallax-img">
                         <h3>TOP EMPLOYER PARTNER AWARDEE OF 2025</h3>
                         <p>City Government of Malabon</p>
                         <p>October 17, 2025</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award2.png" data-src="../IMAGES/award2.png" alt="Award 2" class="lazy-load">
+                        <img src="../IMAGES/award2.png" alt="Award 2" class="parallax-img">
                         <h3>GENDER AND DEVELOPMENT COMMITTEE PROJECT "KAMUSTA KA, KAI BEEGAN?"</h3>
                         <p>May 30, 2025</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award3.png" data-src="../IMAGES/award3.png" alt="Award 3" class="lazy-load">
+                        <img src="../IMAGES/award3.png" alt="Award 3" class="parallax-img">
                         <h3>BRIGADA ESKWELA 2024: Bayanihan para sa MATATAG na Paaralan</h3>
                         <p>July 22-27, 2024</p>
                     </div>
 
                     <div class="award-card">
-                        <img src="../IMAGES/award4.png" data-src="../IMAGES/award4.png" alt="Award 4" class="lazy-load">
+                        <img src="../IMAGES/award4.png" alt="Award 4" class="parallax-img">
                         <h3>OUTSTANDING COOPERATIVE</h3>
                         <p>November 19, 2021</p>
                     </div>
@@ -200,7 +200,7 @@
                     <h3>CERTIFICATE OF RECOGNITION</h3>
                     <ul>
                         <li>GENDER AND DEVELOPMENT COMMITTEE PROJECT "KAMUSTA KA, KAI BEEGAN?" / May 30, 2025</li>
-                        <li>BRIGADA 2024: Bayanihn para sa MATATAG na Paaralan / July 22-27, 2024</li>
+                        <li>BRIGADA ESKWELA 2024: Bayanihan para sa MATATAG na Paaralan / July 22-27, 2024</li>
                         <li>OUTSTANDING COOPERATIVE / November 19, 2021</li>
                         <li>GAWAD GALING KOOP 2018 / December 20, 2018</li>
                     </ul>
@@ -224,7 +224,6 @@
                 </div>
 
 
-
             </div>
         </section>
     </section>
@@ -236,12 +235,12 @@
 
         <section class="officers">
             <div class="officers-container">
-                <img src="../IMAGES/team-img1.1.png" data-src="../IMAGES/team-img1.1.png" alt="Officers Image 1" class="lazy-load">
-                <img src="../IMAGES/team-img2.1.png" data-src="../IMAGES/team-img2.1.1.png" alt="Officers Image 2" class="lazy-load">
-                <img src="../IMAGES/team-img3.png" data-src="../IMAGES/team-img3.png" alt="Officers Image 3" class="lazy-load">
-                <img src="../IMAGES/team-img4.png" data-src="../IMAGES/team-img4.png" alt="Officers Image 4" class="lazy-load">
-                <img src="../IMAGES/team-img5.png" data-src="../IMAGES/team-img5.png" alt="Officers Image 5" class="lazy-load">
-                <img src="../IMAGES/team-img6.png" data-src="../IMAGES/team-img6.png" alt="Officers Image 6" class="lazy-load">
+                <img src="../IMAGES/team-img1.1.png" alt="Officers Image 1" class="parallax-img">
+                <img src="../IMAGES/team-img2.1.png" alt="Officers Image 2" class="parallax-img">
+                <img src="../IMAGES/team-img3.png" alt="Officers Image 3" class="parallax-img">
+                <img src="../IMAGES/team-img4.png" alt="Officers Image 4" class="parallax-img">
+                <img src="../IMAGES/team-img5.png" alt="Officers Image 5" class="parallax-img">
+                <img src="../IMAGES/team-img6.png" alt="Officers Image 6" class="parallax-img">
             </div>
         </section>
     </section>
@@ -269,22 +268,22 @@
                 <div class="community-gallery">
 
                     <div class="community-item" data-animate="slide-left">
-                        <img src="../IMAGES/aboutus-community1.png" data-src="../IMAGES/aboutus-community1.png" alt="Community 1" class="parallax-img lazy-load" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community1.png" alt="Community 1" class="parallax-img" onclick="openPopup(this)">
                         <h3>TAGUMPAY NG PROYEKTONG "KAMUSTA KA, KAIBEEGAN?"</h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-right">
-                        <img src="../IMAGES/aboutus-community2.png" data-src="../IMAGES/aboutus-community2.png" alt="Community 2" class="parallax-img lazy-load" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community2.png" alt="Community 2" class="parallax-img" onclick="openPopup(this)">
                         <h3>PAGTATAPOS NG PROGRAMANG BEE LUSOG 2025 </h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-left">
-                        <img src="../IMAGES/aboutus-community3.png" data-src="../IMAGES/aboutus-community3.png" alt="Community 3" class="parallax-img lazy-load" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community3.png" alt="Community 3" class="parallax-img" onclick="openPopup(this)">
                         <h3>TAGUMPAY NG PROYEKTONG "TULOY ANG PAG-AARAL MATAPOS ANG #CARINA2024"</h3>
                     </div>
 
                     <div class="community-item" data-animate="slide-right">
-                        <img src="../IMAGES/aboutus-community4.png" data-src="../IMAGES/aboutus-community4.png" alt="Community 4" class="parallax-img lazy-load" onclick="openPopup(this)">
+                        <img src="../IMAGES/aboutus-community4.png" alt="Community 4" class="parallax-img" onclick="openPopup(this)">
                         <h3>PAGHAKBANG SA PAG-ASA: TAGUMPAY NG PROYEKTONG "SAPIN SA PAA"</h3>
                     </div>
 
@@ -298,6 +297,8 @@
         <span class="close-popup">&times;</span>
         <img class="popup-img" id="popupImg">
     </div>
+
+
 
 
 
@@ -365,6 +366,7 @@
     <?php include "footer.php"; ?>
 
 
+
     <script>
         function toggleMenu() {
             document.getElementById("navLinks").classList.toggle("active");
@@ -386,9 +388,7 @@
         document.querySelectorAll(".community-item img, .award-card img").forEach(img => {
             img.addEventListener("click", () => {
                 popup.classList.add("active");
-                // For popup images, we might want to load the high-res version immediately
-                // or we could also lazy load them
-                popupImg.src = img.currentSrc || img.src;
+                popupImg.src = img.src;
             });
         });
 
@@ -398,8 +398,6 @@
 
 
     </script>
-
-    <script src="../JS/lazy-load.js"></script>
 
 </body>
 
