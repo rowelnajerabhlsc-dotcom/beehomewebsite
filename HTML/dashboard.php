@@ -247,7 +247,7 @@ $conn->close();
         background: #f2f9f3;
         margin-bottom: 28px;
     }
-    .admin-section h2::before { content: "🔒 "; }
+    .admin-section h2::before { content: "���🔒 "; }
 
     table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 10px; }
     th, td { padding: 8px; border: 1px solid #ccc; text-align: left; font-size: 0.85em; }
@@ -272,6 +272,22 @@ $conn->close();
     .pagination button:hover:not(:disabled) { background: var(--primary); color: #fff; }
     .pagination button:disabled { opacity: 0.4; cursor: default; }
     .pagination button.active { background: var(--primary); color: #fff; font-weight: bold; }
+
+    .export-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        margin-left: 10px;
+        margin-top: -5px;
+    }
+
+    .export-btn:hover {
+        background: var(--secondary);
+    }
 </style>
 </head>
 <body>
@@ -310,26 +326,44 @@ $conn->close();
         <div class="chart-grid">
             <div class="chart-card">
                 <h2>Requests Over Time (6mo)</h2>
+                <button class="export-btn" onclick="exportChart('trendChart', 'Requests Over Time')">
+                    �� 📥 Export
+                </button>
                 <canvas id="trendChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Helpdesk Status Breakdown</h2>
+                <button class="export-btn" onclick="exportChart('helpdeskChart', 'Helpdesk Status Breakdown')">
+                    �� 📥 Export
+                </button>
                 <canvas id="helpdeskChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Transport Status Breakdown</h2>
+                <button class="export-btn" onclick="exportChart('transportChart', 'Transport Status Breakdown')">
+                    �� 📥 Export
+                </button>
                 <canvas id="transportChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Top Requested Manpower Positions</h2>
+                <button class="export-btn" onclick="exportChart('positionChart', 'Top Requested Manpower Positions')">
+                    �� 📥 Export
+                </button>
                 <canvas id="positionChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>User Login Activity (6mo)</h2>
+                <button class="export-btn" onclick="exportChart('loginTrendChart', 'User Login Activity')">
+                    �� 📥 Export
+                </button>
                 <canvas id="loginTrendChart"></canvas>
             </div>
             <div class="chart-card">
                 <h2>Logout/Lockout Trends (6mo)</h2>
+                <button class="export-btn" onclick="exportChart('eventTrendChart', 'Logout/Lockout Trends')">
+                    �� 📥 Export
+                </button>
                 <canvas id="eventTrendChart"></canvas>
             </div>
         </div>
@@ -341,10 +375,16 @@ $conn->close();
             <div class="chart-grid">
                 <div class="chart-card">
                     <h2>User Role Breakdown</h2>
+                    <button class="export-btn" onclick="exportChart('roleChart', 'User Role Breakdown')">
+                        �� 📥 Export
+                    </button>
                     <canvas id="roleChart"></canvas>
                 </div>
                 <div class="chart-card">
                     <h2>Registration Links</h2>
+                    <button class="export-btn" onclick="exportChart('regChart', 'Registration Links')">
+                        �� 📥 Export
+                    </button>
                     <canvas id="regChart"></canvas>
                 </div>
             </div>
@@ -490,6 +530,35 @@ new Chart(document.getElementById('regChart'), {
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 <?php endif; ?>
+
+function exportChart(chartId, chartTitle) {
+    const chart = Chart.getChart(chartId);
+    if (!chart) {
+        alert('Chart not found');
+        return;
+    }
+
+    // Get the base64 image data
+    const url = chart.toBase64Image();
+
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+
+    // Create filename from chart title
+    const fileName = chartTitle
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')      // Remove special characters
+        .replace(/\s+/g, '_')         // Replace spaces with underscores
+        .trim();
+
+    a.download = `${fileName}.png`;
+
+    // Trigger download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
 </script>
 
