@@ -176,9 +176,15 @@ button:hover {
     max-width: 800px;
     max-height: 80vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Prevent background scrolling while modal is open */
+body.modal-open {
+    overflow: hidden;
 }
 
 /* TITLE */

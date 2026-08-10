@@ -177,10 +177,12 @@ if (isset($_SESSION['user_id'])) {
     <script>
         function openPrivacyModal() {
             document.getElementById("privacyModal").style.display = "flex";
+            document.body.classList.add("modal-open");
         }
 
         function closePrivacyModal() {
             document.getElementById("privacyModal").style.display = "none";
+            document.body.classList.remove("modal-open");
         }
     </script>
 

@@ -686,6 +686,20 @@
           if (modal) modal.style.display = 'none';
         };
 
+        window.openPrivacyModal = function () {
+          const modal = document.getElementById('privacyModal');
+          if (!modal) return;
+          modal.style.display = 'flex';
+          document.body.classList.add('modal-open');
+        };
+
+        window.closePrivacyModal = function () {
+          const modal = document.getElementById('privacyModal');
+          if (!modal) return;
+          modal.style.display = 'none';
+          document.body.classList.remove('modal-open');
+        };
+
         if (rentForm) {
           rentForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // stay on the page instead of redirecting
