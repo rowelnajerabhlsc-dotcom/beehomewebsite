@@ -166,11 +166,56 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="scroll-container">
         <div class="lenis-content">
             <section class="hero">
-                <div class="hero-text">
+                <div class="hero-inner">
+                    <div class="hero-text">
+                        <span class="hero-badge">
+                            <svg class="hero-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Registered Cooperative
+                        </span>
 
-                    <h1>WELCOME TO</h1>
+                        <h1>WELCOME TO</h1>
+                        <h2><span class="hero-highlight">BEE HOME</span><br>Labor Multipurpose Cooperative</h2>
 
-                    <h2>BEE HOME LABOR MULTIPURPOSE COOPERATIVE</h2>
+                        <p class="hero-desc">
+                            Bee Home Labor Multipurpose Cooperative is dedicated to assisting its members in
+                            increasing their financial prosperity by supplying worthwhile goods and services.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a href="HTML/manpower_request.php" class="hero-action-btn hero-action-btn--primary">
+                                Request Manpower
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+                                </svg>
+                            </a>
+                            <a href="membership" class="hero-action-btn hero-action-btn--outline">Join as Member</a>
+                        </div>
+                    </div>
+
+                    <div class="hero-highlights">
+                        <a href="HTML/labor.php" class="hero-highlight-card">
+                            <img src="../IMAGES/home-logo1.png" alt="" class="hero-highlight-icon">
+                            <h3>Labor Operation</h3>
+                            <p>Skilled, well-trained manpower solutions across diverse industries.</p>
+                        </a>
+                        <a href="HTML/transport.php" class="hero-highlight-card">
+                            <img src="../IMAGES/home-logo3.png" alt="" class="hero-highlight-icon">
+                            <h3>Transport Operation</h3>
+                            <p>Safe, reliable, and efficient transportation services.</p>
+                        </a>
+                        <a href="HTML/credit.php" class="hero-highlight-card">
+                            <img src="../IMAGES/home-logo2.png" alt="" class="hero-highlight-icon">
+                            <h3>Credit Operation</h3>
+                            <p>Accessible loan programs and financial support for members.</p>
+                        </a>
+                        <a href="HTML/products.php" class="hero-highlight-card">
+                            <img src="../IMAGES/home-logo4.png" alt="" class="hero-highlight-icon">
+                            <h3>More Services</h3>
+                            <p>Discover the full range of services offered by Bee Home.</p>
+                        </a>
+                    </div>
                 </div>
             </section>
 
