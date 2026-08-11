@@ -190,7 +190,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
                                 </svg>
                             </a>
-                            <a href="membership" class="hero-action-btn hero-action-btn--outline">Join as Member</a>
+                            <a href="HTML/login.php" class="hero-action-btn hero-action-btn--outline">Log In</a>
                         </div>
                     </div>
 
