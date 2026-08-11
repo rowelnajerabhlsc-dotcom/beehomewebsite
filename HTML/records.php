@@ -399,7 +399,7 @@ $result = $stmt->get_result();
 
             <div class="button-group">
                 <button type="submit" class="save-btn">Save</button>
-                <button type="button" class="cancel-btn" onclick="window.location.href='/records'">Cancel</button>
+                <button type="button" class="cancel-btn" id="editCancelBtn">Cancel</button>
             </div>
 
         </form>
@@ -414,17 +414,41 @@ $result = $stmt->get_result();
     const modal = document.getElementById('editModal');
     if (!modal) return;
 
+    // When this page is embedded inside the centralized dashboard,
+    // #pageContent (the dashboard's content wrapper) will be present in
+    // the document as an ancestor of this modal. In that case we should
+    // just close the modal in place, not navigate — a real navigation to
+    // /records here would hit the dashboard's own URL/context, not the
+    // standalone records page, and would kick the user out of the
+    // dashboard entirely. When running standalone (not embedded),
+    // #pageContent won't exist, so we fall back to the original behavior
+    // of navigating to a clean /records URL (clearing ?edit=... from it).
+    const isEmbedded = !!document.getElementById('pageContent');
+
+    function closeEditModal() {
+        if (isEmbedded) {
+            modal.remove();
+        } else {
+            window.location.href = '/records';
+        }
+    }
+
+    const cancelBtn = document.getElementById('editCancelBtn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeEditModal);
+    }
+
     // Click on dim backdrop (not on the card itself) closes the modal
     modal.addEventListener('click', function (e) {
         if (e.target === modal) {
-            window.location.href = '/records';
+            closeEditModal();
         }
     });
 
     // Escape key closes the modal
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            window.location.href = '/records';
+            closeEditModal();
         }
     });
 })();

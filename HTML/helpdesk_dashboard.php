@@ -631,7 +631,18 @@ async function submitCase() {
         const data = await res.json();
         if (data.ok) {
             showMsg('Email sent to member.', false);
-            setTimeout(() => { closeModal(); window.location.reload(); }, 1200);
+            setTimeout(() => {
+                closeModal();
+                // When embedded in the centralized dashboard, refresh just this
+                // tab's content instead of reloading the whole document (which,
+                // since the address bar still shows /dashboard, would otherwise
+                // dump the user back out to the dashboard home).
+                if (typeof window.dashboardReloadCurrentPage === 'function') {
+                    window.dashboardReloadCurrentPage();
+                } else {
+                    window.location.reload();
+                }
+            }, 1200);
         } else {
             showMsg(data.error || 'Could not send this email. Draft has been kept.', true);
         }

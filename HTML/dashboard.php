@@ -727,6 +727,69 @@ function exportChart(chartId, chartTitle) {
         });
     }
 
+    // Swaps #pageContent with fresh HTML from `res`, tracks the resulting
+    // page URL (following any server-side redirect), and re-wires
+    // links/forms/scripts inside the new content.
+    async function render(res, fallbackUrl) {
+        if (!res.ok) throw new Error('Request failed: ' + res.status);
+        const html = await res.text();
+
+        currentPageUrl = res.url || fallbackUrl;
+
+        pageContent.innerHTML = html;
+        pageLoader.style.display = 'none';
+        pageContent.style.display = '';
+
+        runScripts(pageContent);
+        wireLinks(pageContent, currentPageUrl);
+        wireForms(pageContent, currentPageUrl);
+    }
+
+    function showError(message, url) {
+        pageLoader.style.display = 'none';
+        pageContent.style.display = '';
+        pageContent.innerHTML = '<p style="padding:20px;color:#a12626;">' + message +
+            ' <a href="' + url + '">Open it directly instead</a>.</p>';
+    }
+
+    // Intercepts clicks on plain <a> links inside embedded pages (pagination,
+    // Delete/Approve/Reject actions, View buttons, etc.) so they load via
+    // fetch into #pageContent instead of navigating the whole tab away —
+    // which previously landed on whatever URL the address bar still showed
+    // (e.g. /dashboard) instead of the actual link target.
+    function wireLinks(container, pageUrl) {
+        container.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+
+            // Skip things that aren't real page navigations.
+            if (!href || href.startsWith('#') || href.startsWith('javascript:') ||
+                href.startsWith('mailto:') || href.startsWith('tel:') ||
+                link.target === '_blank' || link.hasAttribute('download')) {
+                return;
+            }
+
+            link.addEventListener('click', async function (e) {
+                // If an inline onclick="return confirm(...)" already ran and the
+                // user hit Cancel, the browser will have set defaultPrevented
+                // before this listener runs — respect that and stop here.
+                if (e.defaultPrevented) return;
+                e.preventDefault();
+
+                const targetUrl = new URL(href, pageUrl).href;
+
+                pageContent.style.display = 'none';
+                pageLoader.style.display = '';
+
+                try {
+                    const res = await fetch(targetUrl, { credentials: 'same-origin' });
+                    await render(res, targetUrl);
+                } catch (err) {
+                    showError('Couldn\'t load this page (' + err.message + ').', targetUrl);
+                }
+            });
+        });
+    }
+
     function wireForms(container, pageUrl) {
         container.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', async function (e) {
@@ -755,23 +818,9 @@ function exportChart(chartId, chartTitle) {
                     } else {
                         res = await fetch(targetUrl, { method, body: formData, credentials: 'same-origin' });
                     }
-                    if (!res.ok) throw new Error('Request failed: ' + res.status);
-                    const html = await res.text();
-
-                    // If the endpoint redirected (e.g. to /transport-dashboard after an action),
-                    // res.url reflects the final URL — keep that as the new "page" context.
-                    currentPageUrl = res.url || targetUrl;
-
-                    pageContent.innerHTML = html;
-                    pageLoader.style.display = 'none';
-                    pageContent.style.display = '';
-
-                    runScripts(pageContent);
-                    wireForms(pageContent, currentPageUrl);
+                    await render(res, targetUrl);
                 } catch (err) {
-                    pageLoader.style.display = 'none';
-                    pageContent.style.display = '';
-                    pageContent.innerHTML = '<p style="padding:20px;color:#a12626;">Something went wrong submitting this form (' + err.message + '). <a href="' + targetUrl + '">Open the page directly instead</a>.</p>';
+                    showError('Something went wrong submitting this form (' + err.message + ').', targetUrl);
                 }
             });
         });
@@ -784,21 +833,9 @@ function exportChart(chartId, chartTitle) {
 
         try {
             const res = await fetch(url, { credentials: 'same-origin' });
-            if (!res.ok) throw new Error('Request failed: ' + res.status);
-            const html = await res.text();
-
-            currentPageUrl = res.url || url;
-
-            pageContent.innerHTML = html;
-            pageLoader.style.display = 'none';
-            pageContent.style.display = '';
-
-            runScripts(pageContent);
-            wireForms(pageContent, currentPageUrl);
+            await render(res, url);
         } catch (err) {
-            pageLoader.style.display = 'none';
-            pageContent.style.display = '';
-            pageContent.innerHTML = '<p style="padding:20px;color:#a12626;">Couldn\'t load this page (' + err.message + '). <a href="' + url + '">Open it directly instead</a>.</p>';
+            showError('Couldn\'t load this page (' + err.message + ').', url);
         }
 
         setActive(tab);
@@ -818,6 +855,20 @@ function exportChart(chartId, chartTitle) {
             loadPage(url, tab);
         });
     });
+
+    // Public hook: any embedded page's own JS can call this instead of
+    // window.location.reload() to refresh just the currently-loaded page
+    // in place, without reloading the whole dashboard document (which,
+    // since the address bar still shows /dashboard, is what a real
+    // reload() would otherwise do). Pages should check
+    // `typeof window.dashboardReloadCurrentPage === 'function'` first and
+    // fall back to location.reload() when running standalone (outside the
+    // dashboard), where this function won't exist.
+    window.dashboardReloadCurrentPage = function () {
+        if (!currentPageUrl) return;
+        const activeTab = document.querySelector('#quickLinks .ql-tab.active') || tabs[0];
+        loadPage(currentPageUrl, activeTab);
+    };
 })();
 </script>
 
