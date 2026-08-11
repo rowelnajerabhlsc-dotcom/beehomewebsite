@@ -190,7 +190,9 @@ if (session_status() === PHP_SESSION_NONE) {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
                                 </svg>
                             </a>
+                            <?php if (!isset($_SESSION['user_id'])): ?>
                             <a href="HTML/login.php" class="hero-action-btn hero-action-btn--outline">Log In</a>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -555,30 +557,77 @@ if (session_status() === PHP_SESSION_NONE) {
             <!-- CONTENT 4 - ABOUT US -->
             <section class="about" data-no-snap>
                 <div class="about-container">
-                    <h2 data-animate="fade-in">ABOUT US</h2>
 
-                    <p style="font-size: 22px; text-align: justify;" data-animate="slide-left">
-                        <strong>Bee Home Labor Multipurpose Cooperative (BHLMPC)</strong> is a registered, versatile
-                        cooperative
-                        dedicated to driving community growth and uplifting our members' socio-economic well-being. As a
-                        dynamic, <strong>multipurpose organization</strong>, we operate a diverse ecosystem of services
-                        engineered to
-                        meet a wide range of business and community needs. Our comprehensive portfolio spans
-                        <strong>modern</strong> essential public utility <strong>transports</strong>,
-                        <strong>property</strong>
-                        management, diverse <strong>financial</strong> and <strong>credit</strong> solutions,
-                        <strong>retail</strong> distribution, and professional <strong>labor</strong> services.
-                    </p>
+                    <div class="about-hero-grid">
 
-                    <p style="font-size: 22px; text-align: justify;" data-animate="slide-right">
-                        Looking forward, we <strong>continue to expand</strong> our reach with upcoming services in
-                        <strong>travel and tours</strong>,
-                        alongside convenient <strong>bills and payment</strong> solutions. Every member-worker is a
-                        co-owner of this
-                        growing enterprise, united under the shared values of professionalism, integrity, and mutual
-                        progress. By continuously bridging new service gaps, BHLMPC remains a proud partner in
-                        productivity and sustainable community development.
-                    </p>
+                        <div class="about-q-header" data-animate="slide-left">
+                            <span class="about-badge">Who We Are</span>
+                            <h2 class="about-hero-heading">
+                                A Cooperative Built on <span class="accent">Trust,<br>Service,</span> and Community
+                            </h2>
+                        </div>
+
+                        <div class="about-video-card" data-animate="fade-in">
+                            <div class="about-video-play">
+                                <div class="about-video-play-btn">
+                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                                <h3>Watch Our Story</h3>
+                                <span>Cooperative Presentation Video</span>
+                            </div>
+                            <span class="about-video-tag about-video-tag--left">🐝 Bee Home Cooperative</span>
+                            <span class="about-video-tag about-video-tag--right">Video Coming Soon</span>
+                        </div>
+
+                        <p class="about-q-p1" data-animate="slide-left">
+                            <strong>Bee Home Labor Multipurpose Cooperative (BHLMPC)</strong> is a registered, versatile
+                            cooperative dedicated to driving community growth and uplifting our members' socio-economic
+                            well-being. As a dynamic, <strong>multipurpose organization</strong>, we operate a diverse
+                            ecosystem of services engineered to meet a wide range of business and community needs. Our
+                            comprehensive portfolio spans <strong>modern</strong> essential public utility
+                            <strong>transports</strong>, <strong>property</strong> management, diverse
+                            <strong>financial</strong> and <strong>credit</strong> solutions, <strong>retail</strong>
+                            distribution, and professional <strong>labor</strong> services.
+                        </p>
+
+                        <p class="about-q-p2" data-animate="slide-right">
+                            Looking forward, we <strong>continue to expand</strong> our reach with upcoming services in
+                            <strong>travel and tours</strong>, alongside convenient <strong>bills and payment</strong>
+                            solutions. Every member-worker is a co-owner of this growing enterprise, united under the
+                            shared values of professionalism, integrity, and mutual progress. By continuously bridging
+                            new service gaps, BHLMPC remains a proud partner in productivity and sustainable community
+                            development.
+                        </p>
+
+                        <div class="about-feature-list">
+                            <div class="about-feature">
+                                <div class="about-feature-icon">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div>
+                                    <h4>CDA Registered &amp; Compliant</h4>
+                                    <p>Fully accredited by the Cooperative Development Authority</p>
+                                </div>
+                            </div>
+                            <div class="about-feature">
+                                <div class="about-feature-icon">
+                                    <i class="fa-solid fa-people-group"></i>
+                                </div>
+                                <div>
+                                    <h4>Member-Owned &amp; Operated</h4>
+                                    <p>Growth shared among nearly 1,000 active members</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="../HTML/about.php" class="about-hero-cta">
+                            Learn More About Us
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" width="18" height="18">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                        </a>
+
+                    </div>
 
                     <div class="about-slider" data-animate="fade-in">
 

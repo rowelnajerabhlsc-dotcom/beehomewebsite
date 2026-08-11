@@ -1937,3 +1937,233 @@ body.loading {
         font-size: 24px;
     }
 }
+
+/* ------------------------------------------------------ */
+/* ABOUT US — HERO GRID (text + video showcase card) */
+/* Added: two-column "Who We Are" layout combining the intro copy
+   with a video placeholder card, plus orbit spacing fixes. */
+
+.about-hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    column-gap: 56px;
+    row-gap: 32px;
+    align-items: start;
+    margin-bottom: 48px;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+@media (max-width: 960px) {
+    .about-hero-grid {
+        grid-template-columns: 1fr;
+        row-gap: 24px;
+    }
+}
+
+.about-q-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.about-badge {
+    display: inline-block;
+    background: #e5f5e8;
+    color: #0c8a36;
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 8px 18px;
+    border-radius: 50px;
+    margin-bottom: 18px;
+}
+
+.about .about-hero-heading {
+    font-size: 2.6em;
+    line-height: 1.15;
+    font-weight: 800;
+    color: #142a1c;
+    margin: 0;
+    text-align: left;
+}
+
+.about .about-hero-heading .accent {
+    color: #0c8a36;
+}
+
+.about-hero-grid p {
+    font-size: 1.05em;
+    text-align: left;
+    color: #445048;
+    margin: 0;
+}
+
+.about-feature-list {
+    grid-column: 1 / -1;
+    margin: 24px 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.about-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.about-feature-icon {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #e5f5e8;
+    color: #0c8a36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+}
+
+.about-feature h4 {
+    margin: 0 0 4px;
+    font-size: 1.05em;
+    color: #142a1c;
+}
+
+.about-feature p {
+    margin: 0;
+    font-size: 0.92em;
+    color: #6a746c;
+}
+
+.about-hero-cta {
+    grid-column: 1 / -1;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #0c5c26;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 14px 26px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.about-hero-cta:hover {
+    background: #0c8a36;
+}
+
+/* Video showcase card */
+.about-video-card {
+    position: relative;
+    background: linear-gradient(135deg, #0c5c26, #0c8a36);
+    border-radius: 20px;
+    aspect-ratio: 16 / 11;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 45px rgba(12, 92, 38, 0.28);
+}
+
+.about-video-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+}
+
+.about-video-play {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    color: #fff;
+    text-align: center;
+}
+
+.about-video-play-btn {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: #f1c531;
+    border: 6px solid rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.about-video-play-btn:hover {
+    transform: scale(1.06);
+}
+
+.about-video-play-btn svg {
+    width: 26px;
+    height: 26px;
+    fill: #0c5c26;
+    margin-left: 4px;
+}
+
+.about-video-play h3 {
+    margin: 0;
+    font-size: 1.3em;
+}
+
+.about-video-play span {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.92em;
+}
+
+.about-video-tag {
+    position: absolute;
+    z-index: 2;
+    bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.28);
+    color: #fff;
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 50px;
+    backdrop-filter: blur(4px);
+}
+
+.about-video-tag--left {
+    left: 18px;
+}
+
+.about-video-tag--right {
+    right: 18px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* ------------------------------------------------------ */
+/* SERVICES ORBIT — spacing between header / circle / footer */
+
+.orbit-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.orbit-header {
+    margin-bottom: 28px;
+}
+
+.orbit-circle {
+    margin-bottom: 28px;
+}
