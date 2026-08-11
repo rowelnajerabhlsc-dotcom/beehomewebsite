@@ -27,6 +27,13 @@ if (session_status() === PHP_SESSION_NONE) {
             will-change: transform;
         }
 
+        .loader-backdrop {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: #ffffff;
+        }
+
         .loader-fragments {
             position: absolute;
             inset: 0;
@@ -138,6 +145,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <body class="loading">
 
     <div id="page-loader" class="page-loader" aria-hidden="true">
+        <div class="loader-backdrop" id="loader-backdrop"></div>
         <div class="loader-stage">
             <div class="loader-wordmark">
                 <span class="loader-piece loader-c" aria-hidden="true">C</span>

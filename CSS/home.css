@@ -1224,6 +1224,19 @@ body.loading {
     will-change: transform;
 }
 
+/* Static, JS-independent white layer. This is what actually hides the
+   page on first paint — it exists purely via CSS/HTML, so it's opaque
+   before any script has run. The moment the fragment tiles start their
+   exit flight (still fully opaque themselves at that instant), the
+   loader script hides this layer so the tiles' movement reveals the
+   real page underneath instead of solid white. */
+.loader-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #ffffff;
+}
+
 .loader-fragments {
     position: absolute;
     inset: 0;

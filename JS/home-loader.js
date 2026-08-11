@@ -104,7 +104,19 @@
     var timeline = anime.timeline({
         autoplay: true,
         complete: function () {
+            var backdrop = document.getElementById("loader-backdrop");
+
             var exitTimeline = anime.timeline({
+                begin: function () {
+                    // Fragments are still fully opaque/covering everything at
+                    // this exact instant, so swapping the backdrop out here
+                    // is invisible — but from this point on, the fragments'
+                    // own movement (not a static white layer) is what's
+                    // hiding the page, so their flight actually reveals it.
+                    if (backdrop) {
+                        backdrop.style.display = "none";
+                    }
+                },
                 complete: function () {
                     loader.remove();
                     document.body.classList.remove("loading");
