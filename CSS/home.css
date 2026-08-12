@@ -2071,15 +2071,50 @@ body.loading {
     box-shadow: 0 20px 45px rgba(12, 92, 38, 0.28);
 }
 
+.about-video-card.is-playing {
+    display: block; /* let the iframe fill the card on its own */
+}
+
+.about-video-thumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Dim the YouTube thumbnail so the play button/text stay readable,
+   and keep the same green-tinted feel as the original placeholder. */
+.about-video-card:not(.is-playing)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, rgba(12, 92, 38, 0.75), rgba(12, 138, 54, 0.6));
+}
+
+.about-video-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
 .about-video-card::before {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 1;
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
     background-size: 48px 48px;
     opacity: 0.5;
+}
+
+.about-video-card.is-playing::before {
+    display: none;
 }
 
 .about-video-play {
@@ -2091,6 +2126,7 @@ body.loading {
     gap: 14px;
     color: #fff;
     text-align: center;
+    cursor: pointer;
 }
 
 .about-video-play-btn {

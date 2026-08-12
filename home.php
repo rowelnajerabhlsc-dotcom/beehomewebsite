@@ -567,8 +567,12 @@ if (session_status() === PHP_SESSION_NONE) {
                             </h2>
                         </div>
 
-                        <div class="about-video-card" data-animate="fade-in">
-                            <div class="about-video-play">
+                        <div class="about-video-card" id="aboutVideoCard" data-youtube-id="phVxcbcoA4Y" data-animate="fade-in">
+                            <img class="about-video-thumb"
+                                 src="https://img.youtube.com/vi/phVxcbcoA4Y/maxresdefault.jpg"
+                                 alt="Bee Home Cooperative presentation video thumbnail"
+                                 loading="lazy">
+                            <div class="about-video-play" id="aboutVideoPlayBtn" role="button" tabindex="0" aria-label="Play Watch Our Story video">
                                 <div class="about-video-play-btn">
                                     <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
@@ -576,7 +580,6 @@ if (session_status() === PHP_SESSION_NONE) {
                                 <span>Cooperative Presentation Video</span>
                             </div>
                             <span class="about-video-tag about-video-tag--left">🐝 Bee Home Cooperative</span>
-                            <span class="about-video-tag about-video-tag--right">Video Coming Soon</span>
                         </div>
 
                         <p class="about-q-p1" data-animate="slide-left">
@@ -905,6 +908,39 @@ if (session_status() === PHP_SESSION_NONE) {
 
         // Target all elements you want to animate
         document.querySelectorAll('.scroll-element').forEach(el => observer.observe(el));
+
+        // ---- About Us video card: click-to-play YouTube embed ----
+        // Loads the iframe only after the user clicks (not on page load),
+        // so the About section doesn't pay YouTube's load cost up front.
+        (function () {
+            const card = document.getElementById('aboutVideoCard');
+            const playBtn = document.getElementById('aboutVideoPlayBtn');
+            if (!card || !playBtn) return;
+
+            function playVideo() {
+                const videoId = card.dataset.youtubeId;
+                if (!videoId) return;
+
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(videoId) + '?autoplay=1&rel=0';
+                iframe.title = 'Bee Home Cooperative — Watch Our Story';
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                iframe.setAttribute('allowfullscreen', '');
+                iframe.className = 'about-video-iframe';
+
+                card.innerHTML = '';
+                card.appendChild(iframe);
+                card.classList.add('is-playing');
+            }
+
+            playBtn.addEventListener('click', playVideo);
+            playBtn.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    playVideo();
+                }
+            });
+        })();
 
     </script>
 
