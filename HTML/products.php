@@ -36,7 +36,6 @@
                     <p>• Sub Contracting</p>
                     <div class="product-buttons">
                         <a href="../HTML/labor.php" class="btn-green">View More</a>
-                        </a>
                     </div>
                 </div>
 

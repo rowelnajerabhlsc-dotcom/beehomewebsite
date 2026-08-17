@@ -229,6 +229,7 @@ section {
 
 .btn-green:hover {
     background: #086b29;
+    transform: scale(1.08);
 }
 
 .btn-underline {
@@ -241,25 +242,6 @@ section {
     width: fit-content;
 }
 
-/* Buttons */
-.btn-green {
-    display: inline-block;
-    padding: 8px 14px;
-    background: #0c8a36;
-    color: #fff;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 12px;
-    margin: 5px;
-
-    transition: transform 0.2s ease, background 0.2s ease;
-}
-
-/* 🔥 ZOOM EFFECT */
-.btn-green:hover {
-    background: #086b29;
-    transform: scale(1.08);
-}
 
 .btn-underline {
     color: #096D2B;
