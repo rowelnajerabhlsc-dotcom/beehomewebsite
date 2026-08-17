@@ -385,7 +385,7 @@
         const popup = document.getElementById("imagePopup");
         const popupImg = document.getElementById("popupImg");
 
-        document.querySelectorAll(".community-item img, .award-card img").forEach(img => {
+        document.querySelectorAll(".community-item img, .award-card img, .officers-container img").forEach(img => {
             img.addEventListener("click", () => {
                 popup.classList.add("active");
                 popupImg.src = img.src;
