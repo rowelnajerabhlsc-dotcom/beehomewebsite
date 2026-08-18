@@ -116,7 +116,7 @@ if (isset($_SESSION['user_id'])) {
     </div>
 
     <!-- ================= MODAL ================= -->
-    <div id="privacyModal" class="modal-overlay">
+    <div id="privacyModal" class="modal-overlay" data-lenis-prevent>
 
         <div class="modal-box">
 
@@ -178,11 +178,17 @@ if (isset($_SESSION['user_id'])) {
         function openPrivacyModal() {
             document.getElementById("privacyModal").style.display = "flex";
             document.body.classList.add("modal-open");
+            if (window.lenis) {
+                window.lenis.stop();
+            }
         }
 
         function closePrivacyModal() {
             document.getElementById("privacyModal").style.display = "none";
             document.body.classList.remove("modal-open");
+            if (window.lenis) {
+                window.lenis.start();
+            }
         }
     </script>
 
