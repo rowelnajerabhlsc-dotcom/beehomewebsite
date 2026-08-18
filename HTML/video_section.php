@@ -98,6 +98,10 @@ $videoPoster          = $videoPoster ?? null;    // optional photo path for the 
 
 <style>
 /* VIDEO CARD (shared partial styling -- self-contained so any page can include video_section.php) */
+.property-video-section {
+    width: 100%;
+}
+
 .video-container {
     display: flex;
     justify-content: center;
