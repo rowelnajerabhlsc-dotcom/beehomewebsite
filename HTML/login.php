@@ -76,10 +76,6 @@ $lastLoginDisplay = isset($_COOKIE['last_login_time'])
 
             <button type="submit" <?php echo $isLockedOut ? 'disabled' : ''; ?>>Login</button>
         </form>
-
-        <div class="auth-link">
-            <p>Don't have an account? <a href="/register">Register</a></p>
-        </div>
     </div>
 </div>
 
