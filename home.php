@@ -184,13 +184,13 @@ if (session_status() === PHP_SESSION_NONE) {
                         </p>
 
                         <div class="hero-actions">
+                            <?php if (!isset($_SESSION['user_id'])): ?>
                             <a href="HTML/manpower_request.php" class="hero-action-btn hero-action-btn--primary">
                                 Request Manpower
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
                                 </svg>
                             </a>
-                            <?php if (!isset($_SESSION['user_id'])): ?>
                             <a href="HTML/login.php" class="hero-action-btn hero-action-btn--outline">Log In</a>
                             <?php endif; ?>
                         </div>
