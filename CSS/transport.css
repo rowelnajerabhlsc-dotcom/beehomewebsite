@@ -1059,3 +1059,12 @@ input[type="submit"]:hover {
 body.modal-open {
     overflow: hidden;
 }
+/* Override shared video-card sizing for the Transport page only */
+.scroll-container .property-video-section {
+    margin-top: 80px;
+}
+
+.scroll-container .video-container .video-card {
+    max-width: 900px;
+    aspect-ratio: 16 / 8;
+}
