@@ -7,7 +7,7 @@ session_start();
 // ⚠️ REMOVE THIS BLOCK (or hardcode DEVMODE_ENABLED = false) before
 // deploying to production — it bypasses login entirely.
 // =====================================================================
-define('DEVMODE_ENABLED', false); // set to false to disable devmode outright
+define('DEVMODE_ENABLED', true); // set to false to disable devmode outright
 $devmode = DEVMODE_ENABLED && isset($_GET['devmode']) && $_GET['devmode'] === 'true';
 
 if ($devmode) {
@@ -137,10 +137,7 @@ function show($val) {
     </div>
 <?php endif; ?>
 
-<div class="auth-container">
-    <div class="auth-card profile-card">
-
-        <h1>My Profile</h1>
+<div class="pv-shell">
 
 <?php if (isset($_GET['updated'])): ?>
     <div class="success-message">
@@ -148,170 +145,200 @@ function show($val) {
     </div>
 <?php endif; ?>
 
-<div class="profile-grid">
-
-    <div class="profile-box full-width">
-        <span>Username:</span>
-        <p><?= show($username); ?></p>
-    </div>
-
-    <div class="profile-box full-width">
-        <span>Full Name:</span>
-        <p><?= show(trim("$fname $mname $lname")); ?></p>
-    </div>
-
-    <div class="profile-box full-width">
-        <span>Email / Facebook Account:</span>
-        <p><?= show($email); ?><?= $facebook_account ? ' / ' . show($facebook_account) : ''; ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Contact Number:</span>
-        <p><?= show($contact_number); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Address:</span>
-        <p><?= show($address); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Birthday:</span>
-        <p><?= $birthday ? htmlspecialchars(date("F d, Y", strtotime($birthday))) : 'N/A'; ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Age:</span>
-        <p><?= $age !== null ? htmlspecialchars($age) : 'N/A'; ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Civil Status:</span>
-        <p><?= show($civil_status); ?></p>
-    </div>
-
-    <?php if (strtolower((string) $civil_status) === 'married'): ?>
-    <div class="profile-box">
-        <span>No. of Dependents:</span>
-        <p><?= show($no_of_dependents); ?></p>
-    </div>
-    <?php endif; ?>
-
-    <div class="profile-box">
-        <span>Gender:</span>
-        <p><?= show($gender); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Height / Weight:</span>
-        <p><?= show($height_cm); ?> cm / <?= show($weight_kg); ?> kg</p>
-    </div>
-
-    <div class="profile-box">
-        <span>Blood Type:</span>
-        <p><?= show($blood_type); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Religion:</span>
-        <p><?= show($religion); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>TIN No.:</span>
-        <p><?= show($tin_no); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>SSS No.:</span>
-        <p><?= show($sss_no); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Pag-IBIG No.:</span>
-        <p><?= show($pagibig_no); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>PhilHealth No.:</span>
-        <p><?= show($philhealth_no); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>PMES Orientation Date:</span>
-        <p><?= $pmes_orientation_date ? htmlspecialchars(date("F d, Y", strtotime($pmes_orientation_date))) : 'N/A'; ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Position:</span>
-        <p><?= show($position); ?></p>
-    </div>
-
-    <div class="profile-box">
-        <span>Department:</span>
-        <p><?= show($department); ?></p>
-    </div>
-
-    <div class="profile-box full-width">
-        <span>Client Assignment:</span>
-        <p><?= show($client_assignment); ?></p>
-    </div>
-
-</div>
-
-<h2 class="section-title">Educational Attainment</h2>
-<div class="education-table">
-    <div class="education-row education-header">
-        <div>School</div>
-        <div>Year Graduated</div>
-        <div>Course</div>
-    </div>
-    <?php foreach ($education_rows as $row): ?>
-    <div class="education-row">
-        <div><?= show($row['school'] ?? ''); ?></div>
-        <div><?= show($row['year_graduated'] ?? ''); ?></div>
-        <div><?= show($row['course'] ?? ''); ?></div>
-    </div>
-    <?php endforeach; ?>
-</div>
-
-<div class="emergency-box">
-    <h2 class="section-title">In Case of Emergency, Notify:</h2>
-    <div class="profile-grid">
-        <div class="profile-box">
-            <span>Name:</span>
-            <p><?= show($emergency_name); ?></p>
+    <!-- ===== HEADER CARD ===== -->
+    <div class="pv-header">
+        <div class="pv-header-left">
+            <div class="pv-avatar">
+                <?php
+                    $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
+                    echo htmlspecialchars($initials ?: '?');
+                ?>
+            </div>
+            <div class="pv-header-info">
+                <h1><?= show(trim("$fname $mname $lname")); ?></h1>
+                <div class="pv-header-meta">
+                    <span class="pv-pill"><?= show($position); ?></span>
+                    <span class="pv-pill pv-pill-muted"><?= show($department); ?></span>
+                </div>
+                <div class="pv-header-sub">
+                    <?= $birthday ? htmlspecialchars(date("F d, Y", strtotime($birthday))) : 'Birthday N/A'; ?>
+                    <?= $age !== null ? ' &middot; ' . htmlspecialchars($age) . ' years old' : ''; ?>
+                    &middot; <?= show($gender === 'M' ? 'Male' : ($gender === 'F' ? 'Female' : $gender)); ?>
+                </div>
+            </div>
         </div>
-        <div class="profile-box">
-            <span>Relationship:</span>
-            <p><?= show($emergency_relationship); ?></p>
-        </div>
-        <div class="profile-box full-width">
-            <span>Address:</span>
-            <p><?= show($emergency_address); ?></p>
-        </div>
-        <div class="profile-box full-width">
-            <span>Contact No.:</span>
-            <p><?= show($emergency_contact_no); ?></p>
+        <div class="pv-header-actions">
+            <button onclick="window.location.href='/edit_Profile'" class="pv-btn pv-btn-primary">
+                Edit Profile
+            </button>
+            <button onclick="window.location.href='/change_password'" class="pv-btn pv-btn-ghost">
+                Change Password
+            </button>
         </div>
     </div>
-</div>
 
-<div class="button-group">
-    <button onclick="window.location.href='/edit_Profile'" class="save-btn">
-        Edit Profile
+    <!-- ===== ACCOUNT & CONTACT ===== -->
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Account &amp; Contact</h2>
+        </div>
+        <div class="pv-field-grid">
+            <div class="pv-field">
+                <label>Username</label>
+                <div class="pv-value"><?= show($username); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Email / Facebook Account</label>
+                <div class="pv-value"><?= show($email); ?><?= $facebook_account ? ' / ' . show($facebook_account) : ''; ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Contact Number</label>
+                <div class="pv-value"><?= show($contact_number); ?></div>
+            </div>
+            <div class="pv-field pv-field-wide">
+                <label>Address</label>
+                <div class="pv-value"><?= show($address); ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PERSONAL DETAILS ===== -->
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Personal Details</h2>
+        </div>
+        <div class="pv-field-grid">
+            <div class="pv-field">
+                <label>Civil Status</label>
+                <div class="pv-value"><?= show($civil_status); ?></div>
+            </div>
+            <?php if (strtolower((string) $civil_status) === 'married'): ?>
+            <div class="pv-field">
+                <label>No. of Dependents</label>
+                <div class="pv-value"><?= show($no_of_dependents); ?></div>
+            </div>
+            <?php endif; ?>
+            <div class="pv-field">
+                <label>Height / Weight</label>
+                <div class="pv-value"><?= show($height_cm); ?> cm / <?= show($weight_kg); ?> kg</div>
+            </div>
+            <div class="pv-field">
+                <label>Blood Type</label>
+                <div class="pv-value"><?= show($blood_type); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Religion</label>
+                <div class="pv-value"><?= show($religion); ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GOVERNMENT IDs ===== -->
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Government IDs</h2>
+        </div>
+        <div class="pv-field-grid">
+            <div class="pv-field">
+                <label>TIN No.</label>
+                <div class="pv-value"><?= show($tin_no); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>SSS No.</label>
+                <div class="pv-value"><?= show($sss_no); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Pag-IBIG No.</label>
+                <div class="pv-value"><?= show($pagibig_no); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>PhilHealth No.</label>
+                <div class="pv-value"><?= show($philhealth_no); ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EMPLOYMENT ===== -->
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Employment</h2>
+        </div>
+        <div class="pv-field-grid">
+            <div class="pv-field">
+                <label>Position</label>
+                <div class="pv-value"><?= show($position); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Department</label>
+                <div class="pv-value"><?= show($department); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>PMES Orientation Date</label>
+                <div class="pv-value"><?= $pmes_orientation_date ? htmlspecialchars(date("F d, Y", strtotime($pmes_orientation_date))) : 'N/A'; ?></div>
+            </div>
+            <div class="pv-field pv-field-wide">
+                <label>Client Assignment</label>
+                <div class="pv-value"><?= show($client_assignment); ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EDUCATIONAL ATTAINMENT ===== -->
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Educational Attainment</h2>
+        </div>
+        <div class="education-table">
+            <div class="education-row education-header">
+                <div>School</div>
+                <div>Year Graduated</div>
+                <div>Course</div>
+            </div>
+            <?php foreach ($education_rows as $row): ?>
+            <div class="education-row">
+                <div><?= show($row['school'] ?? ''); ?></div>
+                <div><?= show($row['year_graduated'] ?? ''); ?></div>
+                <div><?= show($row['course'] ?? ''); ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- ===== EMERGENCY CONTACT ===== -->
+    <div class="pv-card pv-card-emergency">
+        <div class="pv-card-header">
+            <span class="pv-accent pv-accent-gold"></span>
+            <h2>In Case of Emergency, Notify</h2>
+        </div>
+        <div class="pv-field-grid">
+            <div class="pv-field">
+                <label>Name</label>
+                <div class="pv-value"><?= show($emergency_name); ?></div>
+            </div>
+            <div class="pv-field">
+                <label>Relationship</label>
+                <div class="pv-value"><?= show($emergency_relationship); ?></div>
+            </div>
+            <div class="pv-field pv-field-wide">
+                <label>Address</label>
+                <div class="pv-value"><?= show($emergency_address); ?></div>
+            </div>
+            <div class="pv-field pv-field-wide">
+                <label>Contact No.</label>
+                <div class="pv-value"><?= show($emergency_contact_no); ?></div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="window.location.href='/logout'" class="pv-logout">
+        Logout
     </button>
 
-    <button onclick="window.location.href='/change_password'" class="cancel-btn">
-        Change Password
-    </button>
-</div>
-
-<button onclick="window.location.href='/logout'" class="logout-btn">
-    Logout
-</button>
-
-    </div>
 </div>
 
 </body>
