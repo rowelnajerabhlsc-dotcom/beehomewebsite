@@ -7,7 +7,7 @@ session_start();
 // ⚠️ REMOVE THIS BLOCK (or hardcode DEVMODE_ENABLED = false) before
 // deploying to production — it bypasses login entirely.
 // =====================================================================
-define('DEVMODE_ENABLED', true); // set to false to disable devmode outright
+define('DEVMODE_ENABLED', false); // set to false to disable devmode outright
 $devmode = DEVMODE_ENABLED && isset($_GET['devmode']) && $_GET['devmode'] === 'true';
 
 if ($devmode) {
