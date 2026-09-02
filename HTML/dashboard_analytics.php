@@ -223,7 +223,9 @@ $chartHeight = ($days > 90) ? 120 : 90;
                 btn.addEventListener('click', async function() {
 
                     const range = this.dataset.range;
-                    const targetUrl = 'dashboard_analytics.php?range=' + range;
+                    // Use absolute path from domain root, matching the navbar link:
+                    // /dashboard_analytics maps to HTML/dashboard_analytics.php
+                    const targetUrl = '/HTML/dashboard_analytics.php?range=' + range;
 
                     try {
                         const res = await fetch(targetUrl, { credentials: 'same-origin' });
