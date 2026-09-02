@@ -140,4 +140,51 @@ echo "\nTip: set putenv('CF_DEBUG=1'); in secrets.php to log every raw request/r
 echo "to PHP's error log (check cPanel's Errors tool or your error_log file) for any\n";
 echo "query made through cf_graphql_request(), not just this debug page.\n";
 
+// --- Test 5: Settings node — Cloudflare's own answer for what this zone can query ---
+echo "\n--- Test 5: Settings node (actual documented limits for this zone) ---\n";
+
+$settingsQuery = '
+    query ZoneSettings($zoneTag: string) {
+        viewer {
+            zones(filter: { zoneTag: $zoneTag }) {
+                settings {
+                    httpRequestsAdaptiveGroups {
+                        enabled
+                        maxDuration
+                        maxNumberOfFields
+                        maxPageSize
+                        notOlderThan
+                    }
+                    httpRequests1dGroups {
+                        enabled
+                        maxDuration
+                        maxNumberOfFields
+                        maxPageSize
+                        notOlderThan
+                    }
+                }
+            }
+        }
+    }
+';
+
+$settingsResult = cf_graphql_request($settingsQuery, ['zoneTag' => $zoneId], 'settings_check');
+
+echo "Raw response:\n";
+echo htmlspecialchars(json_encode($settingsResult, JSON_PRETTY_PRINT)) . "\n\n";
+
+if (empty($settingsResult['errors'])) {
+    $settings = $settingsResult['data']['viewer']['zones'][0]['settings'] ?? [];
+    foreach ($settings as $dataset => $limits) {
+        if (!$limits) continue;
+        $maxDurationDays = isset($limits['maxDuration']) ? round($limits['maxDuration'] / 86400, 1) : '?';
+        $notOlderThanDays = isset($limits['notOlderThan']) ? round($limits['notOlderThan'] / 86400, 1) : '?';
+        echo "{$dataset}:\n";
+        echo "  enabled: " . ($limits['enabled'] ? 'yes' : 'no') . "\n";
+        echo "  max query window: {$maxDurationDays} days\n";
+        echo "  historical lookback: {$notOlderThanDays} days\n";
+        echo "  max page size: " . ($limits['maxPageSize'] ?? '?') . " rows\n\n";
+    }
+}
+
 echo "</pre>";
