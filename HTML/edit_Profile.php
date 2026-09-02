@@ -160,26 +160,47 @@ function val($v) { return htmlspecialchars((string) $v); }
 
 <?php include "navbar.php"; ?>
 
-<div class="auth-container">
-    <div class="auth-card profile-card">
+<div class="pv-shell">
 
-        <h1>Edit Profile</h1>
-
-        <div class="warning-box" id="draftNotice" style="display:none;">
-            Restored your unsaved changes from your last visit.
+    <div class="pv-header pv-header-form">
+        <div class="pv-header-left">
+            <div class="pv-avatar">
+                <?php
+                    $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
+                    echo htmlspecialchars($initials ?: '?');
+                ?>
+            </div>
+            <div class="pv-header-info">
+                <h1>Edit Profile</h1>
+                <div class="pv-header-sub">Update your information below. All fields are required.</div>
+            </div>
         </div>
-
-        <?php if (!empty($errors)): ?>
-        <div class="error-message">
-            <?php foreach ($errors as $e) echo htmlspecialchars($e) . "<br>"; ?>
+        <div class="pv-header-actions">
+            <button onclick="window.location.href='/profile'" class="pv-btn pv-btn-ghost">
+                Back to Profile
+            </button>
         </div>
-        <?php endif; ?>
+    </div>
 
-        <form method="POST" class="profile-form" id="editProfileForm">
-            <input type="hidden" name="action" value="save">
+    <div class="warning-box" id="draftNotice" style="display:none;">
+        Restored your unsaved changes from your last visit.
+    </div>
 
+    <?php if (!empty($errors)): ?>
+    <div class="error-message">
+        <?php foreach ($errors as $e) echo htmlspecialchars($e) . "<br>"; ?>
+    </div>
+    <?php endif; ?>
+
+    <form method="POST" id="editProfileForm">
+        <input type="hidden" name="action" value="save">
+
+        <div class="pv-card">
+            <div class="pv-card-header">
+                <span class="pv-accent"></span>
+                <h2>Account &amp; Contact</h2>
+            </div>
             <div class="form-grid">
-
                 <div class="form-group">
                     <label>First Name</label>
                     <input type="text" name="fname" id="fname" value="<?= val($fname) ?>" required>
@@ -207,7 +228,15 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <label>Birthday</label>
                     <input type="date" name="birthday" id="birthday" value="<?= val($birthday) ?>" required>
                 </div>
+            </div>
+        </div>
 
+        <div class="pv-card">
+            <div class="pv-card-header">
+                <span class="pv-accent"></span>
+                <h2>Personal Details</h2>
+            </div>
+            <div class="form-grid">
                 <div class="form-group">
                     <label>Civil Status</label>
                     <select name="civil_status" id="civil_status" required>
@@ -256,7 +285,15 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <label>Religion</label>
                     <input type="text" name="religion" id="religion" value="<?= val($religion) ?>" required>
                 </div>
+            </div>
+        </div>
 
+        <div class="pv-card">
+            <div class="pv-card-header">
+                <span class="pv-accent"></span>
+                <h2>Government IDs</h2>
+            </div>
+            <div class="form-grid">
                 <div class="form-group">
                     <label>TIN No.</label>
                     <input type="text" name="tin_no" id="tin_no" value="<?= val($tin_no) ?>" required>
@@ -276,7 +313,15 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <label>PhilHealth No.</label>
                     <input type="text" name="philhealth_no" id="philhealth_no" value="<?= val($philhealth_no) ?>" required>
                 </div>
+            </div>
+        </div>
 
+        <div class="pv-card">
+            <div class="pv-card-header">
+                <span class="pv-accent"></span>
+                <h2>Employment</h2>
+            </div>
+            <div class="form-grid">
                 <div class="form-group">
                     <label>PMES Orientation Date</label>
                     <input type="date" name="pmes_orientation_date" id="pmes_orientation_date" value="<?= val($pmes_orientation_date) ?>" required>
@@ -302,8 +347,13 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <input type="text" name="facebook_account" id="facebook_account" value="<?= val($facebook_account) ?>" required>
                 </div>
             </div>
+        </div>
 
-            <h2 class="section-title">Educational Attainment</h2>
+        <div class="pv-card">
+            <div class="pv-card-header">
+                <span class="pv-accent"></span>
+                <h2>Educational Attainment</h2>
+            </div>
             <div class="education-table education-table-form">
                 <div class="education-row education-header">
                     <div>School</div>
@@ -318,9 +368,14 @@ function val($v) { return htmlspecialchars((string) $v); }
                 </div>
                 <?php endforeach; ?>
             </div>
+        </div>
 
-            <h2 class="section-title">To Notify in Case of Emergency</h2>
-            <div class="form-grid emergency-box">
+        <div class="pv-card pv-card-emergency">
+            <div class="pv-card-header">
+                <span class="pv-accent pv-accent-gold"></span>
+                <h2>To Notify in Case of Emergency</h2>
+            </div>
+            <div class="form-grid">
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" name="emergency_name" id="emergency_name" value="<?= val($emergency_name) ?>" required>
@@ -338,14 +393,14 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <input type="text" name="emergency_contact_no" id="emergency_contact_no" value="<?= val($emergency_contact_no) ?>" required>
                 </div>
             </div>
+        </div>
 
-            <div class="button-group">
-                <button type="submit" class="save-btn">Save</button>
-                <button type="button" class="cancel-btn" id="leaveBtn">Save Draft &amp; Leave</button>
-            </div>
-        </form>
+        <div class="pv-form-actions">
+            <button type="submit" class="pv-btn pv-btn-primary">Save</button>
+            <button type="button" class="pv-btn pv-btn-ghost-dark" id="leaveBtn">Save Draft &amp; Leave</button>
+        </div>
+    </form>
 
-    </div>
 </div>
 
 <script>
