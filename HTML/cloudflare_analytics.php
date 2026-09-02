@@ -40,7 +40,7 @@ function cf_ensure_cache_table(mysqli $conn): void {
  * @param array  $variables GraphQL variables
  * @return array Decoded JSON response, or ['errors' => [...]] on failure
  */
-function cf_graphql_request(string $query, array $variables): array {
+function cf_graphql_request(string $query, array $variables, ?string $debugLabel = null): array {
     $token = getenv('CF_API_TOKEN');
 
     if (!$token) {
@@ -64,7 +64,17 @@ function cf_graphql_request(string $query, array $variables): array {
 
     $response = curl_exec($ch);
     $curlError = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
+
+    // Debug logging: set CF_DEBUG=1 in secrets.php to log every request/response
+    // to the PHP error log (visible in cPanel's error_log or via tail on GoDaddy).
+    if (getenv('CF_DEBUG') === '1') {
+        error_log('[CF_DEBUG] ' . ($debugLabel ?? 'request') . " HTTP {$httpCode}");
+        error_log('[CF_DEBUG] query: ' . preg_replace('/\s+/', ' ', trim($query)));
+        error_log('[CF_DEBUG] variables: ' . json_encode($variables));
+        error_log('[CF_DEBUG] response: ' . substr((string)$response, 0, 4000));
+    }
 
     if ($response === false) {
         return ['errors' => [['message' => 'cURL error: ' . $curlError]]];
@@ -72,10 +82,26 @@ function cf_graphql_request(string $query, array $variables): array {
 
     $decoded = json_decode($response, true);
     if (!is_array($decoded)) {
-        return ['errors' => [['message' => 'Invalid JSON from Cloudflare']]];
+        return ['errors' => [['message' => 'Invalid JSON from Cloudflare (HTTP ' . $httpCode . '): ' . substr((string)$response, 0, 500)]]];
+    }
+
+    if ($httpCode >= 400 && empty($decoded['errors'])) {
+        $decoded['errors'] = [['message' => "Cloudflare returned HTTP {$httpCode} with no error detail"]];
     }
 
     return $decoded;
+}
+
+/**
+ * Flattens all GraphQL error messages into one readable string, instead of
+ * only surfacing the first one. Cloudflare sometimes returns several errors
+ * (e.g. one per invalid field) in a single response.
+ */
+function cf_format_errors(array $errors): string {
+    $messages = array_map(function ($e) {
+        return $e['message'] ?? json_encode($e);
+    }, $errors);
+    return implode(' | ', $messages);
 }
 
 /**
@@ -87,7 +113,7 @@ function cf_graphql_request(string $query, array $variables): array {
 function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
     cf_ensure_cache_table($conn);
 
-    $cacheKey = "daily_visitors_v2_{$days}d";
+    $cacheKey = "daily_visitors_v3_{$days}d";
     $cached = cf_read_cache($conn, $cacheKey);
     if ($cached !== null) {
         return $cached;
@@ -98,16 +124,33 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
         return ['ok' => false, 'daily' => [], 'error' => 'CF_ZONE_ID not set in secrets.php'];
     }
 
-    $since = gmdate('Y-m-d\TH:i:s\Z', strtotime("-{$days} days"));
-    $until = gmdate('Y-m-d\TH:i:s\Z');
+    $sinceTime = gmdate('Y-m-d\TH:i:s\Z', strtotime("-{$days} days"));
+    $untilTime = gmdate('Y-m-d\TH:i:s\Z');
+    $sinceDate = substr($sinceTime, 0, 10);
+    $untilDate = substr($untilTime, 0, 10);
 
-    // Note: httpRequestsAdaptiveGroups does NOT support uniq{} (only sum/avg).
-    // uniq{uniques} is only available on the legacy rollup datasets, so we use
-    // httpRequests1dGroups here for daily visits + unique visitor estimates.
-    // (This dataset also doesn't support the requestSource:"eyeball" filter,
-    // so bot traffic isn't excluded from these daily numbers.)
-    $query = '
-        query DailyVisitors($zoneTag: String!, $since: Time!, $until: Time!) {
+    // Neither dataset has everything we want, so we query both and merge by date:
+    //   - httpRequestsAdaptiveGroups: has sum.visits (session-like), but no uniq{}
+    //   - httpRequests1dGroups: has uniq.uniques, but no sum.visits (only requests/bytes/etc)
+    $visitsQuery = '
+        query DailyVisits($zoneTag: String!, $since: Time!, $until: Time!) {
+            viewer {
+                zones(filter: { zoneTag: $zoneTag }) {
+                    httpRequestsAdaptiveGroups(
+                        limit: 10000,
+                        filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
+                        orderBy: [datetimeDay_ASC]
+                    ) {
+                        sum { visits }
+                        dimensions { datetimeDay }
+                    }
+                }
+            }
+        }
+    ';
+
+    $uniquesQuery = '
+        query DailyUniques($zoneTag: String!, $since: Date!, $until: Date!) {
             viewer {
                 zones(filter: { zoneTag: $zoneTag }) {
                     httpRequests1dGroups(
@@ -115,7 +158,6 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
                         filter: { date_geq: $since, date_leq: $until }
                         orderBy: [date_ASC]
                     ) {
-                        sum { visits }
                         uniq { uniques }
                         dimensions { date }
                     }
@@ -124,24 +166,57 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
         }
     ';
 
-    $result = cf_graphql_request($query, [
+    $visitsResult = cf_graphql_request($visitsQuery, [
         'zoneTag' => $zoneId,
-        'since' => substr($since, 0, 10), // httpRequests1dGroups wants Date, not Time
-        'until' => substr($until, 0, 10),
-    ]);
+        'since' => $sinceTime,
+        'until' => $untilTime,
+    ], 'daily_visits');
 
-    if (!empty($result['errors'])) {
-        return ['ok' => false, 'daily' => [], 'error' => $result['errors'][0]['message'] ?? 'Unknown Cloudflare API error'];
+    if (!empty($visitsResult['errors'])) {
+        return ['ok' => false, 'daily' => [], 'error' => 'Visits query failed: ' . cf_format_errors($visitsResult['errors'])];
     }
 
-    $groups = $result['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
+    $uniquesResult = cf_graphql_request($uniquesQuery, [
+        'zoneTag' => $zoneId,
+        'since' => $sinceDate,
+        'until' => $untilDate,
+    ], 'daily_uniques');
+
+    if (!empty($uniquesResult['errors'])) {
+        return ['ok' => false, 'daily' => [], 'error' => 'Uniques query failed: ' . cf_format_errors($uniquesResult['errors'])];
+    }
+
+    $visitGroups = $visitsResult['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
+    $uniqueGroups = $uniquesResult['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
+
+    // Index both result sets by date so we can merge them
+    $visitsByDate = [];
+    foreach ($visitGroups as $group) {
+        $date = substr($group['dimensions']['datetimeDay'] ?? '', 0, 10);
+        if ($date === '') {
+            continue;
+        }
+        $visitsByDate[$date] = ($visitsByDate[$date] ?? 0) + ($group['sum']['visits'] ?? 0);
+    }
+
+    $uniquesByDate = [];
+    foreach ($uniqueGroups as $group) {
+        $date = $group['dimensions']['date'] ?? '';
+        if ($date === '') {
+            continue;
+        }
+        $uniquesByDate[$date] = $group['uniq']['uniques'] ?? 0;
+    }
+
+    $allDates = array_unique(array_merge(array_keys($visitsByDate), array_keys($uniquesByDate)));
+    sort($allDates);
 
     $daily = [];
-    foreach ($groups as $group) {
+    foreach ($allDates as $date) {
         $daily[] = [
-            'date' => $group['dimensions']['date'] ?? '',
-            'visits' => $group['sum']['visits'] ?? 0,
-            'uniques' => $group['uniq']['uniques'] ?? 0,
+            'date' => $date,
+            'visits' => $visitsByDate[$date] ?? 0,
+            'uniques' => $uniquesByDate[$date] ?? 0,
         ];
     }
 
@@ -193,10 +268,10 @@ function cf_get_top_countries(mysqli $conn, int $days = 30, int $limit = 10): ar
         'zoneTag' => $zoneId,
         'since' => $since,
         'until' => $until,
-    ]);
+    ], 'top_countries');
 
     if (!empty($result['errors'])) {
-        return ['ok' => false, 'countries' => [], 'error' => $result['errors'][0]['message'] ?? 'Unknown Cloudflare API error'];
+        return ['ok' => false, 'countries' => [], 'error' => cf_format_errors($result['errors'])];
     }
 
     $groups = $result['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
