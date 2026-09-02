@@ -136,7 +136,8 @@ $stmt = $conn->prepare("
         religion, pmes_orientation_date,
         position, client_id, facebook_account,
         education_json,
-        emergency_name, emergency_address, emergency_relationship, emergency_contact_no
+        emergency_name, emergency_address, emergency_relationship, emergency_contact_no,
+        profile_photo_url
     FROM user_profiles WHERE user_id = ?
 ");
 $stmt->bind_param("i", $user_id);
@@ -149,7 +150,8 @@ $stmt->bind_result(
     $religion, $pmes_orientation_date,
     $position, $client_id, $facebook_account,
     $education_json,
-    $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no
+    $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no,
+    $profile_photo_url
 );
 $stmt->fetch();
 $stmt->close();
@@ -190,15 +192,24 @@ function val($v) { return htmlspecialchars((string) $v); }
 
     <div class="pv-header pv-header-form">
         <div class="pv-header-left">
-            <div class="pv-avatar">
-                <?php
-                    $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
-                    echo htmlspecialchars($initials ?: '?');
-                ?>
+            <div class="pv-avatar-upload">
+                <div class="pv-avatar" id="avatarPreview">
+                    <?php if (!empty($profile_photo_url)): ?>
+                        <img src="<?= htmlspecialchars($profile_photo_url) ?>" alt="Profile photo" id="avatarImg">
+                    <?php else: ?>
+                        <span id="avatarInitials"><?php
+                            $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
+                            echo htmlspecialchars($initials ?: '?');
+                        ?></span>
+                        <img src="" alt="Profile photo" id="avatarImg" style="display:none;">
+                    <?php endif; ?>
+                </div>
+                <label for="photoInput" class="pv-avatar-edit-btn" title="Change photo">✎</label>
+                <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
             </div>
             <div class="pv-header-info">
                 <h1>Edit Profile</h1>
-                <div class="pv-header-sub">Update your information below. All fields are required.</div>
+                <div class="pv-header-sub" id="photoStatus">Update your information below. All fields are required.</div>
             </div>
         </div>
         <div class="pv-header-actions">
@@ -481,6 +492,55 @@ function val($v) { return htmlspecialchars((string) $v); }
     document.querySelectorAll('input[data-mask]').forEach(function (el) {
         applyMask(el); // format any prefilled/restored value on load
         el.addEventListener('input', function () { applyMask(el); });
+    });
+
+    // ---- Profile picture upload (Cloudinary via upload_profile_picture.php) ----
+    var photoInput = document.getElementById('photoInput');
+    var avatarImg = document.getElementById('avatarImg');
+    var avatarInitials = document.getElementById('avatarInitials');
+    var photoStatus = document.getElementById('photoStatus');
+
+    photoInput.addEventListener('change', function () {
+        var file = photoInput.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            photoStatus.textContent = 'Image must be under 5MB.';
+            photoStatus.style.color = '#b3261e';
+            return;
+        }
+
+        // Instant local preview while the real upload happens in the background
+        var localPreviewUrl = URL.createObjectURL(file);
+        avatarImg.src = localPreviewUrl;
+        avatarImg.style.display = '';
+        if (avatarInitials) avatarInitials.style.display = 'none';
+
+        photoStatus.textContent = 'Uploading photo...';
+        photoStatus.style.color = '';
+
+        var formData = new FormData();
+        formData.append('photo', file);
+
+        fetch('/upload_profile_picture.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    avatarImg.src = data.url; // swap to the real Cloudinary URL
+                    photoStatus.textContent = 'Photo updated.';
+                    photoStatus.style.color = '#096D2B';
+                } else {
+                    photoStatus.textContent = 'Upload failed: ' + (data.error || 'Unknown error.');
+                    photoStatus.style.color = '#b3261e';
+                }
+            })
+            .catch(function () {
+                photoStatus.textContent = 'Upload failed. Check your connection and try again.';
+                photoStatus.style.color = '#b3261e';
+            });
     });
 
     // ---- Serialize current form fields (excluding action) into a plain object ----

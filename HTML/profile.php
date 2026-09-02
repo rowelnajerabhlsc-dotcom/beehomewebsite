@@ -22,6 +22,7 @@ if ($devmode) {
     $department           = 'Labor & Manpower';
     $position             = 'Field Coordinator';
     $client_name          = 'ABC Manufacturing Corp.';
+    $profile_photo_url    = null; // set to a real URL here if you want to preview the photo state
     $birthday             = '1995-06-14';
     $civil_status         = 'Married';
     $no_of_dependents     = 2;
@@ -68,7 +69,8 @@ if ($devmode) {
             p.religion, p.pmes_orientation_date,
             p.facebook_account,
             p.education_json,
-            p.emergency_name, p.emergency_address, p.emergency_relationship, p.emergency_contact_no
+            p.emergency_name, p.emergency_address, p.emergency_relationship, p.emergency_contact_no,
+            p.profile_photo_url
         FROM users u
         LEFT JOIN user_profiles p ON u.id = p.user_id
         LEFT JOIN clients c ON p.client_id = c.id
@@ -88,7 +90,8 @@ if ($devmode) {
         $religion, $pmes_orientation_date,
         $facebook_account,
         $education_json,
-        $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no
+        $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no,
+        $profile_photo_url
     );
 
     $stmt->fetch();
@@ -150,10 +153,14 @@ function show($val) {
     <div class="pv-header">
         <div class="pv-header-left">
             <div class="pv-avatar">
-                <?php
-                    $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
-                    echo htmlspecialchars($initials ?: '?');
-                ?>
+                <?php if (!empty($profile_photo_url)): ?>
+                    <img src="<?= htmlspecialchars($profile_photo_url) ?>" alt="Profile photo">
+                <?php else: ?>
+                    <?php
+                        $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
+                        echo htmlspecialchars($initials ?: '?');
+                    ?>
+                <?php endif; ?>
             </div>
             <div class="pv-header-info">
                 <h1><?= show(trim("$fname $mname $lname")); ?></h1>

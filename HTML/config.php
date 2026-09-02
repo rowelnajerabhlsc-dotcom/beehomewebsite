@@ -88,4 +88,10 @@ $google_sheet_id = getenv('GOOGLE_SHEET_ID')
 
 $google_sheet_range = getenv('GOOGLE_SHEET_RANGE')
     ?: 'Form Responses 1!A2:N';
+
+$cloudinary_config = [
+    'cloud_name' => getenv('CLOUDINARY_CLOUD_NAME'),
+    'api_key'    => getenv('CLOUDINARY_API_KEY'),
+    'api_secret' => getenv('CLOUDINARY_API_SECRET'),
+];  
 ?>
