@@ -522,11 +522,24 @@ function val($v) { return htmlspecialchars((string) $v); }
         var formData = new FormData();
         formData.append('photo', file);
 
-        fetch('/upload_profile_picture.php', {
+        fetch('/upload_profile_picture', {
             method: 'POST',
             body: formData
         })
-            .then(function (res) { return res.json(); })
+            .then(function (res) {
+                return res.text().then(function (raw) {
+                    var parsed;
+                    try {
+                        parsed = JSON.parse(raw);
+                    } catch (e) {
+                        // Server didn't return valid JSON — surface the raw response
+                        // (often a PHP warning/fatal error) so it's actually debuggable.
+                        console.error('Non-JSON response from upload_profile_picture.php:', raw);
+                        throw new Error('Server error — see browser console for details.');
+                    }
+                    return parsed;
+                });
+            })
             .then(function (data) {
                 if (data.success) {
                     avatarImg.src = data.url; // swap to the real Cloudinary URL
@@ -537,8 +550,8 @@ function val($v) { return htmlspecialchars((string) $v); }
                     photoStatus.style.color = '#b3261e';
                 }
             })
-            .catch(function () {
-                photoStatus.textContent = 'Upload failed. Check your connection and try again.';
+            .catch(function (err) {
+                photoStatus.textContent = 'Upload failed: ' + (err.message || 'Check your connection and try again.');
                 photoStatus.style.color = '#b3261e';
             });
     });
