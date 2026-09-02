@@ -130,24 +130,57 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
     $untilDate = substr($untilTime, 0, 10);
 
     // Neither dataset has everything we want, so we query both and merge by date:
-    //   - httpRequestsAdaptiveGroups: has sum.visits (session-like), but no uniq{}
-    //   - httpRequests1dGroups: has uniq.uniques, but no sum.visits (only requests/bytes/etc)
-    $visitsQuery = '
-        query DailyVisits($zoneTag: String!, $since: Time!, $until: Time!) {
-            viewer {
-                zones(filter: { zoneTag: $zoneTag }) {
-                    httpRequestsAdaptiveGroups(
-                        limit: 10000,
-                        filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
-                        orderBy: [date_ASC]
-                    ) {
-                        sum { visits }
-                        dimensions { date }
+    //   - httpRequestsAdaptiveGroups: has sum.visits (session-like), but no uniq{},
+    //     AND this zone's plan restricts it to 1-day-wide query windows only
+    //     ("cannot request a time range wider than 1d") — so we loop day by day.
+    //   - httpRequests1dGroups: has uniq.uniques, no sum.visits, but accepts wide ranges.
+    $visitsByDate = [];
+    $visitsErrors = [];
+
+    for ($i = 0; $i < $days; $i++) {
+        $dayStart = gmdate('Y-m-d\T00:00:00\Z', strtotime("-{$i} days"));
+        $dayEnd = gmdate('Y-m-d\T23:59:59\Z', strtotime("-{$i} days"));
+        $dayDate = gmdate('Y-m-d', strtotime("-{$i} days"));
+
+        $visitsQuery = '
+            query DailyVisits($zoneTag: String!, $since: Time!, $until: Time!) {
+                viewer {
+                    zones(filter: { zoneTag: $zoneTag }) {
+                        httpRequestsAdaptiveGroups(
+                            limit: 100,
+                            filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
+                        ) {
+                            sum { visits }
+                        }
                     }
                 }
             }
+        ';
+
+        $dayResult = cf_graphql_request($visitsQuery, [
+            'zoneTag' => $zoneId,
+            'since' => $dayStart,
+            'until' => $dayEnd,
+        ], "daily_visits_{$dayDate}");
+
+        if (!empty($dayResult['errors'])) {
+            $visitsErrors[] = "{$dayDate}: " . cf_format_errors($dayResult['errors']);
+            continue;
         }
-    ';
+
+        $dayGroups = $dayResult['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
+        $dayTotal = 0;
+        foreach ($dayGroups as $group) {
+            $dayTotal += $group['sum']['visits'] ?? 0;
+        }
+        $visitsByDate[$dayDate] = $dayTotal;
+    }
+
+    // If every single day failed, treat this as a hard error. A handful of
+    // failed days (rate limit blip, etc.) still lets us show what we got.
+    if (empty($visitsByDate) && !empty($visitsErrors)) {
+        return ['ok' => false, 'daily' => [], 'error' => 'Visits query failed for all days: ' . implode(' || ', array_slice($visitsErrors, 0, 3))];
+    }
 
     $uniquesQuery = '
         query DailyUniques($zoneTag: String!, $since: Date!, $until: Date!) {
@@ -166,16 +199,6 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
         }
     ';
 
-    $visitsResult = cf_graphql_request($visitsQuery, [
-        'zoneTag' => $zoneId,
-        'since' => $sinceTime,
-        'until' => $untilTime,
-    ], 'daily_visits');
-
-    if (!empty($visitsResult['errors'])) {
-        return ['ok' => false, 'daily' => [], 'error' => 'Visits query failed: ' . cf_format_errors($visitsResult['errors'])];
-    }
-
     $uniquesResult = cf_graphql_request($uniquesQuery, [
         'zoneTag' => $zoneId,
         'since' => $sinceDate,
@@ -186,18 +209,7 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
         return ['ok' => false, 'daily' => [], 'error' => 'Uniques query failed: ' . cf_format_errors($uniquesResult['errors'])];
     }
 
-    $visitGroups = $visitsResult['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
     $uniqueGroups = $uniquesResult['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
-
-    // Index both result sets by date so we can merge them
-    $visitsByDate = [];
-    foreach ($visitGroups as $group) {
-        $date = $group['dimensions']['date'] ?? '';
-        if ($date === '') {
-            continue;
-        }
-        $visitsByDate[$date] = ($visitsByDate[$date] ?? 0) + ($group['sum']['visits'] ?? 0);
-    }
 
     $uniquesByDate = [];
     foreach ($uniqueGroups as $group) {
