@@ -50,27 +50,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $education_json = json_encode($education_rows);
 
-    // ---- Required-field validation (all fields required; dependents only if married) ----
-    $required = compact(
-        'fname', 'lname', 'address', 'contact_number', 'birthday', 'civil_status',
-        'gender', 'height_cm', 'weight_kg', 'tin_no', 'sss_no', 'blood_type',
-        'pagibig_no', 'philhealth_no', 'religion', 'pmes_orientation_date',
-        'position', 'facebook_account',
+    // ---- Required-field validation: allow save but show warnings for important fields ----
+    // Critical fields: if empty, save proceeds but warnings are shown
+    $critical = [
+        'fname', 'lname', 'address', 'contact_number', 'birthday',
+        'gender', 'height_cm', 'weight_kg',
+        'tin_no', 'sss_no', 'blood_type',
+        'pagibig_no', 'philhealth_no', 'religion',
         'emergency_name', 'emergency_address', 'emergency_relationship', 'emergency_contact_no'
-    );
-    foreach ($required as $label => $val) {
+    ];
+    $warnings = [];
+    $hasCriticalMissing = false;
+
+    foreach ($critical as $label) {
+        $val = $$label ?? '';
         if ($val === '') {
-            $errors[] = ucwords(str_replace('_', ' ', $label)) . " is required.";
+            $hasCriticalMissing = true;
+            $warnings[] = ucwords(str_replace('_', ' ', $label)) . " is important and should be filled in.";
         }
     }
+
+    // Check client assignment
     if ($client_id === null) {
-        $errors[] = "Client Assignment is required.";
-    }
-    if ($civil_status === 'Married' && $no_of_dependents === null) {
-        $errors[] = "No. of Dependents is required for married members.";
+        $hasCriticalMissing = true;
+        $warnings[] = "Client Assignment is important and should be selected.";
     }
 
-    // ---- Government ID format validation (must match the masked pattern exactly) ----
+    // Check dependents if married
+    if ($civil_status === 'Married' && ($no_of_dependents ?? '') === '') {
+        $hasCriticalMissing = true;
+        $warnings[] = "No. of Dependents is required when Civil Status is Married.";
+    }
+
+    // Additional format validation (must match the masked pattern exactly) ----
     $id_formats = [
         'tin_no'        => ['pattern' => '/^\d{3}-\d{3}-\d{3}-\d{3}$/', 'label' => 'TIN No.', 'example' => '123-456-789-101'],
         'sss_no'        => ['pattern' => '/^\d{2}-\d{7}-\d{1}$/',       'label' => 'SSS No.', 'example' => '12-1234567-1'],
@@ -222,6 +234,12 @@ function val($v) { return htmlspecialchars((string) $v); }
     <div class="warning-box" id="draftNotice" style="display:none;">
         Restored your unsaved changes from your last visit.
     </div>
+
+    <?php if (!empty($warnings)): ?>
+    <div class="warning-message">
+        <?php foreach ($warnings as $w) echo htmlspecialchars($w) . "<br>"; ?>
+    </div>
+    <?php endif; ?>
 
     <?php if (!empty($errors)): ?>
     <div class="error-message">
