@@ -139,10 +139,10 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
                     httpRequestsAdaptiveGroups(
                         limit: 10000,
                         filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
-                        orderBy: [datetimeDay_ASC]
+                        orderBy: [date_ASC]
                     ) {
                         sum { visits }
-                        dimensions { datetimeDay }
+                        dimensions { date }
                     }
                 }
             }
@@ -192,7 +192,7 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
     // Index both result sets by date so we can merge them
     $visitsByDate = [];
     foreach ($visitGroups as $group) {
-        $date = substr($group['dimensions']['datetimeDay'] ?? '', 0, 10);
+        $date = $group['dimensions']['date'] ?? '';
         if ($date === '') {
             continue;
         }

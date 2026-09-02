@@ -67,9 +67,10 @@ $testQuery = '
                 httpRequestsAdaptiveGroups(
                     limit: 5,
                     filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
+                    orderBy: [date_ASC]
                 ) {
                     sum { visits }
-                    dimensions { datetimeDay }
+                    dimensions { date }
                 }
             }
         }
