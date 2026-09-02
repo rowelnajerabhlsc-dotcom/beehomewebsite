@@ -97,14 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     foreach ($education_rows as $i => $row) {
         if ($row['school'] === '' || $row['year_graduated'] === '' || $row['course'] === '') {
-            $errors[] = "Educational Attainment row " . ($i + 1) . " is incomplete.";
+            $warnings[] = "Educational Attainment row " . ($i + 1) . " is incomplete.";
         }
     }
 
-    // Proceed with save if there are no format/education errors.
-    // Warnings (important fields empty) allow save but show messages to user.
-    if (empty($errors)) {
-        $stmt = $conn->prepare("
+    // Proceed with save always — all validations now produce warnings only.
+    // (No fields block the save; important-field warnings are shown to the user.)
+    $stmt = $conn->prepare("
             UPDATE user_profiles SET
                 fname = ?, mname = ?, lname = ?,
                 address = ?, contact_number = ?,
@@ -137,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
         header("Location: /profile?updated=1");
         exit();
-    }
 }
 
 // ---- Load existing values for prefill (draft cache takes over client-side via JS) ----
