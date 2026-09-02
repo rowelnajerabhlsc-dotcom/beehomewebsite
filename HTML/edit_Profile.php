@@ -101,6 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 
+    // Proceed with save if there are no format/education errors.
+    // Warnings (important fields empty) allow save but show messages to user.
     if (empty($errors)) {
         $stmt = $conn->prepare("
             UPDATE user_profiles SET
@@ -258,7 +260,7 @@ function val($v) { return htmlspecialchars((string) $v); }
             <div class="form-grid">
                 <div class="form-group">
                     <label>First Name</label>
-                    <input type="text" name="fname" id="fname" value="<?= val($fname) ?>" required>
+                    <input type="text" name="fname" id="fname" value="<?= val($fname) ?>">
                 </div>
                 <div class="form-group">
                     <label>Middle Name</label>
@@ -266,22 +268,22 @@ function val($v) { return htmlspecialchars((string) $v); }
                 </div>
                 <div class="form-group">
                     <label>Last Name</label>
-                    <input type="text" name="lname" id="lname" value="<?= val($lname) ?>" required>
+                    <input type="text" name="lname" id="lname" value="<?= val($lname) ?>">
                 </div>
 
                 <div class="form-group full-width">
                     <label>Address</label>
-                    <input type="text" name="address" id="address" value="<?= val($address) ?>" required>
+                    <input type="text" name="address" id="address" value="<?= val($address) ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Contact Number</label>
-                    <input type="text" name="contact_number" id="contact_number" value="<?= val($contact_number) ?>" required>
+                    <input type="text" name="contact_number" id="contact_number" value="<?= val($contact_number) ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Birthday</label>
-                    <input type="date" name="birthday" id="birthday" value="<?= val($birthday) ?>" required>
+                    <input type="date" name="birthday" id="birthday" value="<?= val($birthday) ?>">
                 </div>
             </div>
         </div>
@@ -294,7 +296,7 @@ function val($v) { return htmlspecialchars((string) $v); }
             <div class="form-grid">
                 <div class="form-group">
                     <label>Civil Status</label>
-                    <select name="civil_status" id="civil_status" required>
+                    <select name="civil_status" id="civil_status">
                         <option value="">Select</option>
                         <?php foreach (['Single', 'Married', 'Widow'] as $opt): ?>
                         <option value="<?= $opt ?>" <?= $civil_status === $opt ? 'selected' : '' ?>><?= $opt ?></option>
@@ -309,7 +311,7 @@ function val($v) { return htmlspecialchars((string) $v); }
 
                 <div class="form-group">
                     <label>Gender</label>
-                    <select name="gender" id="gender" required>
+                    <select name="gender" id="gender">
                         <option value="">Select</option>
                         <option value="M" <?= $gender === 'M' ? 'selected' : '' ?>>Male</option>
                         <option value="F" <?= $gender === 'F' ? 'selected' : '' ?>>Female</option>
@@ -318,17 +320,17 @@ function val($v) { return htmlspecialchars((string) $v); }
 
                 <div class="form-group">
                     <label>Height (cm)</label>
-                    <input type="number" step="0.1" name="height_cm" id="height_cm" value="<?= val($height_cm) ?>" required>
+                    <input type="number" step="0.1" name="height_cm" id="height_cm" value="<?= val($height_cm) ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Weight (kg)</label>
-                    <input type="number" step="0.1" name="weight_kg" id="weight_kg" value="<?= val($weight_kg) ?>" required>
+                    <input type="number" step="0.1" name="weight_kg" id="weight_kg" value="<?= val($weight_kg) ?>">
                 </div>
 
                 <div class="form-group">
                     <label>Blood Type</label>
-                    <select name="blood_type" id="blood_type" required>
+                    <select name="blood_type" id="blood_type">
                         <option value="">Select</option>
                         <?php foreach (['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $bt): ?>
                         <option value="<?= $bt ?>" <?= $blood_type === $bt ? 'selected' : '' ?>><?= $bt ?></option>
@@ -338,7 +340,7 @@ function val($v) { return htmlspecialchars((string) $v); }
 
                 <div class="form-group">
                     <label>Religion</label>
-                    <input type="text" name="religion" id="religion" value="<?= val($religion) ?>" required>
+                    <input type="text" name="religion" id="religion" value="<?= val($religion) ?>">
                 </div>
             </div>
         </div>
@@ -353,28 +355,28 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <label>TIN No.</label>
                     <input type="text" name="tin_no" id="tin_no" value="<?= val($tin_no) ?>"
                            data-mask="3-3-3-3" inputmode="numeric" maxlength="15"
-                           placeholder="123-456-789-101" required>
+                           placeholder="123-456-789-101">
                 </div>
 
                 <div class="form-group">
                     <label>SSS No.</label>
                     <input type="text" name="sss_no" id="sss_no" value="<?= val($sss_no) ?>"
                            data-mask="2-7-1" inputmode="numeric" maxlength="12"
-                           placeholder="12-1234567-1" required>
+                           placeholder="12-1234567-1" >
                 </div>
 
                 <div class="form-group">
                     <label>Pag-IBIG No.</label>
                     <input type="text" name="pagibig_no" id="pagibig_no" value="<?= val($pagibig_no) ?>"
                            data-mask="4-4-4" inputmode="numeric" maxlength="14"
-                           placeholder="1234-1234-1234" required>
+                           placeholder="1234-1234-1234" >
                 </div>
 
                 <div class="form-group">
                     <label>PhilHealth No.</label>
                     <input type="text" name="philhealth_no" id="philhealth_no" value="<?= val($philhealth_no) ?>"
                            data-mask="2-9-1" inputmode="numeric" maxlength="14"
-                           placeholder="12-123456789-1" required>
+                           placeholder="12-123456789-1" >
                 </div>
             </div>
         </div>
@@ -387,17 +389,17 @@ function val($v) { return htmlspecialchars((string) $v); }
             <div class="form-grid">
                 <div class="form-group">
                     <label>PMES Orientation Date</label>
-                    <input type="date" name="pmes_orientation_date" id="pmes_orientation_date" value="<?= val($pmes_orientation_date) ?>" required>
+                    <input type="date" name="pmes_orientation_date" id="pmes_orientation_date" value="<?= val($pmes_orientation_date) ?>" >
                 </div>
 
                 <div class="form-group">
                     <label>Position</label>
-                    <input type="text" name="position" id="position" value="<?= val($position) ?>" required>
+                    <input type="text" name="position" id="position" value="<?= val($position) ?>" >
                 </div>
 
                 <div class="form-group full-width">
                     <label>Client Assignment</label>
-                    <select name="client_id" id="client_id" required>
+                    <select name="client_id" id="client_id" >
                         <option value="">Select client</option>
                         <?php foreach ($clients_list as $c): ?>
                         <option value="<?= (int) $c['id'] ?>" <?= ((int) $client_id === (int) $c['id']) ? 'selected' : '' ?>>
@@ -409,7 +411,7 @@ function val($v) { return htmlspecialchars((string) $v); }
 
                 <div class="form-group full-width">
                     <label>Facebook Account</label>
-                    <input type="text" name="facebook_account" id="facebook_account" value="<?= val($facebook_account) ?>" required>
+                    <input type="text" name="facebook_account" id="facebook_account" value="<?= val($facebook_account) ?>" >
                 </div>
             </div>
         </div>
@@ -427,9 +429,9 @@ function val($v) { return htmlspecialchars((string) $v); }
                 </div>
                 <?php foreach ($education_rows as $i => $row): ?>
                 <div class="education-row">
-                    <input type="text" name="edu_school[]" id="edu_school_<?= $i ?>" value="<?= val($row['school'] ?? '') ?>" placeholder="School" required>
-                    <input type="text" name="edu_year[]" id="edu_year_<?= $i ?>" value="<?= val($row['year_graduated'] ?? '') ?>" placeholder="Year Graduated" required>
-                    <input type="text" name="edu_course[]" id="edu_course_<?= $i ?>" value="<?= val($row['course'] ?? '') ?>" placeholder="Course" required>
+                    <input type="text" name="edu_school[]" id="edu_school_<?= $i ?>" value="<?= val($row['school'] ?? '') ?>" placeholder="School" >
+                    <input type="text" name="edu_year[]" id="edu_year_<?= $i ?>" value="<?= val($row['year_graduated'] ?? '') ?>" placeholder="Year Graduated" >
+                    <input type="text" name="edu_course[]" id="edu_course_<?= $i ?>" value="<?= val($row['course'] ?? '') ?>" placeholder="Course" >
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -443,19 +445,19 @@ function val($v) { return htmlspecialchars((string) $v); }
             <div class="form-grid">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" name="emergency_name" id="emergency_name" value="<?= val($emergency_name) ?>" required>
+                    <input type="text" name="emergency_name" id="emergency_name" value="<?= val($emergency_name) ?>" >
                 </div>
                 <div class="form-group">
                     <label>Relationship</label>
-                    <input type="text" name="emergency_relationship" id="emergency_relationship" value="<?= val($emergency_relationship) ?>" required>
+                    <input type="text" name="emergency_relationship" id="emergency_relationship" value="<?= val($emergency_relationship) ?>" >
                 </div>
                 <div class="form-group full-width">
                     <label>Address</label>
-                    <input type="text" name="emergency_address" id="emergency_address" value="<?= val($emergency_address) ?>" required>
+                    <input type="text" name="emergency_address" id="emergency_address" value="<?= val($emergency_address) ?>" >
                 </div>
                 <div class="form-group full-width">
                     <label>Contact No.</label>
-                    <input type="text" name="emergency_contact_no" id="emergency_contact_no" value="<?= val($emergency_contact_no) ?>" required>
+                    <input type="text" name="emergency_contact_no" id="emergency_contact_no" value="<?= val($emergency_contact_no) ?>" >
                 </div>
             </div>
         </div>
