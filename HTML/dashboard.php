@@ -306,6 +306,7 @@ $conn->close();
         <a href="/transport-dashboard" class="ql-tab" data-target="transport-dashboard">Transport Requests</a>
         <?php if ($isAdmin): ?>
             <a href="/dashboard_analytics" class="ql-tab" data-target="dashboard_analytics">Analytics</a>
+            <a href="/manage-clients" class="ql-tab" data-target="manage-clients">Manage Clients</a>
             <a href="/generate_reg_link" class="ql-tab" data-target="generate_reg_link">Generate Registration Link</a>
         <?php endif; ?>
     </div>
@@ -728,9 +729,20 @@ function exportChart(chartId, chartTitle) {
         });
     }
 
-    // Swaps #pageContent with fresh HTML from `res`, tracks the resulting
-    // page URL (following any server-side redirect), and re-wires
-    // links/forms/scripts inside the new content.
+    // Swaps #pageContent with fresh HTML from `res` and tracks the
+    // resulting page URL (following any server-side redirect).
+    // NOTE: link/form handling is NOT re-wired per-render anymore — see
+    // the delegated listeners below, which is a deliberate robustness fix.
+    // The previous approach attached click/submit listeners to each
+    // individual <a>/<form> at the moment a page's HTML was injected.
+    // Anything added to the DOM afterward (dynamically-built rows, modals
+    // populated by a page's own script, edge cases in how browsers repair
+    // certain markup, etc.) fell through that net and got the browser's
+    // native/default behavior instead — which, since the address bar
+    // still shows /dashboard, silently reloaded the dashboard itself and
+    // discarded whatever was on screen. Delegating from the stable
+    // #pageContent container instead means every link/form inside it is
+    // covered, no matter when it appeared.
     async function render(res, fallbackUrl) {
         if (!res.ok) throw new Error('Request failed: ' + res.status);
         const html = await res.text();
@@ -742,8 +754,6 @@ function exportChart(chartId, chartTitle) {
         pageContent.style.display = '';
 
         runScripts(pageContent);
-        wireLinks(pageContent, currentPageUrl);
-        wireForms(pageContent, currentPageUrl);
     }
 
     function showError(message, url) {
@@ -753,79 +763,76 @@ function exportChart(chartId, chartTitle) {
             ' <a href="' + url + '">Open it directly instead</a>.</p>';
     }
 
-    // Intercepts clicks on plain <a> links inside embedded pages (pagination,
-    // Delete/Approve/Reject actions, View buttons, etc.) so they load via
-    // fetch into #pageContent instead of navigating the whole tab away —
-    // which previously landed on whatever URL the address bar still showed
-    // (e.g. /dashboard) instead of the actual link target.
-    function wireLinks(container, pageUrl) {
-        container.querySelectorAll('a[href]').forEach(link => {
-            const href = link.getAttribute('href');
+    function shouldIntercept(link) {
+        const href = link.getAttribute('href');
+        return href && !href.startsWith('#') && !href.startsWith('javascript:') &&
+            !href.startsWith('mailto:') && !href.startsWith('tel:') &&
+            link.target !== '_blank' && !link.hasAttribute('download');
+    }
 
-            // Skip things that aren't real page navigations.
-            if (!href || href.startsWith('#') || href.startsWith('javascript:') ||
-                href.startsWith('mailto:') || href.startsWith('tel:') ||
-                link.target === '_blank' || link.hasAttribute('download')) {
-                return;
+    // Delegated click handler: catches every link inside #pageContent,
+    // including ones added after the initial page load (pagination
+    // controls rebuilt by a page's own JS, dynamically-populated modals, etc).
+    pageContent.addEventListener('click', async function (e) {
+        const link = e.target.closest('a[href]');
+        if (!link || !pageContent.contains(link)) return;
+        if (!shouldIntercept(link)) return;
+
+        // If an inline onclick="return confirm(...)" already ran (it fires
+        // during the target phase, before this bubbled delegated listener)
+        // and the user hit Cancel, defaultPrevented will already be true —
+        // respect that and stop here.
+        if (e.defaultPrevented) return;
+        e.preventDefault();
+
+        const href = link.getAttribute('href');
+        const targetUrl = new URL(href, currentPageUrl || window.location.href).href;
+
+        pageContent.style.display = 'none';
+        pageLoader.style.display = '';
+
+        try {
+            const res = await fetch(targetUrl, { credentials: 'same-origin' });
+            await render(res, targetUrl);
+        } catch (err) {
+            showError('Couldn\'t load this page (' + err.message + ').', targetUrl);
+        }
+    });
+
+    // Delegated submit handler: catches every form inside #pageContent,
+    // including forms whose submit buttons live outside the <form> tag
+    // itself via the HTML5 form="id" attribute (the submit event still
+    // bubbles from the <form> element either way).
+    pageContent.addEventListener('submit', async function (e) {
+        const form = e.target;
+        if (!(form instanceof HTMLFormElement) || !pageContent.contains(form)) return;
+        if (e.defaultPrevented) return;
+        e.preventDefault();
+
+        const pageUrl = currentPageUrl || window.location.href;
+        const rawAction = form.getAttribute('action');
+        const targetUrl = rawAction ? new URL(rawAction, pageUrl).href : pageUrl;
+        const method = (form.getAttribute('method') || 'GET').toUpperCase();
+
+        const submitter = e.submitter; // the actual button clicked, so name/value (e.g. "action=delete") is included
+        const formData = new FormData(form, submitter);
+
+        pageContent.style.display = 'none';
+        pageLoader.style.display = '';
+
+        try {
+            let res;
+            if (method === 'GET') {
+                const qs = new URLSearchParams(formData).toString();
+                res = await fetch(targetUrl + (targetUrl.includes('?') ? '&' : '?') + qs, { credentials: 'same-origin' });
+            } else {
+                res = await fetch(targetUrl, { method, body: formData, credentials: 'same-origin' });
             }
-
-            link.addEventListener('click', async function (e) {
-                // If an inline onclick="return confirm(...)" already ran and the
-                // user hit Cancel, the browser will have set defaultPrevented
-                // before this listener runs — respect that and stop here.
-                if (e.defaultPrevented) return;
-                e.preventDefault();
-
-                const targetUrl = new URL(href, pageUrl).href;
-
-                pageContent.style.display = 'none';
-                pageLoader.style.display = '';
-
-                try {
-                    const res = await fetch(targetUrl, { credentials: 'same-origin' });
-                    await render(res, targetUrl);
-                } catch (err) {
-                    showError('Couldn\'t load this page (' + err.message + ').', targetUrl);
-                }
-            });
-        });
-    }
-
-    function wireForms(container, pageUrl) {
-        container.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
-
-                // Resolve the real target: explicit action attribute (relative
-                // or absolute) if present, otherwise the page this form came from.
-                const rawAction = form.getAttribute('action');
-                const targetUrl = rawAction ? new URL(rawAction, pageUrl).href : pageUrl;
-                const method = (form.getAttribute('method') || 'GET').toUpperCase();
-
-                const submitter = e.submitter; // the actual button clicked, so name/value (e.g. "generate") is included
-                const formData = new FormData(form);
-                if (submitter && submitter.name) {
-                    formData.append(submitter.name, submitter.value);
-                }
-
-                pageContent.style.display = 'none';
-                pageLoader.style.display = '';
-
-                try {
-                    let res;
-                    if (method === 'GET') {
-                        const qs = new URLSearchParams(formData).toString();
-                        res = await fetch(targetUrl + (targetUrl.includes('?') ? '&' : '?') + qs, { credentials: 'same-origin' });
-                    } else {
-                        res = await fetch(targetUrl, { method, body: formData, credentials: 'same-origin' });
-                    }
-                    await render(res, targetUrl);
-                } catch (err) {
-                    showError('Something went wrong submitting this form (' + err.message + ').', targetUrl);
-                }
-            });
-        });
-    }
+            await render(res, targetUrl);
+        } catch (err) {
+            showError('Something went wrong submitting this form (' + err.message + ').', targetUrl);
+        }
+    });
 
     async function loadPage(url, tab) {
         dashboardHome.style.display = 'none';
