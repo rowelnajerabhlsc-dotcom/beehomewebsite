@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $religion            = trim($_POST['religion'] ?? '');
     $pmes_orientation_date = trim($_POST['pmes_orientation_date'] ?? '');
     $position            = trim($_POST['position'] ?? '');
-    $client_assignment   = trim($_POST['client_assignment'] ?? '');
-    $department          = trim($_POST['department'] ?? '');
+    $client_id           = (int) ($_POST['client_id'] ?? 0);
+    $client_id           = $client_id > 0 ? $client_id : null;
     $facebook_account    = trim($_POST['facebook_account'] ?? '');
     $emergency_name         = trim($_POST['emergency_name'] ?? '');
     $emergency_address      = trim($_POST['emergency_address'] ?? '');
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         'fname', 'lname', 'address', 'contact_number', 'birthday', 'civil_status',
         'gender', 'height_cm', 'weight_kg', 'tin_no', 'sss_no', 'blood_type',
         'pagibig_no', 'philhealth_no', 'religion', 'pmes_orientation_date',
-        'position', 'client_assignment', 'department', 'facebook_account',
+        'position', 'facebook_account',
         'emergency_name', 'emergency_address', 'emergency_relationship', 'emergency_contact_no'
     );
     foreach ($required as $label => $val) {
@@ -63,9 +63,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $errors[] = ucwords(str_replace('_', ' ', $label)) . " is required.";
         }
     }
+    if ($client_id === null) {
+        $errors[] = "Client Assignment is required.";
+    }
     if ($civil_status === 'Married' && $no_of_dependents === null) {
         $errors[] = "No. of Dependents is required for married members.";
     }
+
+    // ---- Government ID format validation (must match the masked pattern exactly) ----
+    $id_formats = [
+        'tin_no'        => ['pattern' => '/^\d{3}-\d{3}-\d{3}-\d{3}$/', 'label' => 'TIN No.', 'example' => '123-456-789-101'],
+        'sss_no'        => ['pattern' => '/^\d{2}-\d{7}-\d{1}$/',       'label' => 'SSS No.', 'example' => '12-1234567-1'],
+        'pagibig_no'    => ['pattern' => '/^\d{4}-\d{4}-\d{4}$/',       'label' => 'Pag-IBIG No.', 'example' => '1234-1234-1234'],
+        'philhealth_no' => ['pattern' => '/^\d{2}-\d{9}-\d{1}$/',       'label' => 'PhilHealth No.', 'example' => '12-123456789-1'],
+    ];
+    foreach ($id_formats as $field => $rule) {
+        if ($$field !== '' && !preg_match($rule['pattern'], $$field)) {
+            $errors[] = $rule['label'] . " must be in the format " . $rule['example'] . ".";
+        }
+    }
+
     foreach ($education_rows as $i => $row) {
         if ($row['school'] === '' || $row['year_graduated'] === '' || $row['course'] === '') {
             $errors[] = "Educational Attainment row " . ($i + 1) . " is incomplete.";
@@ -81,21 +98,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 height_cm = ?, weight_kg = ?,
                 tin_no = ?, sss_no = ?, blood_type = ?, pagibig_no = ?, philhealth_no = ?,
                 religion = ?, pmes_orientation_date = ?,
-                position = ?, client_assignment = ?, department = ?, facebook_account = ?,
+                position = ?, client_id = ?, facebook_account = ?,
                 education_json = ?,
                 emergency_name = ?, emergency_address = ?, emergency_relationship = ?, emergency_contact_no = ?
             WHERE user_id = ?
         ");
 
         $stmt->bind_param(
-            "sssssssisssssssssssssssssssi",
+            "sssssssisssssssssssissssssi",
             $fname, $mname, $lname,
             $address, $contact_number,
             $birthday, $civil_status, $no_of_dependents, $gender,
             $height_cm, $weight_kg,
             $tin_no, $sss_no, $blood_type, $pagibig_no, $philhealth_no,
             $religion, $pmes_orientation_date,
-            $position, $client_assignment, $department, $facebook_account,
+            $position, $client_id, $facebook_account,
             $education_json,
             $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no,
             $user_id
@@ -117,7 +134,7 @@ $stmt = $conn->prepare("
         height_cm, weight_kg,
         tin_no, sss_no, blood_type, pagibig_no, philhealth_no,
         religion, pmes_orientation_date,
-        position, client_assignment, department, facebook_account,
+        position, client_id, facebook_account,
         education_json,
         emergency_name, emergency_address, emergency_relationship, emergency_contact_no
     FROM user_profiles WHERE user_id = ?
@@ -130,12 +147,21 @@ $stmt->bind_result(
     $height_cm, $weight_kg,
     $tin_no, $sss_no, $blood_type, $pagibig_no, $philhealth_no,
     $religion, $pmes_orientation_date,
-    $position, $client_assignment, $department, $facebook_account,
+    $position, $client_id, $facebook_account,
     $education_json,
     $emergency_name, $emergency_address, $emergency_relationship, $emergency_contact_no
 );
 $stmt->fetch();
 $stmt->close();
+
+// ---- Active clients for the Client Assignment dropdown ----
+$clients_list = [];
+$clientsResult = $conn->query("SELECT id, client_name FROM clients WHERE is_active = 1 ORDER BY client_name ASC");
+if ($clientsResult) {
+    while ($row = $clientsResult->fetch_assoc()) {
+        $clients_list[] = $row;
+    }
+}
 
 $education_rows = [];
 if (!empty($education_json)) {
@@ -296,22 +322,30 @@ function val($v) { return htmlspecialchars((string) $v); }
             <div class="form-grid">
                 <div class="form-group">
                     <label>TIN No.</label>
-                    <input type="text" name="tin_no" id="tin_no" value="<?= val($tin_no) ?>" required>
+                    <input type="text" name="tin_no" id="tin_no" value="<?= val($tin_no) ?>"
+                           data-mask="3-3-3-3" inputmode="numeric" maxlength="15"
+                           placeholder="123-456-789-101" required>
                 </div>
 
                 <div class="form-group">
                     <label>SSS No.</label>
-                    <input type="text" name="sss_no" id="sss_no" value="<?= val($sss_no) ?>" required>
+                    <input type="text" name="sss_no" id="sss_no" value="<?= val($sss_no) ?>"
+                           data-mask="2-7-1" inputmode="numeric" maxlength="12"
+                           placeholder="12-1234567-1" required>
                 </div>
 
                 <div class="form-group">
                     <label>Pag-IBIG No.</label>
-                    <input type="text" name="pagibig_no" id="pagibig_no" value="<?= val($pagibig_no) ?>" required>
+                    <input type="text" name="pagibig_no" id="pagibig_no" value="<?= val($pagibig_no) ?>"
+                           data-mask="4-4-4" inputmode="numeric" maxlength="14"
+                           placeholder="1234-1234-1234" required>
                 </div>
 
                 <div class="form-group">
                     <label>PhilHealth No.</label>
-                    <input type="text" name="philhealth_no" id="philhealth_no" value="<?= val($philhealth_no) ?>" required>
+                    <input type="text" name="philhealth_no" id="philhealth_no" value="<?= val($philhealth_no) ?>"
+                           data-mask="2-9-1" inputmode="numeric" maxlength="14"
+                           placeholder="12-123456789-1" required>
                 </div>
             </div>
         </div>
@@ -332,14 +366,16 @@ function val($v) { return htmlspecialchars((string) $v); }
                     <input type="text" name="position" id="position" value="<?= val($position) ?>" required>
                 </div>
 
-                <div class="form-group">
-                    <label>Department</label>
-                    <input type="text" name="department" id="department" value="<?= val($department) ?>" required>
-                </div>
-
                 <div class="form-group full-width">
                     <label>Client Assignment</label>
-                    <input type="text" name="client_assignment" id="client_assignment" value="<?= val($client_assignment) ?>" required>
+                    <select name="client_id" id="client_id" required>
+                        <option value="">Select client</option>
+                        <?php foreach ($clients_list as $c): ?>
+                        <option value="<?= (int) $c['id'] ?>" <?= ((int) $client_id === (int) $c['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($c['client_name']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="form-group full-width">
@@ -424,6 +460,28 @@ function val($v) { return htmlspecialchars((string) $v); }
     }
     civilStatus.addEventListener('change', toggleDependents);
     toggleDependents();
+
+    // ---- Formatted ID inputs (TIN, SSS, Pag-IBIG, PhilHealth) ----
+    // data-mask="3-3-3-3" means: group sizes of 3 digits each, dash-separated.
+    function applyMask(el) {
+        var groups = el.getAttribute('data-mask').split('-').map(Number);
+        var digits = el.value.replace(/\D/g, '').slice(0, groups.reduce(function (a, b) { return a + b; }, 0));
+
+        var parts = [];
+        var pos = 0;
+        groups.forEach(function (size) {
+            if (pos < digits.length) {
+                parts.push(digits.slice(pos, pos + size));
+                pos += size;
+            }
+        });
+        el.value = parts.join('-');
+    }
+
+    document.querySelectorAll('input[data-mask]').forEach(function (el) {
+        applyMask(el); // format any prefilled/restored value on load
+        el.addEventListener('input', function () { applyMask(el); });
+    });
 
     // ---- Serialize current form fields (excluding action) into a plain object ----
     function collectFormData() {

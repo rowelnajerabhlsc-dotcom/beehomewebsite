@@ -21,7 +21,7 @@ if ($devmode) {
     $contact_number       = '0917-123-4567';
     $department           = 'Labor & Manpower';
     $position             = 'Field Coordinator';
-    $client_assignment    = 'ABC Manufacturing Corp.';
+    $client_name          = 'ABC Manufacturing Corp.';
     $birthday             = '1995-06-14';
     $civil_status         = 'Married';
     $no_of_dependents     = 2;
@@ -61,7 +61,7 @@ if ($devmode) {
             u.username, u.email,
             p.fname, p.mname, p.lname,
             p.address, p.contact_number,
-            p.department, p.position, p.client_assignment,
+            p.department, p.position, c.client_name,
             p.birthday, p.civil_status, p.no_of_dependents, p.gender,
             p.height_cm, p.weight_kg,
             p.tin_no, p.sss_no, p.blood_type, p.pagibig_no, p.philhealth_no,
@@ -71,6 +71,7 @@ if ($devmode) {
             p.emergency_name, p.emergency_address, p.emergency_relationship, p.emergency_contact_no
         FROM users u
         LEFT JOIN user_profiles p ON u.id = p.user_id
+        LEFT JOIN clients c ON p.client_id = c.id
         WHERE u.id = ?
     ");
 
@@ -80,7 +81,7 @@ if ($devmode) {
     $stmt->bind_result(
         $username, $email, $fname, $mname, $lname,
         $address, $contact_number,
-        $department, $position, $client_assignment,
+        $department, $position, $client_name,
         $birthday, $civil_status, $no_of_dependents, $gender,
         $height_cm, $weight_kg,
         $tin_no, $sss_no, $blood_type, $pagibig_no, $philhealth_no,
@@ -282,7 +283,7 @@ function show($val) {
             </div>
             <div class="pv-field pv-field-wide">
                 <label>Client Assignment</label>
-                <div class="pv-value"><?= show($client_assignment); ?></div>
+                <div class="pv-value"><?= show($client_name); ?></div>
             </div>
         </div>
     </div>
