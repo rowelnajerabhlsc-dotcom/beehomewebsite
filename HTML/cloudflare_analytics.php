@@ -87,7 +87,7 @@ function cf_graphql_request(string $query, array $variables): array {
 function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
     cf_ensure_cache_table($conn);
 
-    $cacheKey = "daily_visitors_{$days}d";
+    $cacheKey = "daily_visitors_v2_{$days}d";
     $cached = cf_read_cache($conn, $cacheKey);
     if ($cached !== null) {
         return $cached;
@@ -101,18 +101,23 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
     $since = gmdate('Y-m-d\TH:i:s\Z', strtotime("-{$days} days"));
     $until = gmdate('Y-m-d\TH:i:s\Z');
 
+    // Note: httpRequestsAdaptiveGroups does NOT support uniq{} (only sum/avg).
+    // uniq{uniques} is only available on the legacy rollup datasets, so we use
+    // httpRequests1dGroups here for daily visits + unique visitor estimates.
+    // (This dataset also doesn't support the requestSource:"eyeball" filter,
+    // so bot traffic isn't excluded from these daily numbers.)
     $query = '
         query DailyVisitors($zoneTag: String!, $since: Time!, $until: Time!) {
             viewer {
                 zones(filter: { zoneTag: $zoneTag }) {
-                    httpRequestsAdaptiveGroups(
+                    httpRequests1dGroups(
                         limit: 10000,
-                        filter: { datetime_geq: $since, datetime_leq: $until, requestSource: "eyeball" }
-                        orderBy: [datetime_ASC]
+                        filter: { date_geq: $since, date_leq: $until }
+                        orderBy: [date_ASC]
                     ) {
                         sum { visits }
                         uniq { uniques }
-                        dimensions { datetimeDay }
+                        dimensions { date }
                     }
                 }
             }
@@ -121,20 +126,20 @@ function cf_get_daily_visitors(mysqli $conn, int $days = 30): array {
 
     $result = cf_graphql_request($query, [
         'zoneTag' => $zoneId,
-        'since' => $since,
-        'until' => $until,
+        'since' => substr($since, 0, 10), // httpRequests1dGroups wants Date, not Time
+        'until' => substr($until, 0, 10),
     ]);
 
     if (!empty($result['errors'])) {
         return ['ok' => false, 'daily' => [], 'error' => $result['errors'][0]['message'] ?? 'Unknown Cloudflare API error'];
     }
 
-    $groups = $result['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
+    $groups = $result['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
 
     $daily = [];
     foreach ($groups as $group) {
         $daily[] = [
-            'date' => substr($group['dimensions']['datetimeDay'] ?? '', 0, 10),
+            'date' => $group['dimensions']['date'] ?? '',
             'visits' => $group['sum']['visits'] ?? 0,
             'uniques' => $group['uniq']['uniques'] ?? 0,
         ];
