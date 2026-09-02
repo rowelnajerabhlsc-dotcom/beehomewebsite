@@ -305,6 +305,7 @@ $conn->close();
         <a href="/helpdesk_dashboard" class="ql-tab" data-target="helpdesk_dashboard">Consumer Assistance</a>
         <a href="/transport-dashboard" class="ql-tab" data-target="transport-dashboard">Transport Requests</a>
         <?php if ($isAdmin): ?>
+            <a href="/dashboard_analytics" class="ql-tab" data-target="dashboard_analytics">Analytics</a>
             <a href="/generate_reg_link" class="ql-tab" data-target="generate_reg_link">Generate Registration Link</a>
         <?php endif; ?>
     </div>
