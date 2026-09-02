@@ -345,3 +345,190 @@ function cf_write_cache(mysqli $conn, string $key, array $payload): void {
     $stmt->execute();
     $stmt->close();
 }
+
+
+/**
+ * Compare current period against previous period.
+ *
+ * Example:
+ * 7 days  vs previous 7 days
+ * 30 days vs previous 30 days
+ * 180 days vs previous 180 days
+ */
+function cf_get_period_comparison(mysqli $conn, int $days): array
+{
+    $current = cf_get_daily_visitors($conn, $days);
+
+    if (!$current['ok']) {
+        return [
+            'ok' => false,
+            'error' => $current['error'] ?? 'Unable to load current period'
+        ];
+    }
+
+    $currentVisits = 0;
+    $currentUniques = 0;
+
+    foreach ($current['daily'] as $row) {
+        $currentVisits += (int)$row['visits'];
+        $currentUniques += (int)$row['uniques'];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Previous Period
+    |--------------------------------------------------------------------------
+    |
+    | Example:
+    | Current:  Last 30 Days
+    | Previous: 30 Days Before That
+    |
+    */
+
+    $cacheKey = "period_compare_{$days}d";
+
+    $cached = cf_read_cache($conn, $cacheKey);
+
+    if ($cached !== null) {
+        return $cached;
+    }
+
+    $zoneId = getenv('CF_ZONE_ID');
+
+    if (!$zoneId) {
+        return [
+            'ok' => false,
+            'error' => 'CF_ZONE_ID not set'
+        ];
+    }
+
+    $currentStart = strtotime("-{$days} days");
+
+    $previousStart = strtotime("-" . ($days * 2) . " days");
+    $previousEnd   = strtotime("-{$days} days");
+
+    $previousDaily = [];
+
+    for ($i = $previousStart; $i < $previousEnd; $i += 86400) {
+
+        $dayStart = gmdate('Y-m-d\T00:00:00\Z', $i);
+        $dayEnd   = gmdate('Y-m-d\T23:59:59\Z', $i);
+
+        $query = '
+            query DailyVisits($zoneTag: String!, $since: Time!, $until: Time!) {
+                viewer {
+                    zones(filter: { zoneTag: $zoneTag }) {
+                        httpRequestsAdaptiveGroups(
+                            limit: 100,
+                            filter: {
+                                datetime_geq: $since,
+                                datetime_leq: $until,
+                                requestSource: "eyeball"
+                            }
+                        ) {
+                            sum { visits }
+                        }
+                    }
+                }
+            }
+        ';
+
+        $result = cf_graphql_request(
+            $query,
+            [
+                'zoneTag' => $zoneId,
+                'since' => $dayStart,
+                'until' => $dayEnd
+            ],
+            'period_compare'
+        );
+
+        $visits = 0;
+
+        if (empty($result['errors'])) {
+
+            $groups = $result['data']['viewer']['zones'][0]['httpRequestsAdaptiveGroups'] ?? [];
+
+            foreach ($groups as $group) {
+                $visits += $group['sum']['visits'] ?? 0;
+            }
+        }
+
+        $previousDaily[] = $visits;
+    }
+
+    $previousVisits = array_sum($previousDaily);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Previous Uniques
+    |--------------------------------------------------------------------------
+    */
+
+    $uniquesQuery = '
+        query DailyUniques($zoneTag: String!, $since: Date!, $until: Date!) {
+            viewer {
+                zones(filter: { zoneTag: $zoneTag }) {
+                    httpRequests1dGroups(
+                        limit: 10000,
+                        filter: {
+                            date_geq: $since,
+                            date_leq: $until
+                        }
+                    ) {
+                        uniq { uniques }
+                    }
+                }
+            }
+        }
+    ';
+
+    $uniquesResult = cf_graphql_request(
+        $uniquesQuery,
+        [
+            'zoneTag' => $zoneId,
+            'since' => gmdate('Y-m-d', $previousStart),
+            'until' => gmdate('Y-m-d', $previousEnd)
+        ],
+        'period_compare_uniques'
+    );
+
+    $previousUniques = 0;
+
+    if (empty($uniquesResult['errors'])) {
+
+        $groups = $uniquesResult['data']['viewer']['zones'][0]['httpRequests1dGroups'] ?? [];
+
+        foreach ($groups as $group) {
+            $previousUniques += $group['uniq']['uniques'] ?? 0;
+        }
+    }
+
+    $visitChange = $previousVisits > 0
+        ? (($currentVisits - $previousVisits) / $previousVisits) * 100
+        : 0;
+
+    $uniqueChange = $previousUniques > 0
+        ? (($currentUniques - $previousUniques) / $previousUniques) * 100
+        : 0;
+
+    $payload = [
+        'ok' => true,
+        'current' => [
+            'visits' => $currentVisits,
+            'uniques' => $currentUniques
+        ],
+        'previous' => [
+            'visits' => $previousVisits,
+            'uniques' => $previousUniques
+        ],
+        'changes' => [
+            'visits' => round($visitChange, 2),
+            'uniques' => round($uniqueChange, 2)
+        ]
+    ];
+
+    cf_write_cache($conn, $cacheKey, $payload);
+
+    return $payload;
+}
