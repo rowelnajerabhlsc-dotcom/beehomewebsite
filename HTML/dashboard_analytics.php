@@ -216,28 +216,51 @@ $chartHeight = ($days > 90) ? 120 : 90;
                 }
             });
 
+            // Range filter buttons: fetch new range data and reload the dashboard tab
+            // following the same pattern as #quickLinks tab navigation in dashboard.php.
             document.querySelectorAll('.range-btn').forEach(btn => {
 
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', async function() {
 
                     const range = this.dataset.range;
+                    const targetUrl = 'dashboard_analytics.php?range=' + range;
 
-                    if (typeof loadDashboardTab === 'function') {
+                    try {
+                        const res = await fetch(targetUrl, { credentials: 'same-origin' });
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
 
-                        loadDashboardTab(
-                            'analytics',
-                            'dashboard_analytics.php?range=' + range
-                        );
+                        const html = await res.text();
 
-                    } else {
+                        // Replace the dashboard content area (same pattern as dashboard tabs)
+                        const dashboardSection = document.querySelector('.analytics-dashboard');
+                        if (dashboardSection) {
+                            dashboardSection.innerHTML = html;
+                        }
 
-                        window.location =
-                            'dashboard.php?tab=analytics&range=' + range;
+                        // Re-execute any <script> tags in the new content
+                        runScripts(dashboardSection);
+
+                    } catch (err) {
+                        console.error('Failed to load analytics range:', err);
+                        alert('Couldn\'t load analytics range: ' + err.message);
                     }
 
                 });
 
             });
+
+            // Re-run any <script> tags injected via innerHTML (they don't execute by default).
+            function runScripts(container) {
+                container.querySelectorAll('script').forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    oldScript.replaceWith(newScript);
+                });
+            }
 
         })();
         </script>
