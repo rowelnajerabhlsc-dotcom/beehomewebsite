@@ -23,6 +23,7 @@ if ($devmode) {
     $position             = 'Field Coordinator';
     $client_name          = 'ABC Manufacturing Corp.';
     $profile_photo_url    = null; // set to a real URL here if you want to preview the photo state
+    $user_id              = 0; // placeholder — devmode has no real session user
     $birthday             = '1995-06-14';
     $civil_status         = 'Married';
     $no_of_dependents     = 2;
@@ -154,7 +155,7 @@ function show($val) {
         <div class="pv-header-left">
             <div class="pv-avatar">
                 <?php if (!empty($profile_photo_url)): ?>
-                    <img src="<?= htmlspecialchars($profile_photo_url) ?>" alt="Profile photo">
+                    <img src="/serve_profile_photo?user_id=<?= (int) $user_id ?>" alt="Profile photo">
                 <?php else: ?>
                     <?php
                         $initials = strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1));
@@ -176,9 +177,6 @@ function show($val) {
             </div>
         </div>
         <div class="pv-header-actions">
-            <button onclick="window.location.href='/capital_share'" class="pv-btn pv-btn-primary">
-                My Capital Share
-            </button>
             <button onclick="window.location.href='/edit_Profile'" class="pv-btn pv-btn-primary">
                 Edit Profile
             </button>

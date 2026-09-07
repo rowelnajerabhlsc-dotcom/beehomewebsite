@@ -16,6 +16,7 @@ session_start();
 header('Content-Type: application/json');
 
 include "config.php"; // provides $conn and $cloudinary_config
+include "cloudinary_helpers.php";
 
 function respond($data, $code = 200) {
     http_response_code($code);
@@ -79,10 +80,13 @@ $public_id = 'user_' . $user_id . '_' . $timestamp;
 
 // Params to sign MUST be sorted alphabetically by key, joined as key=value&key=value,
 // with the api_secret appended, then sha1'd. (Cloudinary's signing spec.)
+// type=private means this asset is NOT publicly reachable by its plain URL —
+// serve_profile_photo.php generates a fresh signed URL per request instead.
 $params_to_sign = [
     'folder'    => $folder,
     'public_id' => $public_id,
     'timestamp' => $timestamp,
+    'type'      => 'private',
 ];
 ksort($params_to_sign);
 
@@ -102,6 +106,7 @@ $post_fields = [
     'signature' => $signature,
     'folder'    => $folder,
     'public_id' => $public_id,
+    'type'      => 'private',
 ];
 
 $ch = curl_init();
@@ -132,32 +137,29 @@ $secure_url = $result['secure_url'];
 $returned_public_id = $result['public_id'];
 
 // ---- Save the new photo reference to the DB ----
+// UPDATE alone silently affects 0 rows if this user doesn't have a
+// user_profiles row yet — fall back to INSERT in that case so the photo
+// is never lost after a successful Cloudinary upload.
 $stmt = $conn->prepare("UPDATE user_profiles SET profile_photo_url = ?, profile_photo_public_id = ? WHERE user_id = ?");
 $stmt->bind_param("ssi", $secure_url, $returned_public_id, $user_id);
 $stmt->execute();
+$rows_updated = $stmt->affected_rows;
 $stmt->close();
+
+if ($rows_updated === 0) {
+    $insert_stmt = $conn->prepare("INSERT INTO user_profiles (user_id, profile_photo_url, profile_photo_public_id) VALUES (?, ?, ?)");
+    $insert_stmt->bind_param("iss", $user_id, $secure_url, $returned_public_id);
+    $insert_ok = $insert_stmt->execute();
+    $insert_stmt->close();
+
+    if (!$insert_ok) {
+        respond(['success' => false, 'error' => 'Uploaded to Cloudinary but could not save to the database: ' . $conn->error], 500);
+    }
+}
 
 // ---- Best-effort cleanup: delete the old Cloudinary image, if any ----
 if (!empty($old_public_id) && $old_public_id !== $returned_public_id) {
-    $destroy_timestamp = time();
-    $destroy_signable = "public_id={$old_public_id}&timestamp={$destroy_timestamp}{$api_secret}";
-    $destroy_signature = sha1($destroy_signable);
-
-    $destroy_ch = curl_init();
-    curl_setopt_array($destroy_ch, [
-        CURLOPT_URL => "https://api.cloudinary.com/v1_1/{$cloud_name}/image/destroy",
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => [
-            'public_id' => $old_public_id,
-            'api_key'   => $api_key,
-            'timestamp' => $destroy_timestamp,
-            'signature' => $destroy_signature,
-        ],
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 15,
-    ]);
-    curl_exec($destroy_ch); // fire-and-forget; a failed cleanup isn't fatal to this request
-    curl_close($destroy_ch);
+    cloudinary_destroy_private($old_public_id, 'image', $cloudinary_config);
 }
 
 respond(['success' => true, 'url' => $secure_url, 'public_id' => $returned_public_id]);

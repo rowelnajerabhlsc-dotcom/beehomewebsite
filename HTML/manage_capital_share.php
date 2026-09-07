@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "config.php";
+include "cloudinary_helpers.php";
 
 // ---- Access control: department staff and above only ----
 // Assumption: encoding capital share is a Staff-level (role 2+) task.
@@ -101,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
                 $folder    = 'bhlmpc/capital_share_docs';
                 $public_id = 'member_' . $doc_user_id . '_' . $timestamp;
 
-                $params_to_sign = ['folder' => $folder, 'public_id' => $public_id, 'timestamp' => $timestamp];
+                $params_to_sign = ['folder' => $folder, 'public_id' => $public_id, 'timestamp' => $timestamp, 'type' => 'private'];
                 ksort($params_to_sign);
                 $signable = '';
                 foreach ($params_to_sign as $key => $value) {
@@ -120,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
                         'signature' => $signature,
                         'folder'    => $folder,
                         'public_id' => $public_id,
+                        'type'      => 'private',
                     ],
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_TIMEOUT => 30,

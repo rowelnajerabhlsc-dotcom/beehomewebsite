@@ -24,6 +24,7 @@
 
 session_start();
 include "config.php";
+include "cloudinary_helpers.php";
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /login");
@@ -92,8 +93,45 @@ if ($is_owner) {
     $logStmt->close();
 }
 
-// ---- Serve the file (Cloudinary secure_url) ----
-header("Location: " . $file_url);
+// ---- Documents are private on Cloudinary — build a fresh signed URL
+//      from the stored public_id rather than using the plain stored
+//      file_url (which won't resolve on its own under type=private). ----
+$signed_url = cloudinary_private_url($public_id, 'raw', $cloudinary_config, $action === 'downloaded');
+
+if (!$signed_url) {
+    http_response_code(500);
+    exit('Could not generate a delivery link for this document (Cloudinary not configured).');
+}
+
+// ---- Verify the file is actually reachable before we tell the user it
+//      was delivered (and, critically, before we ever consider deleting
+//      it). Without this check, a bad signature or blocked delivery would
+//      still get "delivered" (redirect sent) and deleted, even though the
+//      user never actually received the file. ----
+$verify_ch = curl_init();
+curl_setopt_array($verify_ch, [
+    CURLOPT_URL => $signed_url,
+    CURLOPT_NOBODY => true,       // HEAD request, don't download the body
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 10,
+]);
+curl_exec($verify_ch);
+$verify_http_code = curl_getinfo($verify_ch, CURLINFO_HTTP_CODE);
+curl_close($verify_ch);
+
+if ($verify_http_code !== 200) {
+    http_response_code(502);
+    exit(
+        'This document could not be delivered right now (Cloudinary returned ' . $verify_http_code . '). ' .
+        'If this keeps happening, check that "Allow delivery of PDF and ZIP files" is enabled in your ' .
+        'Cloudinary account\'s Security settings, and that the signed-URL signing logic in ' .
+        'cloudinary_helpers.php matches Cloudinary\'s current API — this scheme is based on documented ' .
+        'signing conventions but hasn\'t been independently verified against a live account.'
+    );
+}
+
+// ---- Serve the file ----
+header("Location: " . $signed_url);
 
 // If running under PHP-FPM (GoDaddy shared hosting typically does),
 // this sends the response to the browser immediately and closes the
@@ -105,43 +143,18 @@ if (function_exists('fastcgi_finish_request')) {
 
 // ---- If this was the OWNER performing a real download, delete the
 //      Cloudinary asset afterward (fire-and-forget, best-effort) ----
-if ($is_owner && $action === 'downloaded') {
-    $cloud_name = $cloudinary_config['cloud_name'];
-    $api_key    = $cloudinary_config['api_key'];
-    $api_secret = $cloudinary_config['api_secret'];
+if ($is_owner && $action === 'downloaded' && $public_id) {
+    $destroyed = cloudinary_destroy_private($public_id, 'raw', $cloudinary_config);
 
-    if ($cloud_name && $api_key && $api_secret && $public_id) {
-        $destroy_timestamp = time();
-        $destroy_signable = "public_id={$public_id}&timestamp={$destroy_timestamp}{$api_secret}";
-        $destroy_signature = sha1($destroy_signable);
-
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => "https://api.cloudinary.com/v1_1/{$cloud_name}/raw/destroy",
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => [
-                'public_id' => $public_id,
-                'api_key'   => $api_key,
-                'timestamp' => $destroy_timestamp,
-                'signature' => $destroy_signature,
-            ],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 15,
-        ]);
-        $destroy_response = curl_exec($ch);
-        curl_close($ch);
-
-        $destroy_result = json_decode($destroy_response, true);
-        if (($destroy_result['result'] ?? '') === 'ok') {
-            $markStmt = $conn->prepare("UPDATE capital_share_documents SET file_deleted_at = NOW() WHERE id = ?");
-            $markStmt->bind_param("i", $doc_id);
-            $markStmt->execute();
-            $markStmt->close();
-        }
-        // If destroy failed, we deliberately do NOT mark file_deleted_at —
-        // better to leave the file live and retry-able than to mark it
-        // gone when it might still exist on Cloudinary.
+    if ($destroyed) {
+        $markStmt = $conn->prepare("UPDATE capital_share_documents SET file_deleted_at = NOW() WHERE id = ?");
+        $markStmt->bind_param("i", $doc_id);
+        $markStmt->execute();
+        $markStmt->close();
     }
+    // If destroy failed, we deliberately do NOT mark file_deleted_at —
+    // better to leave the file live and retry-able than to mark it
+    // gone when it might still exist on Cloudinary.
 }
 
 exit();
