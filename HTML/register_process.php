@@ -104,7 +104,20 @@ $stmt->bind_param("sss", $username, $email, $hashedPassword);
 
 if ($stmt->execute()) {
 
-    reglog("DB: user inserted id=" . $stmt->insert_id);
+    $new_user_id = $stmt->insert_id;
+    reglog("DB: user inserted id=" . $new_user_id);
+
+    // Create the matching user_profiles row right away, so this account
+    // is never orphaned (a bug we hit where accounts existed in `users`
+    // but had no user_profiles row, silently breaking profile edits).
+    $profileStmt = $conn->prepare("INSERT INTO user_profiles (user_id) VALUES (?)");
+    $profileStmt->bind_param("i", $new_user_id);
+    if (!$profileStmt->execute()) {
+        // Don't fail the whole registration over this — but log it loudly,
+        // since a failure here reproduces the orphaned-account bug.
+        reglog("DB ERROR creating user_profiles row for user_id={$new_user_id}: " . $profileStmt->error);
+    }
+    $profileStmt->close();
 
     // Mark the registration token as used so the link cannot be reused
     if (isset($_SESSION['reg_token'])) {

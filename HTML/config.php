@@ -94,4 +94,4 @@ $cloudinary_config = [
     'api_key'    => getenv('CLOUDINARY_API_KEY'),
     'api_secret' => getenv('CLOUDINARY_API_SECRET'),
 ];  
-?>
+?>  
