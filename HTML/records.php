@@ -200,35 +200,44 @@ $result = $stmt->get_result();
 
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search employees...">
+
+        <button class="fetch-btn" onclick="toggleColumns()">Show More Columns</button>
     </div>
 
     <table>
         <tr>
-            <th>Batching ID</th>
             <th>Username</th>
             <th>Full Name</th>
             <th>Email</th>
-            <th>Department</th>
-            <th>Position</th>
-            <th>Contact</th>
-            <th>TIN</th>
-            <th>Blood Type</th>
-            <th>Emergency</th>
-            <th>Actions</th>
+            <th>Role</th>
+            <th class="actions">Actions</th>
+            <th class="tin" style="display:none;">TIN</th>
+            <th class="blood" style="display:none;">Blood Type</th>
+            <th class="emergency" style="display:none;">Emergency</th>
         </tr>
 
         <?php while($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
             <td><?= htmlspecialchars($row['username']); ?></td>
             <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
             <td><?= htmlspecialchars($row['email']); ?></td>
-            <td><?= htmlspecialchars($row['department']); ?></td>
-            <td><?= htmlspecialchars($row['position']); ?></td>
-            <td><?= htmlspecialchars($row['contact_number']); ?></td>
-            <td><?= htmlspecialchars(substr($row['tin_no'], 0, 3) . '-*****' ?? ''); ?></td>
-            <td><?= htmlspecialchars($row['blood_type'] ?? ''); ?></td>
-            <td><?= htmlspecialchars($row['emergency_name'] ?? ''); ?><?= $row['emergency_relationship'] ? ' (' . htmlspecialchars($row['emergency_relationship']) . ')' : ''; ?></td>
+            <td><?= htmlspecialchars($row['role'] == 1 ? 'User' : ($row['role'] == 2 ? 'Staff' : ($row['role'] == 3 ? 'Manager' : 'Admin'))); ?></td>
+            <td class="actions">
+                <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
+                    <a href="?edit=<?= (int)$row['id']; ?>">
+                        <button class="action-btn edit">Edit</button>
+                    </a>
+
+                    <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
+                        <button class="action-btn delete">Delete</button>
+                    </a>
+                <?php else: ?>
+                    <span style="color:#999;">No access</span>
+                <?php endif; ?>
+            </td>
+            <td class="tin"><?= htmlspecialchars(substr($row['tin_no'], 0, 3) . '-*****' ?? ''); ?></td>
+            <td class="blood"><?= htmlspecialchars($row['blood_type'] ?? ''); ?></td>
+            <td class="emergency"><?= htmlspecialchars($row['emergency_name'] ?? ''); ?><?= $row['emergency_relationship'] ? ' (' . htmlspecialchars($row['emergency_relationship']) . ')' : ''; ?></td>
         <?php endwhile; ?>
 
     </table>
@@ -392,6 +401,19 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
         }
     });
 });
+
+// Toggle column visibility (TIN, Blood Type, Emergency)
+function toggleColumns() {
+    const btn = document.querySelector('.fetch-btn');
+    const isShown = btn.textContent === 'Hide Columns';
+    
+    // Toggle header visibility
+    document.querySelectorAll('th.tin, th.blood, th.emergency').forEach(h => h.style.display = isShown ? 'none' : 'table-cell');
+    document.querySelectorAll('td.tin, td.blood, td.emergency').forEach(c => c.style.display = isShown ? 'none' : 'table-cell');
+    
+    // Toggle button text
+    btn.textContent = isShown ? 'Show More Columns' : 'Hide Columns';
+}
 </script>
 
 </body>
