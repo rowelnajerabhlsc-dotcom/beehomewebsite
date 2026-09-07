@@ -176,6 +176,9 @@ function show($val) {
             </div>
         </div>
         <div class="pv-header-actions">
+            <button onclick="window.location.href='/capital_share'" class="pv-btn pv-btn-primary">
+                My Capital Share
+            </button>
             <button onclick="window.location.href='/edit_Profile'" class="pv-btn pv-btn-primary">
                 Edit Profile
             </button>
