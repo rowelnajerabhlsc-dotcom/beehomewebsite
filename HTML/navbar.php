@@ -45,11 +45,7 @@ $nav_pages = [
 ];
 
 $active_page = $nav_pages[$current_page] ?? '';
-$show_dashboard = isset($_SESSION['role']) && $_SESSION['role'] >= 3;
-$is_staff = (($_SESSION['role'] ?? 0) === 2);
-$is_logged_in = isset($_SESSION['user_id']);
 ?>
-
 <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
 <link rel="stylesheet" href="/CSS/lenis.css">
 <script defer src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
@@ -58,13 +54,7 @@ $is_logged_in = isset($_SESSION['user_id']);
 <link rel="stylesheet" href="/CSS/scroll-animate.css">
 <script defer src="/JS/scroll-animate.js"></script>
 
-<!-- Ethereal Glass background overlay -->
-<div class="ethereal-overlay fixed inset-0 pointer-events-none z-20 opacity-50 mix-blend-multiply bg-black/50" aria-hidden="true">
-    <div class="absolute inset-0 rounded-[200%] opacity-[0.3] blur-3xl transform -rotate-6 md:translate-x-[300px] md:translate-y-[-200px] bg-gradient-to-br from-[#0b7a34] via-[#26a753] to-[#075423]"></div>
-    <div class="absolute inset-0 rounded-[200%] opacity-[0.2] blur-3xl transform -rotate-6 md:translate-x[-300px] md:translate-y[200px] bg-gradient-to-br from-[#0b7a34] via-[#26a753] to-[#075423]"></div>
-</div>
-
-<nav class="relative z-50">
+<nav>
 
     <!-- LOGO -->
     <div class="logo">
@@ -74,26 +64,27 @@ $is_logged_in = isset($_SESSION['user_id']);
     </div>
 
     <!-- NAV LINKS -->
-    <ul class="nav-links absolute top-6 right-6 flex items-center gap-8 text-white font-[PlusJakartaSans] hidden md:block">
-        <li><a href="/" class="<?php echo $active_page === 'home' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">Home</a></li>
+    <ul class="nav-links" id="navLinks">
+
+        <li><a href="/" class="<?php echo $active_page === 'home' ? 'active' : ''; ?>">Home</a></li>
 
         <li class="dropdown">
-            <a href="/about" class="<?php echo $active_page === 'about' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">About Us ▾</a>
+            <a href="/about" class="<?php echo $active_page === 'about' ? 'active' : ''; ?>">About Us ▾</a>
 
-            <ul class="dropdown-menu absolute right-0 mt-2 w-56 rounded-[calc(2rem-0.375rem)] bg-black/80 backdrop-blur-3xl border border-white/10 p-2 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
-                <li><a href="/about#history" class="block rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#096D2B] mb-2">History</a></li>
-                <li><a href="/about#mission" class="block rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#096D2B] mb-2">Mission, Vision & Core Values</a></li>
-                <li><a href="/about#awards" class="block rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#096D2B] mb-2">Awards & Recognition</a></li>
-                <li><a href="/about#officers" class="block rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#096D2B] mb-2">Officers & Committees</a></li>
-                <li><a href="/about#community" class="block rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#096D2B] mb-2">Community</a></li>
+            <ul class="dropdown-menu">
+                <li><a href="/about#history">History</a></li>
+                <li><a href="/about#mission">Mission, Vision & Core Values</a></li>
+                <li><a href="/about#awards">Awards & Recognition</a></li>
+                <li><a href="/about#officers">Officers & Committees</a></li>
+                <li><a href="/about#community">Community</a></li>
             </ul>
         </li>
 
-        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">Products &
+        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products &
                 Services</a></li>
 
         <?php if (!isset($_SESSION['user_id'])): ?>
-            <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">Manpower
+            <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower
                     Request</a></li>
         <?php endif; ?>
 
@@ -101,7 +92,7 @@ $is_logged_in = isset($_SESSION['user_id']);
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
                 ? '/membership'
-                : '/needlogin'; ?>" class="<?php echo $active_page === 'membership' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">
+                : '/needlogin'; ?>" class="<?php echo $active_page === 'membership' ? 'active' : ''; ?>">
                 Membership
             </a>
         </li>
@@ -110,197 +101,79 @@ $is_logged_in = isset($_SESSION['user_id']);
         <li>
             <a href="<?php echo isset($_SESSION['user_id'])
                 ? '/bee-home-cares'
-                : '/needlogin'; ?>" class="<?php echo $active_page === 'cares' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">
+                : '/needlogin'; ?>" class="<?php echo $active_page === 'cares' ? 'active' : ''; ?>">
                 Bee Home Cares
             </a>
         </li>
         <!-- contact -->
-        <li><a href="/contact" class="<?php echo $active_page === 'contact' ? 'underline underline-offset-4 decoration-[#096D2B]' : ''; ?>">Contact Us</a></li>
+        <li><a href="/contact" class="<?php echo $active_page === 'contact' ? 'active' : ''; ?>">Contact Us</a></li>
 
     </ul>
 
-    <!-- ACCOUNT AREA - Double Bezel Architecture -->
-    <div class="account-area absolute top-6 right-0 flex items-center gap-3">
+    <!-- ACCOUNT AREA -->
+    <div class="account-area">
 
-        <?php if ($is_logged_in): ?>
+        <?php if (isset($_SESSION['user_id'])): ?>
 
-            <div class="account-dropdown relative">
-                <a href="#" class="account-link relative flex items-center gap-2 text-white hover:text-[#096D2B] transition-colors duration-500">
+            <div class="account-dropdown">
+
+                <a href="#" class="account-link" id="accountToggle">
                     <?php echo htmlspecialchars($_SESSION['username']); ?> ▾
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
                 </a>
 
-                <!-- Outer Shell (Double Bezel) -->
-                <div class="account-menu absolute right-0 mt-2 w-64 rounded-[2rem] bg-black/80 backdrop-blur-3xl border border-white/10 p-2 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ring-1 ring-black/5 z-50">
+                <div class="account-menu" id="accountMenu">
 
-                    <div class="space-y-2">
+                    <a href="/profile">Profile</a>
 
-                        <a href="/profile" class="block rounded-full px-4 py-2 text-sm text-white hover:bg-[#e7f5ea] transition-colors duration-300">
-                            <span class="font-medium">Profile</span>
-                        </a>
+                    <a href="/change_password">Change Password</a>
 
-                        <a href="/change_password" class="block rounded-full px-4 py-2 text-sm text-white hover:bg-[#e7f5ea] transition-colors duration-300">
-                            <span class="font-medium">Change Password</span>
-                        </a>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] >= 3): ?>
 
-                        <?php if ($show_dashboard): ?>
-                            <a href="/dashboard" class="block rounded-full px-4 py-2 text-sm text-white hover:bg-[#e7f5ea] transition-colors duration-300">
-                                <span class="font-medium">Dashboard</span>
-                            </a>
-                        <?php endif; ?>
+                        <a href="/dashboard">Dashboard</a>
 
-                        <a href="/manage_capital_share" class="block rounded-full px-4 py-2 text-sm text-[#096D2B] hover:bg-[#F5C233]/10 transition-colors duration-300 mb-1">
-                            <span class="font-medium">Capital Share</span>
-                        </a>
+                    <?php endif; ?>
 
-                        <?php if (($_SESSION['role'] ?? 0) === 2): ?>
-                            <a href="/manage_capital_share" class="block rounded-full px-4 py-2 text-sm text-[#096D2B] hover:bg-[#F5C233]/10 transition-colors duration-300 mb-1">
-                                <span class="font-medium">Capital Share (Staff)</span>
-                            </a>
-                        <?php endif; ?>
+                    <a href="/logout">Logout</a>
 
-                        <?php if (($_SESSION['role'] ?? 0) >= 3): ?>
-                            <a href="/manage_capital_share" class="block rounded-full px-4 py-2 text-sm text-[#096D2B] hover:bg-[#F5C233]/10 transition-colors duration-300 mb-1">
-                                <span class="font-medium">Capital Share (Admin)</span>
-                            </a>
-                        <?php endif; ?>
-
-                        <a href="/capital_share" class="block rounded-full px-4 py-2 text-sm text-white hover:bg-[#e7f5ea] transition-colors duration-300">
-                            <span class="font-medium">My Capital Share</span>
-                        </a>
-
-                        <a href="/logout" class="block rounded-full px-4 py-2 text-sm text-[#5a6b5f] hover:bg-[#e7f5ea]/10 transition-colors duration-300">
-                            <span class="font-medium">Logout</span>
-                        </a>
-                    </div>
                 </div>
-                <!-- /Outer Shell -->
 
             </div>
 
         <?php else: ?>
 
-            <a href="/login" class="account-link text-white hover:text-[#096D2B] transition-colors duration-500">Login</a>
+            <a href="/login" class="account-link">Login</a>
 
         <?php endif; ?>
 
     </div>
 
-    <!-- HAMBURGER WITH MORPH ANIMATION -->
-    <div class="menu-toggle absolute top-6 left-6 flex items-center gap-2 cursor-pointer md:hidden" id="mobileMenuToggle">
-        <span class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
-            <span></span>
-        </span>
-        <span class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
-            <span></span>
-        </span>
-        <span class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]">
-            <span></span>
-        </span>
+    <!-- HAMBURGER -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
 </nav>
 
 <script>
-    // Hamburger morph animation
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const navLinks = document.getElementById('navLinks');
-    const accountMenu = document.getElementById('accountMenu');
-    const accountToggle = document.getElementById('accountToggle').parentElement;
+    const accountToggle = document.getElementById("accountToggle");
+    const accountMenu = document.getElementById("accountMenu");
 
-    if (menuToggle) {
-        const spans = menuToggle.querySelectorAll('.hamburger-line span');
-
-        menuToggle.addEventListener('click', function() {
-            // Toggle nav links visibility
-            navLinks.classList.toggle('hidden');
-            navLinks.classList.toggle('block');
-
-            // Hamburger morph to X
-            spans.forEach((span, idx) => {
-                if (idx === 0) {
-                    span.style.transition = 'transform 0.3s ease-[cubic-bezier(0.32,0.72,0,1)]';
-                    if (navLinks.classList.contains('block')) {
-                        span.style.transform = 'rotate(45deg) translate(5px, 5px)';
-                    } else {
-                        span.style.transform = 'rotate(0deg) translate(0)';
-                    }
-                }
-                if (idx === 1) {
-                    span.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                    if (navLinks.classList.contains('block')) {
-                        span.style.opacity = '0';
-                        span.style.transform = 'translateX(-20px)';
-                    } else {
-                        span.style.opacity = '1';
-                        span.style.transform = 'translateX(0)';
-                    }
-                }
-                if (idx === 2) {
-                    span.style.transition = 'transform 0.3s ease-[cubic-bezier(0.32,0.72,0,1)]';
-                    if (navLinks.classList.contains('block')) {
-                        span.style.transform = 'rotate(-45deg) translate(5px, -5px)';
-                    } else {
-                        span.style.transform = 'rotate(0deg) translate(0)';
-                    }
-                }
-            });
-        });
-    }
-
-    // Account dropdown with staggered reveal
-    if (accountToggle && accountMenu) {
-        accountToggle.addEventListener('click', function(e) {
+    if (accountToggle) {
+        accountToggle.addEventListener("click", function (e) {
             e.preventDefault();
-            accountMenu.classList.toggle('visible');
-            
-            // Staggered reveal animation for menu items
-            const items = accountMenu.querySelectorAll('a');
-            items.forEach((item, idx) => {
-                if (accountMenu.classList.contains('visible')) {
-                    setTimeout(() => {
-                        item.style.transition = 'all 0.5s ease-[cubic-bezier(0.32,0.72,0,1)]';
-                        item.style.transform = 'translateY(0)';
-                        item.style.opacity = '1';
-                    }, idx * 100);
-                } else {
-                    item.style.transform = 'translateY(8px)';
-                    item.style.opacity = '0';
+            accountMenu.classList.toggle("show");
+
+            document.addEventListener("click", function (e) {
+                if (!accountToggle.contains(e.target) && !accountMenu.contains(e.target)) {
+                    accountMenu.classList.remove("show");
                 }
             });
         });
-
-        // Close dropdown on outside click
-        document.addEventListener('click', function(e) {
-            if (!accountToggle.contains(e.target) && !accountMenu.contains(e.target)) {
-                accountMenu.classList.remove('visible');
-                const items = accountMenu.querySelectorAll('a');
-                items.forEach(item => {
-                    item.style.transform = 'translateY(8px)';
-                    item.style.opacity = '0';
-                });
-            }
-        });
     }
 
-    // Navbar scroll effect - float glass pill
-    let lastScroll = 0;
-    const nav = document.querySelector('nav');
-
-    if (nav) {
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll > lastScroll && currentScroll > 100) {
-                // Scroll down - hide navbar or make it more compact
-                nav.style.transform = 'translateY(-100%)';
-            } else {
-                // Scroll up - show navbar
-                nav.style.transform = 'translateY(0)';
-            }
-            lastScroll = currentScroll;
-        }, { passive: true });
+    function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
     }
 </script>
