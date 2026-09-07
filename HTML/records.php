@@ -380,6 +380,37 @@ $extra_columns = [
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        /* Edit modal — forced to behave as a fixed, centered overlay
+           window regardless of auth.css or how the dashboard's
+           #pageContent wrapper is styled when this page is embedded. */
+        #editModal.edit-modal {
+            position: fixed;
+            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(30, 43, 34, 0.55);
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        #editModal.edit-modal .edit-card {
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(9, 109, 43, 0.25);
+            margin: auto;
+        }
     </style>
 </head>
 <body>
