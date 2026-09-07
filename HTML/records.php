@@ -321,12 +321,20 @@ $extra_columns = [
         }
         .column-dropdown-panel.open { display: block; }
 
-        /* Fixed-height scroll area for the table — this page is embedded
-           inside the dashboard's #pageContent, so a growing table would
-           otherwise push controls out of view and force scrolling the
-           whole dashboard just to reach the column dropdown. */
+        /* Fixed-height container — this page is embedded inside the
+           dashboard's #pageContent, so a growing table would otherwise
+           push controls out of view and force scrolling the whole
+           dashboard just to reach the column dropdown. The container
+           itself is capped; search/pagination stay put and only the
+           table area scrolls internally. */
+        .table-container {
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
         .table-scroll {
-            max-height: 480px;
+            flex: 1;
+            min-height: 0; /* allow flex child to actually shrink/scroll */
             overflow-y: auto;
             border: 1px solid #d8ecdd;
             border-radius: 8px;
