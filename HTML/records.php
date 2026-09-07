@@ -7,6 +7,54 @@ include "permissions.php";
 require_role(3); // must be at least Manager to reach this page
 
 /* =========================================================
+   AJAX: FETCH A SINGLE EXTRA COLUMN ON DEMAND
+   (?ajax_column=<field>) — used by the "Show More Columns"
+   dropdown. Only returns data for whitelisted columns.
+   ========================================================= */
+if (isset($_GET['ajax_column'])) {
+    header('Content-Type: application/json');
+
+    // Whitelist: every field here must exist in user_profiles
+    // (schema mirrored from edit_Profile.php), or be the special
+    // 'client_name' case which is joined from the clients table.
+    $allowed_columns = [
+        'tin_no', 'sss_no', 'blood_type', 'pagibig_no', 'philhealth_no',
+        'religion', 'pmes_orientation_date', 'facebook_account',
+        'department', 'position', 'address', 'contact_number', 'birthday',
+        'civil_status', 'gender', 'height_cm', 'weight_kg', 'no_of_dependents',
+        'emergency_name', 'emergency_address', 'emergency_relationship', 'emergency_contact_no',
+        'batching_id', 'client_name'
+    ];
+
+    $col = $_GET['ajax_column'];
+
+    if (!in_array($col, $allowed_columns, true)) {
+        echo json_encode(['error' => 'Invalid column']);
+        exit();
+    }
+
+    if ($col === 'client_name') {
+        $sql = "SELECT p.user_id, c.client_name AS value
+                FROM user_profiles p
+                LEFT JOIN clients c ON p.client_id = c.id";
+    } else {
+        // $col is safe here — validated against the hardcoded whitelist above
+        $sql = "SELECT user_id, `$col` AS value FROM user_profiles";
+    }
+
+    $data = [];
+    $res = $conn->query($sql);
+    if ($res) {
+        while ($r = $res->fetch_assoc()) {
+            $data[$r['user_id']] = $r['value'];
+        }
+    }
+
+    echo json_encode($data);
+    exit();
+}
+
+/* =========================================================
    HANDLE EDIT (POST) — update user and profile, then back to list
    ========================================================= */
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['edit'])) {
@@ -161,7 +209,11 @@ if (isset($_GET['edit'])) {
 }
 
 /* =========================================================
-   LIST DATA
+   LIST DATA — default columns only.
+   Extra profile fields (TIN, SSS, blood type, emergency contact,
+   etc.) are intentionally NOT selected here; they're fetched on
+   demand via ?ajax_column=<field> when the user picks them from
+   the "Show More Columns" dropdown.
    ========================================================= */
 $stmt = $conn->prepare("
     SELECT
@@ -169,19 +221,42 @@ $stmt = $conn->prepare("
         u.username,
         u.email,
         u.role,
-        p.batching_id,
-        p.fname, p.mname, p.lname,
-        p.department, p.position,
-        p.contact_number,
-        p.tin_no, p.sss_no, p.blood_type, p.pagibig_no, p.philhealth_no,
-        p.religion, p.pmes_orientation_date, p.facebook_account,
-        p.emergency_name, p.emergency_relationship, p.emergency_contact_no
+        p.fname, p.mname, p.lname
     FROM users u
     LEFT JOIN user_profiles p ON u.id = p.user_id
     ORDER BY u.id ASC
 ");
 $stmt->execute();
 $result = $stmt->get_result();
+
+/* Column labels used both server-side (dropdown render) and
+   passed to JS for building the dynamic <th>/<td> on fetch. */
+$extra_columns = [
+    'tin_no'                 => 'TIN No.',
+    'sss_no'                 => 'SSS No.',
+    'blood_type'              => 'Blood Type',
+    'pagibig_no'              => 'Pag-IBIG No.',
+    'philhealth_no'           => 'PhilHealth No.',
+    'religion'                => 'Religion',
+    'pmes_orientation_date'   => 'PMES Orientation Date',
+    'facebook_account'        => 'Facebook Account',
+    'department'              => 'Department',
+    'position'                => 'Position',
+    'address'                 => 'Address',
+    'contact_number'          => 'Contact Number',
+    'birthday'                => 'Birthday',
+    'civil_status'            => 'Civil Status',
+    'gender'                  => 'Gender',
+    'height_cm'               => 'Height (cm)',
+    'weight_kg'                => 'Weight (kg)',
+    'no_of_dependents'        => 'No. of Dependents',
+    'emergency_name'          => 'Emergency Contact Name',
+    'emergency_address'       => 'Emergency Contact Address',
+    'emergency_relationship'  => 'Emergency Relationship',
+    'emergency_contact_no'    => 'Emergency Contact No.',
+    'batching_id'             => 'Batching ID',
+    'client_name'             => 'Client',
+];
 ?>
 
 <!DOCTYPE html>
@@ -191,6 +266,40 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" href="IMAGES/logo.png">
+    <style>
+        /* Minimal styling for the column selector — kept inline since
+           this is a small, self-contained addition to an existing page. */
+        .column-selector { position: relative; display: inline-block; }
+        .column-selector .fetch-btn {
+            cursor: pointer;
+        }
+        .column-dropdown-panel {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 20;
+            margin-top: 4px;
+            padding: 10px 14px;
+            background: #ffffff;
+            border: 1px solid #cdeed8;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(9, 109, 43, 0.15);
+            max-height: 320px;
+            overflow-y: auto;
+            min-width: 220px;
+        }
+        .column-dropdown-panel label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 0.9rem;
+            color: #1e2b22;
+            white-space: nowrap;
+        }
+        .column-dropdown-panel.open { display: block; }
+    </style>
 </head>
 <body>
 
@@ -201,10 +310,17 @@ $result = $stmt->get_result();
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search employees...">
 
-        <select class="column-dropdown" onchange="toggleColumns(this.value)">
-            <option value="default">Default Columns</option>
-            <option value="all">Show All Columns</option>
-        </select>
+        <div class="column-selector">
+            <button type="button" id="columnDropdownBtn" class="fetch-btn">Show More Columns</button>
+            <div id="columnDropdownPanel" class="column-dropdown-panel">
+                <?php foreach ($extra_columns as $field => $label): ?>
+                    <label>
+                        <input type="checkbox" data-field="<?= htmlspecialchars($field) ?>" data-label="<?= htmlspecialchars($label) ?>">
+                        <?= htmlspecialchars($label) ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </div>
 
     <table>
@@ -214,13 +330,10 @@ $result = $stmt->get_result();
             <th>Full Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th class="tin" style="display:none;">TIN</th>
-            <th class="blood" style="display:none;">Blood Type</th>
-            <th class="emergency" style="display:none;">Emergency</th>
         </tr>
 
         <?php while($row = $result->fetch_assoc()): ?>
-        <tr>
+        <tr data-user-id="<?= (int)$row['id']; ?>">
             <td class="actions">
                 <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
                     <a href="?edit=<?= (int)$row['id']; ?>">
@@ -238,9 +351,6 @@ $result = $stmt->get_result();
             <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
             <td><?= htmlspecialchars($row['email']); ?></td>
             <td><?= htmlspecialchars($row['role'] == 1 ? 'User' : ($row['role'] == 2 ? 'Staff' : ($row['role'] == 3 ? 'Manager' : 'Admin'))); ?></td>
-            <td class="tin"><?= htmlspecialchars($row['tin_no']); ?></td>
-            <td class="blood"><?= htmlspecialchars($row['blood_type']); ?></td>
-            <td class="emergency"><?= htmlspecialchars($row['emergency_name'] ?? ''); ?><?= $row['emergency_relationship'] ? ' (' . htmlspecialchars($row['emergency_relationship']) . ')' : ''; ?></td>
         <?php endwhile; ?>
 
     </table>
@@ -405,17 +515,84 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
     });
 });
 
-// Toggle column visibility based on dropdown selection
-function toggleColumns(dropdown) {
-    const isAll = dropdown.value === 'all';
-    
-    // Toggle header visibility
-    document.querySelectorAll('th.tin, th.blood, th.emergency, td.tin, td.blood, td.emergency').forEach(h => h.style.display = isAll ? 'table-cell' : 'none');
-    
-    // Update dropdown text based on state
-    const label = isAll ? 'Hide Columns' : 'Show More Columns';
-    dropdown.parentNode.querySelector('button')?.textContent || dropdown.parentNode.querySelector('.fetch-btn')?.textContent = label;
-}
+/* =========================================================
+   "Show More Columns" — real on-demand fetch, not preloaded
+   toggling. Each checkbox fetches (or removes) one column.
+   ========================================================= */
+(function () {
+    const btn = document.getElementById('columnDropdownBtn');
+    const panel = document.getElementById('columnDropdownPanel');
+    const table = document.querySelector('.table-container table');
+
+    if (!btn || !panel || !table) return;
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+            panel.classList.remove('open');
+        }
+    });
+
+    function addColumnToTable(field, label, dataMap) {
+        const headerRow = table.rows[0];
+        const th = document.createElement('th');
+        th.textContent = label;
+        th.dataset.dynamicCol = field;
+        headerRow.appendChild(th);
+
+        table.querySelectorAll('tr[data-user-id]').forEach(function (tr) {
+            const uid = tr.getAttribute('data-user-id');
+            const td = document.createElement('td');
+            td.dataset.dynamicCol = field;
+            const val = dataMap[uid];
+            td.textContent = (val === null || val === undefined || val === '') ? '—' : val;
+            tr.appendChild(td);
+        });
+    }
+
+    function removeColumnFromTable(field) {
+        table.querySelectorAll('[data-dynamic-col="' + field + '"]').forEach(function (el) {
+            el.remove();
+        });
+    }
+
+    function fetchColumn(field, label, checkboxEl) {
+        checkboxEl.disabled = true;
+        fetch('?ajax_column=' + encodeURIComponent(field), { credentials: 'same-origin' })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    alert(data.error);
+                    checkboxEl.checked = false;
+                    return;
+                }
+                addColumnToTable(field, label, data);
+            })
+            .catch(function (err) {
+                console.error('Failed to fetch column "' + field + '":', err);
+                checkboxEl.checked = false;
+            })
+            .finally(function () {
+                checkboxEl.disabled = false;
+            });
+    }
+
+    panel.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            const field = this.dataset.field;
+            const label = this.dataset.label;
+            if (this.checked) {
+                fetchColumn(field, label, this);
+            } else {
+                removeColumnFromTable(field);
+            }
+        });
+    });
+})();
 </script>
 
 </body>
