@@ -209,13 +209,31 @@ if (isset($_GET['edit'])) {
 }
 
 /* =========================================================
-   LIST DATA — pagination enabled
+   PAGINATION — default 15 rows, selectable up to 50.
    ========================================================= */
-$page = max(1, isset($_GET['page']) ? (int)$_GET['page'] : 1);
-$per_page = min(50, max(1, isset($_GET['per_page']) ? (int)$_GET['per_page'] : 15)); // default 15, max 50
+$allowed_per_page = [15, 20, 30, 50];
+$per_page = isset($_GET['per_page']) ? (int) $_GET['per_page'] : 15;
+if (!in_array($per_page, $allowed_per_page, true)) {
+    $per_page = 15;
+}
+
+$count_result = $conn->query("SELECT COUNT(*) AS total FROM users");
+$total_rows   = $count_result ? (int) $count_result->fetch_assoc()['total'] : 0;
+$total_pages  = max(1, (int) ceil($total_rows / $per_page));
+
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($page < 1) $page = 1;
+if ($page > $total_pages) $page = $total_pages;
 
 $offset = ($page - 1) * $per_page;
 
+/* =========================================================
+   LIST DATA — default columns only.
+   Extra profile fields (TIN, SSS, blood type, emergency contact,
+   etc.) are intentionally NOT selected here; they're fetched on
+   demand via ?ajax_column=<field> when the user picks them from
+   the "Show More Columns" dropdown.
+   ========================================================= */
 $stmt = $conn->prepare("
     SELECT
         u.id,
@@ -231,18 +249,6 @@ $stmt = $conn->prepare("
 $stmt->bind_param("ii", $per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
-
-/* Total record count for pagination math */
-$count_stmt = $conn->prepare("
-    SELECT COUNT(*) AS total
-    FROM users u
-    LEFT JOIN user_profiles p ON u.id = p.user_id
-");
-$count_stmt->execute();
-$total_row = $count_stmt->get_result()->fetch_assoc();
-$total_records = (int)$total_row['total'];
-$total_pages = ceil($total_records / $per_page);
-?>
 
 /* Column labels used both server-side (dropdown render) and
    passed to JS for building the dynamic <th>/<td> on fetch. */
@@ -314,6 +320,58 @@ $extra_columns = [
             white-space: nowrap;
         }
         .column-dropdown-panel.open { display: block; }
+
+        /* Fixed-height scroll area for the table — this page is embedded
+           inside the dashboard's #pageContent, so a growing table would
+           otherwise push controls out of view and force scrolling the
+           whole dashboard just to reach the column dropdown. */
+        .table-scroll {
+            max-height: 480px;
+            overflow-y: auto;
+            border: 1px solid #d8ecdd;
+            border-radius: 8px;
+        }
+        .table-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-scroll thead th,
+        .table-scroll tr:first-child th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #ffffff;
+        }
+
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .pagination-bar .page-size-select {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #5a6b5f;
+        }
+        .pagination-bar .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #1e2b22;
+        }
+        .pagination-bar button {
+            cursor: pointer;
+        }
+        .pagination-bar button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -338,18 +396,17 @@ $extra_columns = [
         </div>
     </div>
 
-    <table>
-        <tr>
-            <th class="actions">Actions</th>
-            <th>Username</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Role</th>
-        </tr>
+    <div class="table-scroll">
+        <table>
+            <tr>
+                <th class="actions">Actions</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
 
-<?php $row_count = 0; ?>
-        <?php while($row = $result->fetch_assoc()): ?>
-            <?php if($row_count >= $per_page) break; $row_count++; ?>
+            <?php while($row = $result->fetch_assoc()): ?>
             <tr data-user-id="<?= (int)$row['id']; ?>">
                 <td class="actions">
                     <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
@@ -368,19 +425,27 @@ $extra_columns = [
                 <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
                 <td><?= htmlspecialchars($row['email']); ?></td>
                 <td><?= htmlspecialchars($row['role'] == 1 ? 'User' : ($row['role'] == 2 ? 'Staff' : ($row['role'] == 3 ? 'Manager' : 'Admin'))); ?></td>
-            </tr>
-        <?php endwhile; ?>
+            <?php endwhile; ?>
 
-    </table>
-
-    <div class="pagination-controls">
-        <span>Showing <strong><?= min($per_page, $total_records); ?></strong> of <strong>$total_records</strong> records</span>
-        <a href="?page=1&per_page=<?= $per_page ?>"<?= $page == 1 ? ' class="disabled"' : '' ?>>« First</a>
-        <?php for ($p = 1; $p <= $total_pages; $p++): ?>
-            <a href="?page=<?= $p ?>&per_page=<?= $per_page ?>"<?= $page == $p ? ' class="active"' : '' ?>><?= $p ?></a>
-        <?php endfor; ?>
-        <a href="?page=<?= $page >= $total_pages ? $total_pages : $page + 1 ?>&per_page=<?= $per_page ?>"<?= $page >= $total_pages ? ' class="disabled"' : '' ?>>» Last</a>
+        </table>
     </div>
+
+    <div class="pagination-bar">
+        <div class="page-size-select">
+            <label for="pageSizeSelect">Rows per page:</label>
+            <select id="pageSizeSelect">
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+        <div class="page-controls">
+            <button type="button" id="prevPageBtn">&laquo; Prev</button>
+            <span id="pageIndicator">Page 1 of 1</span>
+            <button type="button" id="nextPageBtn">Next &raquo;</button>
+        </div>
+    </div>
+
 </div>
 
 <?php if ($editing && $edit_row): ?>
@@ -524,22 +589,95 @@ $extra_columns = [
 <?php endif; ?>
 
 <script>
-document.getElementById("searchInput").addEventListener("keyup", function () {
-    let filter = this.value.toLowerCase();
-    let rows = document.querySelectorAll("table tr");
+/* =========================================================
+   Search + pagination (default 15 rows/page, up to 50).
+   Pagination is applied over whatever rows currently match the
+   search filter, so the two work together.
+   ========================================================= */
+(function () {
+    const table = document.querySelector('.table-scroll table');
+    const searchInput = document.getElementById('searchInput');
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
 
-    rows.forEach((row, index) => {
-        if (index === 0) return; // Skip header row
+    if (!table) return;
 
-        let text = row.textContent.toLowerCase();
+    let currentPage = 1;
 
-        if (text.indexOf(filter) > -1) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
+    function getAllDataRows() {
+        // All rows except the header row (first <tr>)
+        return Array.from(table.rows).slice(1);
+    }
+
+    function getMatchingRows() {
+        const filter = (searchInput ? searchInput.value : '').toLowerCase();
+        return getAllDataRows().filter(function (row) {
+            return row.textContent.toLowerCase().indexOf(filter) > -1;
+        });
+    }
+
+    function render() {
+        const pageSize = parseInt(pageSizeSelect ? pageSizeSelect.value : 15, 10) || 15;
+        const allRows = getAllDataRows();
+        const matching = getMatchingRows();
+        const totalPages = Math.max(1, Math.ceil(matching.length / pageSize));
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        const visibleSlice = matching.slice(start, end);
+
+        // Hide everything first, then show only this page's matches
+        allRows.forEach(function (row) { row.style.display = 'none'; });
+        visibleSlice.forEach(function (row) { row.style.display = ''; });
+
+        if (pageIndicator) {
+            pageIndicator.textContent = matching.length === 0
+                ? 'No results'
+                : 'Page ' + currentPage + ' of ' + totalPages + ' (' + matching.length + ' total)';
         }
-    });
-});
+        if (prevBtn) prevBtn.disabled = currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function () {
+            currentPage = 1;
+            render();
+        });
+    }
+
+    if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', function () {
+            currentPage = 1;
+            render();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+            currentPage -= 1;
+            render();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+            currentPage += 1;
+            render();
+        });
+    }
+
+    render();
+
+    // Re-apply pagination whenever a dynamic column is added/removed,
+    // since new <td>s don't change row count but row heights can shift.
+    window.addEventListener('records:columnsChanged', render);
+})();
 
 /* =========================================================
    "Show More Columns" — real on-demand fetch, not preloaded
@@ -584,6 +722,7 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
         table.querySelectorAll('[data-dynamic-col="' + field + '"]').forEach(function (el) {
             el.remove();
         });
+        window.dispatchEvent(new Event('records:columnsChanged'));
     }
 
     function fetchColumn(field, label, checkboxEl) {
@@ -597,6 +736,7 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
                     return;
                 }
                 addColumnToTable(field, label, data);
+                window.dispatchEvent(new Event('records:columnsChanged'));
             })
             .catch(function (err) {
                 console.error('Failed to fetch column "' + field + '":', err);
