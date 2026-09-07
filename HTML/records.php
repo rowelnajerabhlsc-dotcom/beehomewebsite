@@ -398,18 +398,172 @@ $extra_columns = [
             z-index: 1000;
             padding: 20px;
             box-sizing: border-box;
-            overflow-y: auto;
         }
         #editModal.edit-modal .edit-card {
             width: 100%;
-            max-width: 640px;
+            max-width: 680px;
             max-height: 90vh;
-            overflow-y: auto;
             background: #ffffff;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 12px 40px rgba(9, 109, 43, 0.25);
+            border-radius: 14px;
+            box-shadow: 0 16px 48px rgba(9, 109, 43, 0.28);
             margin: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Sticky header with title + close button */
+        #editModal .edit-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            background: #096D2B;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+        #editModal .edit-modal-header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        #editModal .edit-modal-header .modal-subtitle {
+            margin: 2px 0 0;
+            font-size: 0.82rem;
+            color: #cdeed8;
+            font-weight: 400;
+        }
+        #editModal .modal-close-btn {
+            appearance: none;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+        #editModal .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Scrollable body between sticky header and footer */
+        #editModal .edit-modal-body {
+            padding: 24px 28px;
+            overflow-y: auto;
+        }
+
+        #editModal .form-section {
+            margin-bottom: 22px;
+        }
+        #editModal .form-section:last-child {
+            margin-bottom: 0;
+        }
+        #editModal .form-section-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #096D2B;
+            margin: 0 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e7f5ea;
+        }
+
+        #editModal .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 16px;
+        }
+        #editModal .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        #editModal .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #5a6b5f;
+            margin-bottom: 5px;
+        }
+        #editModal .form-group input,
+        #editModal .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 9px 12px;
+            border: 1px solid #d8ecdd;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: #1e2b22;
+            background: #fbfffc;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        #editModal .form-group input:focus,
+        #editModal .form-group select:focus {
+            outline: none;
+            border-color: #2cab4a;
+            box-shadow: 0 0 0 3px rgba(44, 171, 74, 0.15);
+            background: #ffffff;
+        }
+
+        /* Sticky footer with actions */
+        #editModal .edit-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 28px;
+            border-top: 1px solid #e7f5ea;
+            background: #ffffff;
+            flex-shrink: 0;
+        }
+        #editModal .save-btn {
+            appearance: none;
+            border: none;
+            background: #096D2B;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        #editModal .save-btn:hover {
+            background: #075423;
+        }
+        #editModal .cancel-btn {
+            appearance: none;
+            border: 1px solid #d8ecdd;
+            background: #ffffff;
+            color: #5a6b5f;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        #editModal .cancel-btn:hover {
+            background: #e7f5ea;
+        }
+
+        @media (max-width: 600px) {
+            #editModal .form-grid {
+                grid-template-columns: 1fr;
+            }
+            #editModal.edit-modal .edit-card {
+                max-height: 95vh;
+            }
+        }
+
+        /* Body/page scroll lock while the modal is open */
+        body.modal-open {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -491,87 +645,97 @@ $extra_columns = [
 <div class="auth-container edit-modal" id="editModal">
     <div class="auth-card edit-card">
 
-        <h1>Edit User</h1>
+        <div class="edit-modal-header">
+            <div>
+                <h1>Edit User</h1>
+                <p class="modal-subtitle"><?= htmlspecialchars($edit_row['username']); ?></p>
+            </div>
+            <button type="button" class="modal-close-btn" id="editCloseBtn" aria-label="Close">&times;</button>
+        </div>
 
-        <form method="POST" action="?edit=<?= (int)$_GET['edit']; ?>" class="profile-form">
+        <form method="POST" action="?edit=<?= (int)$_GET['edit']; ?>" class="profile-form" id="editUserForm">
+            <div class="edit-modal-body">
 
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" name="username" value="<?= htmlspecialchars($edit_row['username']); ?>" required>
+                <div class="form-section">
+                    <p class="form-section-title">Account</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="username" value="<?= htmlspecialchars($edit_row['username']); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value="<?= htmlspecialchars($edit_row['email']); ?>" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Role</label>
+                            <select name="role">
+                                <option value="1" <?= $edit_row['role']==1?'selected':'' ?>>User</option>
+                                <option value="2" <?= $edit_row['role']==2?'selected':'' ?>>Staff</option>
+                                <option value="3" <?= $edit_row['role']==3?'selected':'' ?>>Manager</option>
+                                <option value="4" <?= $edit_row['role']==4?'selected':'' ?>>Admin</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" name="email" value="<?= htmlspecialchars($edit_row['email']); ?>" required>
+                <div class="form-section">
+                    <p class="form-section-title">Personal Information</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="fname" value="<?= htmlspecialchars($edit_row['fname']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Middle Name</label>
+                            <input type="text" name="mname" value="<?= htmlspecialchars($edit_row['mname']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lname" value="<?= htmlspecialchars($edit_row['lname']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Birthday</label>
+                            <input type="date" name="birthday" value="<?= htmlspecialchars($edit_row['birthday']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <input type="text" name="gender" value="<?= htmlspecialchars($edit_row['gender']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Civil Status</label>
+                            <input type="text" name="civil_status" value="<?= htmlspecialchars($edit_row['civil_status']); ?>">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Address</label>
+                            <input type="text" name="address" value="<?= htmlspecialchars($edit_row['address']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" name="contact_number" value="<?= htmlspecialchars($edit_row['contact_number']); ?>">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Role:</label>
-                    <select name="role">
-                        <option value="1" <?= $edit_row['role']==1?'selected':'' ?>>User</option>
-                        <option value="2" <?= $edit_row['role']==2?'selected':'' ?>>Staff</option>
-                        <option value="3" <?= $edit_row['role']==3?'selected':'' ?>>Manager</option>
-                        <option value="4" <?= $edit_row['role']==4?'selected':'' ?>>Admin</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>First Name:</label>
-                    <input type="text" name="fname" value="<?= htmlspecialchars($edit_row['fname']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Middle Name:</label>
-                    <input type="text" name="mname" value="<?= htmlspecialchars($edit_row['mname']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Last Name:</label>
-                    <input type="text" name="lname" value="<?= htmlspecialchars($edit_row['lname']); ?>">
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Address:</label>
-                    <input type="text" name="address" value="<?= htmlspecialchars($edit_row['address']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Contact:</label>
-                    <input type="text" name="contact_number" value="<?= htmlspecialchars($edit_row['contact_number']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Department:</label>
-                    <input type="text" name="department" value="<?= htmlspecialchars($edit_row['department']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Position:</label>
-                    <input type="text" name="position" value="<?= htmlspecialchars($edit_row['position']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Birthday:</label>
-                    <input type="date" name="birthday" value="<?= htmlspecialchars($edit_row['birthday']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Gender:</label>
-                    <input type="text" name="gender" value="<?= htmlspecialchars($edit_row['gender']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Civil Status:</label>
-                    <input type="text" name="civil_status" value="<?= htmlspecialchars($edit_row['civil_status']); ?>">
+                <div class="form-section">
+                    <p class="form-section-title">Employment</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Department</label>
+                            <input type="text" name="department" value="<?= htmlspecialchars($edit_row['department']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" name="position" value="<?= htmlspecialchars($edit_row['position']); ?>">
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-            <div class="button-group">
-                <button type="submit" class="save-btn">Save</button>
+            <div class="edit-modal-footer">
                 <button type="button" class="cancel-btn" id="editCancelBtn">Cancel</button>
+                <button type="submit" class="save-btn">Save Changes</button>
             </div>
 
         </form>
@@ -597,7 +761,27 @@ $extra_columns = [
     // of navigating to a clean /records URL (clearing ?edit=... from it).
     const isEmbedded = !!document.getElementById('pageContent');
 
+    // ---- Lock background scroll while the modal is open ----
+    // The dashboard uses Lenis for smooth-scroll inside a custom
+    // .scroll-container, and `overflow: hidden` on <body> alone does not
+    // stop Lenis (it keeps driving the scroll under the modal). So this
+    // also calls window.lenis.stop()/start() when Lenis is present, and
+    // marks the modal with data-lenis-prevent as a second line of defense.
+    modal.setAttribute('data-lenis-prevent', '');
+    document.body.classList.add('modal-open');
+    if (window.lenis && typeof window.lenis.stop === 'function') {
+        window.lenis.stop();
+    }
+
+    function unlockScroll() {
+        document.body.classList.remove('modal-open');
+        if (window.lenis && typeof window.lenis.start === 'function') {
+            window.lenis.start();
+        }
+    }
+
     function closeEditModal() {
+        unlockScroll();
         if (isEmbedded) {
             modal.remove();
         } else {
@@ -608,6 +792,11 @@ $extra_columns = [
     const cancelBtn = document.getElementById('editCancelBtn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', closeEditModal);
+    }
+
+    const closeBtn = document.getElementById('editCloseBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeEditModal);
     }
 
     // Click on dim backdrop (not on the card itself) closes the modal
