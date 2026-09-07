@@ -209,12 +209,13 @@ if (isset($_GET['edit'])) {
 }
 
 /* =========================================================
-   LIST DATA — default columns only.
-   Extra profile fields (TIN, SSS, blood type, emergency contact,
-   etc.) are intentionally NOT selected here; they're fetched on
-   demand via ?ajax_column=<field> when the user picks them from
-   the "Show More Columns" dropdown.
+   LIST DATA — pagination enabled
    ========================================================= */
+$page = max(1, isset($_GET['page']) ? (int)$_GET['page'] : 1);
+$per_page = min(50, max(1, isset($_GET['per_page']) ? (int)$_GET['per_page'] : 15)); // default 15, max 50
+
+$offset = ($page - 1) * $per_page;
+
 $stmt = $conn->prepare("
     SELECT
         u.id,
@@ -225,9 +226,23 @@ $stmt = $conn->prepare("
     FROM users u
     LEFT JOIN user_profiles p ON u.id = p.user_id
     ORDER BY u.id ASC
+    LIMIT ? OFFSET ?
 ");
+$stmt->bind_param("ii", $per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
+
+/* Total record count for pagination math */
+$count_stmt = $conn->prepare("
+    SELECT COUNT(*) AS total
+    FROM users u
+    LEFT JOIN user_profiles p ON u.id = p.user_id
+");
+$count_stmt->execute();
+$total_row = $count_stmt->get_result()->fetch_assoc();
+$total_records = (int)$total_row['total'];
+$total_pages = ceil($total_records / $per_page);
+?>
 
 /* Column labels used both server-side (dropdown render) and
    passed to JS for building the dynamic <th>/<td> on fetch. */
@@ -332,29 +347,40 @@ $extra_columns = [
             <th>Role</th>
         </tr>
 
+<?php $row_count = 0; ?>
         <?php while($row = $result->fetch_assoc()): ?>
-        <tr data-user-id="<?= (int)$row['id']; ?>">
-            <td class="actions">
-                <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
-                    <a href="?edit=<?= (int)$row['id']; ?>">
-                        <button class="action-btn edit">Edit</button>
-                    </a>
+            <?php if($row_count >= $per_page) break; $row_count++; ?>
+            <tr data-user-id="<?= (int)$row['id']; ?>">
+                <td class="actions">
+                    <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
+                        <a href="?edit=<?= (int)$row['id']; ?>">
+                            <button class="action-btn edit">Edit</button>
+                        </a>
 
-                    <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
-                        <button class="action-btn delete">Delete</button>
-                    </a>
-                <?php else: ?>
-                    <span style="color:#999;">No access</span>
-                <?php endif; ?>
-            </td>
-            <td><?= htmlspecialchars($row['username']); ?></td>
-            <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
-            <td><?= htmlspecialchars($row['email']); ?></td>
-            <td><?= htmlspecialchars($row['role'] == 1 ? 'User' : ($row['role'] == 2 ? 'Staff' : ($row['role'] == 3 ? 'Manager' : 'Admin'))); ?></td>
+                        <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
+                            <button class="action-btn delete">Delete</button>
+                        </a>
+                    <?php else: ?>
+                        <span style="color:#999;">No access</span>
+                    <?php endif; ?>
+                </td>
+                <td><?= htmlspecialchars($row['username']); ?></td>
+                <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
+                <td><?= htmlspecialchars($row['email']); ?></td>
+                <td><?= htmlspecialchars($row['role'] == 1 ? 'User' : ($row['role'] == 2 ? 'Staff' : ($row['role'] == 3 ? 'Manager' : 'Admin'))); ?></td>
+            </tr>
         <?php endwhile; ?>
 
     </table>
 
+    <div class="pagination-controls">
+        <span>Showing <strong><?= min($per_page, $total_records); ?></strong> of <strong>$total_records</strong> records</span>
+        <a href="?page=1&per_page=<?= $per_page ?>"<?= $page == 1 ? ' class="disabled"' : '' ?>>« First</a>
+        <?php for ($p = 1; $p <= $total_pages; $p++): ?>
+            <a href="?page=<?= $p ?>&per_page=<?= $per_page ?>"<?= $page == $p ? ' class="active"' : '' ?>><?= $p ?></a>
+        <?php endfor; ?>
+        <a href="?page=<?= $page >= $total_pages ? $total_pages : $page + 1 ?>&per_page=<?= $per_page ?>"<?= $page >= $total_pages ? ' class="disabled"' : '' ?>>» Last</a>
+    </div>
 </div>
 
 <?php if ($editing && $edit_row): ?>
