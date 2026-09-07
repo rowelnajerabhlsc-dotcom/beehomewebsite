@@ -50,26 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $education_json = json_encode($education_rows);
 
-    // ---- Required-field validation (all fields required; dependents only if married) ----
-    $required = compact(
-        'fname', 'lname', 'address', 'contact_number', 'birthday', 'civil_status',
-        'gender', 'height_cm', 'weight_kg', 'tin_no', 'sss_no', 'blood_type',
-        'pagibig_no', 'philhealth_no', 'religion', 'pmes_orientation_date',
-        'position', 'facebook_account',
-        'emergency_name', 'emergency_address', 'emergency_relationship', 'emergency_contact_no'
-    );
-    foreach ($required as $label => $val) {
-        if ($val === '') {
-            $errors[] = ucwords(str_replace('_', ' ', $label)) . " is required.";
-        }
-    }
-    if ($client_id === null) {
-        $errors[] = "Client Assignment is required.";
-    }
-    if ($civil_status === 'Married' && $no_of_dependents === null) {
-        $errors[] = "No. of Dependents is required for married members.";
-    }
-
     // ---- Government ID format validation (must match the masked pattern exactly) ----
     $id_formats = [
         'tin_no'        => ['pattern' => '/^\d{3}-\d{3}-\d{3}-\d{3}$/', 'label' => 'TIN No.', 'example' => '123-456-789-101'],
@@ -209,7 +189,7 @@ function val($v) { return htmlspecialchars((string) $v); }
             </div>
             <div class="pv-header-info">
                 <h1>Edit Profile</h1>
-                <div class="pv-header-sub" id="photoStatus">Update your information below. All fields are required.</div>
+                <div class="pv-header-sub" id="photoStatus">Update your information below.</div>
             </div>
         </div>
         <div class="pv-header-actions">
@@ -459,18 +439,6 @@ function val($v) { return htmlspecialchars((string) $v); }
     var civilStatus = document.getElementById('civil_status');
     var dependentsGroup = document.getElementById('dependentsGroup');
     var dependentsInput = document.getElementById('no_of_dependents');
-
-    function toggleDependents() {
-        if (civilStatus.value === 'Married') {
-            dependentsGroup.style.display = '';
-            dependentsInput.setAttribute('required', 'required');
-        } else {
-            dependentsGroup.style.display = 'none';
-            dependentsInput.removeAttribute('required');
-        }
-    }
-    civilStatus.addEventListener('change', toggleDependents);
-    toggleDependents();
 
     // ---- Formatted ID inputs (TIN, SSS, Pag-IBIG, PhilHealth) ----
     // data-mask="3-3-3-3" means: group sizes of 3 digits each, dash-separated.
