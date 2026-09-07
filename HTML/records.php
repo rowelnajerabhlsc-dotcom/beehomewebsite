@@ -172,7 +172,10 @@ $stmt = $conn->prepare("
         p.batching_id,
         p.fname, p.mname, p.lname,
         p.department, p.position,
-        p.contact_number
+        p.contact_number,
+        p.tin_no, p.sss_no, p.blood_type, p.pagibig_no, p.philhealth_no,
+        p.religion, p.pmes_orientation_date, p.facebook_account,
+        p.emergency_name, p.emergency_relationship, p.emergency_contact_no
     FROM users u
     LEFT JOIN user_profiles p ON u.id = p.user_id
     ORDER BY u.id ASC
@@ -188,80 +191,6 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="icon" href="IMAGES/logo.png">
-
-    <style>
-        .table-container {
-            padding: 20px;
-        }
-
-        .search-box {
-            margin-bottom: 15px;
-        }
-
-        .search-box input {
-            width: 300px;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-
-        th {
-            background: #f4f4f4;
-        }
-
-        .action-btn {
-            padding: 5px 10px;
-            margin: 2px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .edit {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .delete {
-            background: #f44336;
-            color: white;
-        }
-
-        /* ===== EDIT MODAL ===== */
-        .edit-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;     /* let card sit near top, scroll down if tall */
-            padding: 40px 16px;
-            background: rgba(0, 0, 0, 0.55);
-            overflow-y: auto;             /* modal scrolls, not the page */
-            overflow-x: hidden;
-        }
-
-        .edit-modal .auth-card {
-            max-width: 700px;
-            width: 100%;
-            max-height: calc(100vh - 80px); /* leave breathing room top + bottom */
-            overflow-y: auto;             /* card scrolls if its form is tall */
-            overflow-x: hidden;            /* never scroll horizontally */
-            margin: 0;
-        }
-    </style>
 </head>
 <body>
 
@@ -282,6 +211,9 @@ $result = $stmt->get_result();
             <th>Department</th>
             <th>Position</th>
             <th>Contact</th>
+            <th>TIN</th>
+            <th>Blood Type</th>
+            <th>Emergency</th>
             <th>Actions</th>
         </tr>
 
@@ -289,26 +221,14 @@ $result = $stmt->get_result();
         <tr>
             <td><?= htmlspecialchars($row['id'] ?? ''); ?></td>
             <td><?= htmlspecialchars($row['username']); ?></td>
-            <td><?= htmlspecialchars(trim($row['fname']." ".$row['mname']." ".$row['lname'])); ?></td>
+            <td><?= htmlspecialchars(trim($row['fname']." "." ".$row['mname']." ".$row['lname'])); ?></td>
             <td><?= htmlspecialchars($row['email']); ?></td>
             <td><?= htmlspecialchars($row['department']); ?></td>
             <td><?= htmlspecialchars($row['position']); ?></td>
             <td><?= htmlspecialchars($row['contact_number']); ?></td>
-
-            <td>
-                <?php if (can_manage_target($_SESSION['role'], (int)$row['role'])): ?>
-                    <a href="?edit=<?= (int)$row['id']; ?>">
-                        <button class="action-btn edit">Edit</button>
-                    </a>
-
-                    <a href="?delete=<?= (int)$row['id']; ?>" onclick="return confirm('Delete this user?')">
-                        <button class="action-btn delete">Delete</button>
-                    </a>
-                <?php else: ?>
-                    <span style="color:#999;">No access</span>
-                <?php endif; ?>
-            </td>
-        </tr>
+            <td><?= htmlspecialchars(substr($row['tin_no'], 0, 3) . '-*****' ?? ''); ?></td>
+            <td><?= htmlspecialchars($row['blood_type'] ?? ''); ?></td>
+            <td><?= htmlspecialchars($row['emergency_name'] ?? ''); ?><?= $row['emergency_relationship'] ? ' (' . htmlspecialchars($row['emergency_relationship']) . ')' : ''; ?></td>
         <?php endwhile; ?>
 
     </table>

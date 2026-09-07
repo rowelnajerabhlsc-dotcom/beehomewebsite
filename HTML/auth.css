@@ -1,0 +1,249 @@
+/* ============================================================
+   auth.css — Shared styles for authentication/profile pages
+   Edit User page: HTML/edit_user.php
+   Records page: HTML/records.php
+   ============================================================ */
+
+/* ============================================================
+   Root variables — easy theming, consistent across pages
+   ============================================================ */
+:root {
+    --primary-color: #096D2B;
+    --primary-dark: #075423;
+    --card-bg: #ffffff;
+    --text-color: #1f2937;
+    --muted-color: #6b7280;
+    --border-color: #d1d5db;
+    --input-bg: #fff;
+    --btn-primary-bg: #096D2B;
+    --btn-primary-hover: #075423;
+    --btn-success: #10b981;
+    --btn-danger: #ef4444;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+    --gap: 1rem;
+    --max-width: 600px;
+}
+
+/* ============================================================
+   Page Container
+   ============================================================ */
+.auth-container {
+    max-width: var(--max-width);
+    width: 100%;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================
+   Card & Form Layout
+   ============================================================ */
+.auth-card,
+.edit-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    width: 100%;
+}
+
+/* Form grid layout — matches edit_user.php .form-grid */
+.form-grid {
+    display: grid;
+    gap: var(--gap);
+}
+
+/* Form groups — each .form-group is one row */
+.form-group {
+    margin-bottom: 0;
+}
+
+/* Full-width group — spans both columns if there were a 2-col layout */
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ============================================================
+   Input & Select Elements
+   ============================================================ */
+/* Base class applied to all form inputs */
+.input-field {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    color: var(--text-color);
+    background: var(--input-bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.input-field::placeholder {
+    color: #9ca3af;
+    opacity: 0.8;
+}
+
+.input-field:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(9, 109, 43, 0.1);
+}
+
+/* Select special — custom arrow since appearance:none */
+.select-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.25rem;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding-right: 1rem !important; /* override for appearance:none hack */
+}
+
+/* ============================================================
+   Button Styles
+   ============================================================ */
+.button-group {
+    display: flex;
+    gap: var(--gap);
+    justify-content: flex-end;
+    padding-top: var(--gap);
+}
+
+.save-btn {
+    background: var(--btn-primary-bg);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.save-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(9, 109, 43, 0.3);
+}
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+.cancel-btn {
+    background: transparent;
+    color: var(--text-color);
+    padding: 0.875rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.cancel-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* ============================================================
+   Specific Page Extensions
+   ============================================================ */
+
+/* Edit User page — .profile-form is the <form> class in edit_user.php */
+.profile-form {
+    /* already uses .form-grid inside, no extra needed */
+}
+
+/* Records page table styles */
+.table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+.search-box {
+    margin-bottom: 1.5rem;
+}
+
+.search-box input {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}
+
+th,
+td {
+    padding: 0.75rem 0.625rem;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+}
+
+.action-btn {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+
+.edit {
+    background: var(--btn-success);
+    color: white;
+}
+
+.delete {
+    background: var(--btn-danger);
+    color: white;
+}
+
+/* Modal styles (records.php edit modal) */
+.edit-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.edit-modal .auth-card {
+    max-width: 600px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
