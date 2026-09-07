@@ -183,6 +183,9 @@ function show($val) {
             <button onclick="window.location.href='/change_password'" class="pv-btn pv-btn-ghost">
                 Change Password
             </button>
+            <button onclick="window.location.href='/capital_share'" class="pv-btn pv-btn-ghost">
+                Capital Share
+            </button>
         </div>
     </div>
 
