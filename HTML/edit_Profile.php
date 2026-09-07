@@ -63,12 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 
-    foreach ($education_rows as $i => $row) {
-        if ($row['school'] === '' || $row['year_graduated'] === '' || $row['course'] === '') {
-            $errors[] = "Educational Attainment row " . ($i + 1) . " is incomplete.";
-        }
-    }
-
     if (empty($errors)) {
         $stmt = $conn->prepare("
             UPDATE user_profiles SET
