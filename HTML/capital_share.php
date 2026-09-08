@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "config.php";
+include "share_capital_helpers.php";
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /login");
@@ -40,11 +41,15 @@ while ($row = $docResult->fetch_assoc()) {
     $documents[] = $row;
 }
 $docStmt->close();
+
+// ---- Own ledger: year x month grid ----
+$ledger_grid = scr_build_ledger_grid($conn, $user_id);
+$month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06'=>'Jun','07'=>'Jul','08'=>'Aug','09'=>'Sep','10'=>'Oct','11'=>'Nov','12'=>'Dec'];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Capital Share</title>
+    <title>Share Capital</title>
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
 </head>
@@ -84,6 +89,45 @@ $docStmt->close();
                 <div class="pv-value">₱<?= $has_record ? htmlspecialchars(number_format((float) $total_amount, 2)) : '0.00' ?></div>
             </div>
         </div>
+    </div>
+
+    <div class="pv-card">
+        <div class="pv-card-header">
+            <span class="pv-accent"></span>
+            <h2>Share Capital Ledger</h2>
+        </div>
+        <?php if (empty($ledger_grid)): ?>
+            <p style="color:#5a6b5f;">No monthly entries encoded yet.</p>
+        <?php else: ?>
+            <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead>
+                    <tr style="background:#f1f3f5;">
+                        <th style="padding:8px; text-align:left; border:1px solid #e2e8e4;">Year</th>
+                        <?php foreach ($month_labels as $ml): ?>
+                        <th style="padding:8px; text-align:center; border:1px solid #e2e8e4;"><?= $ml ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($ledger_grid as $year => $months): ?>
+                    <tr>
+                        <td style="padding:8px; font-weight:700; border:1px solid #e2e8e4;"><?= htmlspecialchars($year) ?></td>
+                        <?php foreach (array_keys($month_labels) as $mkey): ?>
+                        <td style="padding:8px; text-align:center; border:1px solid #e2e8e4;">
+                            <?php if (isset($months[$mkey])): ?>
+                                ₱<?= number_format($months[$mkey]['amount'], 2) ?>
+                            <?php else: ?>
+                                <span style="color:#c3cfc7;">—</span>
+                            <?php endif; ?>
+                        </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="pv-card">
