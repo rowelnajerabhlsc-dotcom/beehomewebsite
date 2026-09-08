@@ -12,8 +12,6 @@ nav{
     box-shadow:0 4px 10px rgba(0,0,0,.2);
 }
 
-/* ================= LOGO ================= */
-
 .logo img{
     height:50px;
     display:block;
@@ -117,60 +115,32 @@ nav{
     border-radius:20px;
     text-decoration:none;
     font-weight:bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .account-link:hover{
     background:#f3f3f3;
 }
 
-.account-menu{
-    position:absolute;
-    top:110%;
-    right:0;
-
-    display:none;
-
-    min-width:200px;
-
-    background:#fff;
-
-    border-radius:8px;
-
-    box-shadow:0 10px 20px rgba(0,0,0,.25);
-
-    overflow:hidden;
-}
-
-.account-menu.show{
-    display:block;
-}
-
-.account-menu a{
-    display:block;
-    padding:12px 15px;
+.account-name{
     color:#096D2B;
-    text-decoration:none;
     font-weight:bold;
+    font-size:14px;
 }
 
-.logout-btn{
-    width:100%;
-    background:#096D2B;
-    color:#fff;
-    border:none;
-    padding:8px 12px;
-    border-radius:8px;
-    font-weight:bold;
-    text-align:left;
-    cursor:pointer;
-    font-size:13px;
+.account-arrow{
+    color:#096D2B;
+    font-size:12px;
+    margin-left:4px;
+    transition: transform 0.3s ease;
 }
 
-.logout-btn:hover{
-    background:#085d22;
+.account-arrow:hover{
+    transform: rotate(180deg);
 }
 
-/* Profile avatar: shows photo OR initials */
 .account-avatar{
     width:32px;
     height:32px;
@@ -182,9 +152,6 @@ nav{
     justify-content: center;
     font-weight: 700;
     font-size: 12px;
-    margin-right:8px;
-    border:2px solid #fff;
-    position: relative;
     flex-shrink: 0;
     overflow: hidden;
 }
@@ -197,22 +164,6 @@ nav{
     transition: opacity 0.3s ease;
 }
 
-.account-avatar.initial-only .avatar-photo{
-    display:none;
-}
-
-.account-avatar .avatar-initials{
-    display:none;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    inset: 0;
-}
-
-.account-avatar.initial-only .avatar-initials{
-    display:flex;
-}
-
 .account-name{
     color:#096D2B;
     font-weight:bold;
@@ -220,17 +171,6 @@ nav{
     display: flex;
     align-items: center;
     gap: 4px;
-}
-
-.account-arrow{
-    color:#096D2B;
-    font-size:12px;
-    margin-left:4px;
-    transition: transform 0.3s ease;
-}
-
-.account-arrow:hover{
-    transform: rotate(180deg);
 }
 
 /* Logout button with proper contrast and animation */
@@ -259,32 +199,6 @@ nav{
 
 .logout-btn:active{
     transform: translateY(1px);
-}
-
-.logout-btn:hover{
-    background:#085d22;
-    transform: translateY(-2px);
-    box-shadow:0 4px 8px rgba(9,109,43,0.3);
-}
-
-.logout-btn:active{
-    transform: translateY(1px);
-}
-
-.account-name{
-    color:#096D2B;
-    font-weight:bold;
-    font-size:14px;
-}
-
-.account-arrow{
-    color:#096D2B;
-    font-size:12px;
-    margin-left:4px;
-}
-
-.account-menu a:hover{
-    background:#f2f2f2;
 }
 
 /* ================= HAMBURGER ================= */

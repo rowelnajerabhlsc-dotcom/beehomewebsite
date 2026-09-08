@@ -45,17 +45,31 @@ $nav_pages = [
 ];
 
 $active_page = $nav_pages[$current_page] ?? '';
+$user_id = $_SESSION['user_id'] ?? 0;
+$username = $_SESSION['username'] ?? 'User';
+$user_role = $_SESSION['role'] ?? 0;
+$initials = htmlspecialchars(substr($username, 0, 1));
+$has_photo = false;
+if ($user_id > 0) {
+    $has_photo = true;
+}
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bee Home</title>
 <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
 <link rel="stylesheet" href="/CSS/lenis.css">
 <script defer src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
 <script defer src="/JS/lenis.js"></script>
 <script type="module" src="/JS/lenis-snap.js"></script>
 <link rel="stylesheet" href="/CSS/scroll-animate.css">
-<script defer src="/JS/scroll-animate.js"></script>
+</head>
+<body>
 
 <nav>
-
     <!-- LOGO -->
     <div class="logo">
         <a href="/">
@@ -65,12 +79,10 @@ $active_page = $nav_pages[$current_page] ?? '';
 
     <!-- NAV LINKS -->
     <ul class="nav-links" id="navLinks">
-
         <li><a href="/" class="<?php echo $active_page === 'home' ? 'active' : ''; ?>">Home</a></li>
 
         <li class="dropdown">
             <a href="/about" class="<?php echo $active_page === 'about' ? 'active' : ''; ?>">About Us ▾</a>
-
             <ul class="dropdown-menu">
                 <li><a href="/about#history">History</a></li>
                 <li><a href="/about#mission">Mission, Vision & Core Values</a></li>
@@ -80,12 +92,10 @@ $active_page = $nav_pages[$current_page] ?? '';
             </ul>
         </li>
 
-        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products &
-                Services</a></li>
+        <li><a href="/products" class="<?php echo $active_page === 'products' ? 'active' : ''; ?>">Products & Services</a></li>
 
         <?php if (!isset($_SESSION['user_id'])): ?>
-            <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower
-                    Request</a></li>
+            <li><a href="/manpower_request" class="<?php echo $active_page === 'manpower' ? 'active' : ''; ?>">Manpower Request</a></li>
         <?php endif; ?>
 
         <!-- Membership -->
@@ -107,7 +117,6 @@ $active_page = $nav_pages[$current_page] ?? '';
         </li>
         <!-- contact -->
         <li><a href="/contact" class="<?php echo $active_page === 'contact' ? 'active' : ''; ?>">Contact Us</a></li>
-
     </ul>
 
     <!-- ACCOUNT AREA -->
@@ -115,55 +124,46 @@ $active_page = $nav_pages[$current_page] ?? '';
 
         <?php if (isset($_SESSION['user_id'])): ?>
 
-            <div class="account-dropdown">
-
-                <?php
-// Profile photo: try user's actual photo from Cloudinary, fall back to initials
-$username = $_SESSION['username'] ?? 'User';
-$user_id = $_SESSION['user_id'] ?? 0;
-$initials = htmlspecialchars(substr($username, 0, 1));
-$show_photo = false;
-if ($user_id > 0) {
-    $show_photo = true;
-}
-?>
-<!-- Profile avatar: shows photo or initials -->
-<span class="account-avatar" id="avatarImg">
-    <?php if ($show_photo): ?>
-        <img src="/serve_profile_photo?user_id=<?= $user_id ?>" alt="Profile photo" 
-             onerror="this.style.display='none'; document.getElementById('avatarInitials').style.display='flex';"
-             class="avatar-photo">
-    <?php else: ?>
-        <span class="avatar-initials"><?= $initials; ?></span>
-    <?php endif; ?>
-</span>
-<span class="avatar-initials" id="avatarInitials" style="display:none;"><?= $initials; ?></span>
-
-                <div class="account-menu" id="accountMenu">
-
-                    <a href="/profile">Profile</a>
-
-                    <a href="/change_password">Change Password</a>
-
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] >= 3): ?>
-                        <a href="/dashboard">Dashboard</a>
+            <!-- Account toggle with profile picture/initials -->
+            <a href="#" class="account-link" id="accountToggle">
+                <span class="account-avatar">
+                    <?php if ($has_photo): ?>
+                        <img src="/serve_profile_photo?user_id=<?= $user_id ?>" alt="Profile photo" 
+                             onerror="this.style.display='none';"
+                             class="avatar-photo">
+                    <?php else: ?>
+                        <span class="avatar-initials"><?= $initials; ?></span>
                     <?php endif; ?>
+                </span>
+                <span class="account-name"><?= htmlspecialchars($username); ?></span>
+                <span class="account-arrow">▼</span>
+            </a>
 
-                    <?php if (($_SESSION['role'] ?? 0) === 2): ?>
-                        <a href="/manage_capital_share" class="nav-link">Share Capital</a>
-                    <?php endif; ?>
+            <!-- Dropdown menu -->
+            <div class="account-menu" id="accountMenu">
 
-                    <?php if (($_SESSION['role'] ?? 0) >= 3): ?>
-                        <a href="/manage_capital_share" class="nav-link">Share Capital</a>
-                    <?php endif; ?>
+                <a href="/profile">Profile</a>
 
-                    <!-- All logged-in members (any role) can see their own capital share. -->
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="/capital_share" class="nav-link">My Share Capital</a>
-                    <?php endif; ?>
+                <a href="/change_password">Change Password</a>
 
-                    <a href="/logout" class="logout-btn">Logout</a>
-                </div>
+                <?php if ($user_role >= 3): ?>
+                    <a href="/dashboard">Dashboard</a>
+                <?php endif; ?>
+
+                <?php if ($user_role === 2): ?>
+                    <a href="/manage_capital_share" class="nav-link">Share Capital</a>
+                <?php endif; ?>
+
+                <?php if ($user_role >= 3): ?>
+                    <a href="/manage_capital_share" class="nav-link">Share Capital</a>
+                <?php endif; ?>
+
+                <!-- All logged-in members (any role) can see their own capital share. -->
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="/capital_share" class="nav-link">My Share Capital</a>
+                <?php endif; ?>
+
+                <a href="/logout" class="logout-btn">Logout</a>
 
             </div>
 
@@ -181,7 +181,6 @@ if ($user_id > 0) {
         <span></span>
         <span></span>
     </div>
-
 </nav>
 
 <script>
@@ -200,8 +199,7 @@ if ($user_id > 0) {
             });
         });
     }
-
-    function toggleMenu() {
-        document.getElementById("navLinks").classList.toggle("active");
-    }
 </script>
+
+</body>
+</html>
