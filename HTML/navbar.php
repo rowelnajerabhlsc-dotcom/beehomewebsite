@@ -118,7 +118,9 @@ $active_page = $nav_pages[$current_page] ?? '';
             <div class="account-dropdown">
 
                 <a href="#" class="account-link" id="accountToggle">
-                    <?php echo htmlspecialchars($_SESSION['username']); ?> ▾
+                    <img src="/IMAGES/avatar.png" alt="Profile" class="account-avatar">
+                    <span class="account-name"><?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
+                    <span class="account-arrow">▼</span>
                 </a>
 
                 <div class="account-menu" id="accountMenu">
@@ -128,26 +130,23 @@ $active_page = $nav_pages[$current_page] ?? '';
                     <a href="/change_password">Change Password</a>
 
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] >= 3): ?>
-
                         <a href="/dashboard">Dashboard</a>
-
                     <?php endif; ?>
 
-                    <?php
-                    if (($_SESSION['role'] ?? 0) === 2) {
-                        echo '<a href="/manage_capital_share" class="nav-link">Share Capital</a>';
-                    }
+                    <?php if (($_SESSION['role'] ?? 0) === 2): ?>
+                        <a href="/manage_capital_share" class="nav-link">Share Capital</a>
+                    <?php endif; ?>
 
-                    if (($_SESSION['role'] ?? 0) >= 3) {
-                        echo '<a href="/manage_capital_share" class="nav-link">Share Capital</a>';
-                    }
-                    // All logged-in members (any role) can see their own capital share.
-                    if (isset($_SESSION['user_id'])) {
-                        echo '<a href="/capital_share" class="nav-link">My Share Capital</a>';
-                    }
-                    ?>
+                    <?php if (($_SESSION['role'] ?? 0) >= 3): ?>
+                        <a href="/manage_capital_share" class="nav-link">Share Capital</a>
+                    <?php endif; ?>
 
-                    <a href="/logout">Logout</a>
+                    <!-- All logged-in members (any role) can see their own capital share. -->
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="/capital_share" class="nav-link">My Share Capital</a>
+                    <?php endif; ?>
+
+                    <a href="/logout" class="logout-btn">Logout</a>
                 </div>
 
             </div>

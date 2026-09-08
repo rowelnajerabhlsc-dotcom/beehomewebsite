@@ -153,6 +153,44 @@ nav{
     font-weight:bold;
 }
 
+.logout-btn{
+    width:100%;
+    background:#c0392b;
+    color:#fff;
+    border:none;
+    padding:10px 15px;
+    border-radius:20px;
+    font-weight:bold;
+    text-align:left;
+    cursor:pointer;
+}
+
+.logout-btn:hover{
+    background:#a93226;
+}
+
+/* Account avatar & name */
+.account-avatar{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-right:8px;
+    border:2px solid #fff;
+}
+
+.account-name{
+    color:#096D2B;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.account-arrow{
+    color:#096D2B;
+    font-size:12px;
+    margin-left:4px;
+}
+
 .account-menu a:hover{
     background:#f2f2f2;
 }
