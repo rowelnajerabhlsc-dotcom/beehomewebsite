@@ -398,9 +398,6 @@ function sort_link(string $column, string $label, string $currentSort, string $c
 </style>
 </head>
 <body>
-
-<?php include "navbar.php"; ?>
-
 <div class="page-wrap">
 
     <div class="section-header">
