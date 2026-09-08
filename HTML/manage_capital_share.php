@@ -198,6 +198,7 @@ if ($membersResult) {
     while ($row = $membersResult->fetch_assoc()) {
         $members[] = $row;
     }
+}
 
 // ---- Load current capital share balances + last update info ----
 $balances = [];
@@ -306,9 +307,14 @@ $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label>Member</label>
-                    <input type="text" name="user_id" id="member-search-1" class="member-search-input" readonly required>
-                    <input type="hidden" name="user_id_hidden" value="">
-                    <div class="search-results" id="search-results-1"></div>
+                    <select name="user_id" required>
+                        <option value="">Select member</option>
+                        <?php foreach ($members as $m): ?>
+                        <option value="<?= (int) $m['id'] ?>">
+                            <?= htmlspecialchars(trim($m['fname'] . ' ' . $m['lname']) ?: $m['username']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Month / Year</label>
@@ -344,9 +350,14 @@ $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label>Member</label>
-                    <input type="text" name="doc_user_id" id="member-search-2" class="member-search-input" readonly required>
-                    <input type="hidden" name="doc_user_id_hidden" value="">
-                    <div class="search-results" id="search-results-2"></div>
+                    <select name="doc_user_id" required>
+                        <option value="">Select member</option>
+                        <?php foreach ($members as $m): ?>
+                        <option value="<?= (int) $m['id'] ?>">
+                            <?= htmlspecialchars(trim($m['fname'] . ' ' . $m['lname']) ?: $m['username']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Month / Year</label>
@@ -372,12 +383,7 @@ $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06
         <form method="GET" class="form-grid" style="margin-bottom:16px;">
             <div class="form-group full-width">
                 <label>View member's ledger</label>
-                <div class="search-wrapper">
-                    <input type="text" name="ledger_user_id" id="member-search-3" class="member-search-input" readonly required>
-                    <input type="hidden" name="ledger_user_id_hidden" value="">
-                    <div class="search-results" id="search-results-3"></div>
-                </div>
-                <select name="ledger_user_id" style="display:none;">
+                <select name="ledger_user_id" onchange="this.form.submit()">
                     <option value="">Select member</option>
                     <?php foreach ($members as $m): ?>
                     <option value="<?= (int) $m['id'] ?>" <?= $ledger_member_id === (int) $m['id'] ? 'selected' : '' ?>>
@@ -515,89 +521,6 @@ $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06
         el.addEventListener('input', function () { applyMask(el); });
     });
 })();
-
-  var members = <?= json_encode($members, JSON_UNESCAPED_UNICODE) ?>;
-
-  function setupMemberSearch(inputId, resultsId) {
-    const input = document.getElementById(inputId);
-    const resultsDiv = document.getElementById(resultsId);
-
-    input.addEventListener('input', function () {
-      const query = this.value.trim();
-      if (query === '') {
-        resultsDiv.style.display = 'none';
-        return;
-      }
-
-      const lowerQuery = query.toLowerCase();
-      const matches = members.filter(function (m) {
-        const name = (m.fname + ' ' + m.lname + ' ' + m.username).toLowerCase();
-        return name.includes(lowerQuery);
-      });
-
-      if (matches.length === 0) {
-        resultsDiv.innerHTML = '<div style="padding: 6px; color: #888;">No members found</div>';
-        resultsDiv.style.display = 'block';
-        return;
-      }
-
-      resultsDiv.innerHTML = matches.slice(0, 10).map(function (m) {
-        const displayName = (m.fname + ' ' + m.lname).trim() || m.username;
-        return '<div style="padding: 6px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px;">' + htmlspecialchars(displayName) + '</div>';
-      }).join('');
-
-      resultsDiv.style.display = 'block';
-    });
-
-    // Click outside to hide results
-    document.addEventListener('click', function (e) {
-      if (!input.contains(e.target) && !resultsDiv.contains(e.target)) {
-        resultsDiv.style.display = 'none';
-      }
-    });
-  }
-
-  function htmlspecialchars(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // Initialize all three search inputs
-  setupMemberSearch('member-search-1', 'search-results-1');
-  setupMemberSearch('member-search-2', 'search-results-2');
-  setupMemberSearch('member-search-3', 'search-results-3');
-
-  // Handle click on a search result
-  document.addEventListener('click', function (e) {
-    if (e.target && e.target.parentNode && e.target.parentNode.classList.contains('search-results')) {
-      // Find the actual clickable element
-      const clicked = e.target;
-      const resultDiv = clickedclosest ? clicked.closest('div') : null;
-      if (resultDiv) {
-        const text = resultDiv.textContent || resultDiv.innerText;
-        // Find matching member and set input + hidden field
-        const match = members.find(function (m) {
-          return (m.fname + ' ' + m.lname).trim() === text || m.username === text;
-        });
-        if (match) {
-          const inputId = resultDiv.id.replace('search-results-', 'member-search-');
-          document.getElementById(inputId).value = text;
-          const hiddenId = inputId.replace('member-search-', 'user_id_hidden');
-          // Find the corresponding hidden field
-          const form = document.querySelector('form');
-          if (form) {
-            const hiddenInput = form.elements[hiddenId];
-            if (hiddenInput) {
-              hiddenInput.value = match.id;
-            }
-          }
-          // Hide results
-          resultDiv.parentNode.style.display = 'none';
-        }
-      }
-    }
-  });
 </script>
 
 </body>
