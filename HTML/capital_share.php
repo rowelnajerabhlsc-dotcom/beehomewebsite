@@ -57,7 +57,7 @@ $docStmt->close();
     <div class="pv-header">
         <div class="pv-header-left">
             <div class="pv-header-info">
-                <h1 style="color:#fff;">My Capital Share</h1>
+                <h1 style="color:#fff;">My Share Capital</h1>
                 <div class="pv-header-sub">
                     <?php if ($has_record && $last_updated): ?>
                         Last updated <?= htmlspecialchars(date('F d, Y', strtotime($last_updated))) ?>
