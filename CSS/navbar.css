@@ -240,6 +240,11 @@ nav{
 .account-menu .logout-btn{
     margin:8px 18px 4px;
     width:calc(100% - 36px);
+    color:#fff;
+}
+
+.account-menu .logout-btn:hover{
+    color:#096D2B;
 }
 
 /* ================= HAMBURGER ================= */
