@@ -170,7 +170,7 @@ nav{
     background:#085d22;
 }
 
-/* Account avatar & name */
+/* Profile avatar: shows photo OR initials */
 .account-avatar{
     width:32px;
     height:32px;
@@ -184,19 +184,91 @@ nav{
     font-size: 12px;
     margin-right:8px;
     border:2px solid #fff;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
-.account-initials{
-    width:20px;
-    height:20px;
+.account-avatar .avatar-photo{
+    width:100%;
+    height:100%;
     border-radius:50%;
-    background: var(--primary);
-    color: #fff;
-    display: flex;
+    object-fit:cover;
+    transition: opacity 0.3s ease;
+}
+
+.account-avatar.initial-only .avatar-photo{
+    display:none;
+}
+
+.account-avatar .avatar-initials{
+    display:none;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 11px;
+    position: absolute;
+    inset: 0;
+}
+
+.account-avatar.initial-only .avatar-initials{
+    display:flex;
+}
+
+.account-name{
+    color:#096D2B;
+    font-weight:bold;
+    font-size:14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.account-arrow{
+    color:#096D2B;
+    font-size:12px;
+    margin-left:4px;
+    transition: transform 0.3s ease;
+}
+
+.account-arrow:hover{
+    transform: rotate(180deg);
+}
+
+/* Logout button with proper contrast and animation */
+.logout-btn{
+    width:100%;
+    background:#096D2B;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:bold;
+    text-align:left;
+    cursor:pointer;
+    font-size:13px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logout-btn:hover{
+    background:#085d22;
+    transform: translateY(-2px);
+    box-shadow:0 4px 8px rgba(9,109,43,0.3);
+}
+
+.logout-btn:active{
+    transform: translateY(1px);
+}
+
+.logout-btn:hover{
+    background:#085d22;
+    transform: translateY(-2px);
+    box-shadow:0 4px 8px rgba(9,109,43,0.3);
+}
+
+.logout-btn:active{
+    transform: translateY(1px);
 }
 
 .account-name{

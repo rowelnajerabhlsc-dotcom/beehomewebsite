@@ -118,15 +118,26 @@ $active_page = $nav_pages[$current_page] ?? '';
             <div class="account-dropdown">
 
                 <?php
-// Profile initials for avatar fallback
+// Profile photo: try user's actual photo from Cloudinary, fall back to initials
 $username = $_SESSION['username'] ?? 'User';
+$user_id = $_SESSION['user_id'] ?? 0;
 $initials = htmlspecialchars(substr($username, 0, 1));
+$show_photo = false;
+if ($user_id > 0) {
+    $show_photo = true;
+}
 ?>
-<a href="#" class="account-link" id="accountToggle">
-    <span class="account-avatar"><?= $initials; ?></span>
-    <span class="account-name"><?= $_SESSION['username']; ?></span>
-    <span class="account-arrow">▼</span>
-</a>
+<!-- Profile avatar: shows photo or initials -->
+<span class="account-avatar" id="avatarImg">
+    <?php if ($show_photo): ?>
+        <img src="/serve_profile_photo?user_id=<?= $user_id ?>" alt="Profile photo" 
+             onerror="this.style.display='none'; document.getElementById('avatarInitials').style.display='flex';"
+             class="avatar-photo">
+    <?php else: ?>
+        <span class="avatar-initials"><?= $initials; ?></span>
+    <?php endif; ?>
+</span>
+<span class="avatar-initials" id="avatarInitials" style="display:none;"><?= $initials; ?></span>
 
                 <div class="account-menu" id="accountMenu">
 
