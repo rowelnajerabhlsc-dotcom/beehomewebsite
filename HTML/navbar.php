@@ -133,8 +133,6 @@ $active_page = $nav_pages[$current_page] ?? '';
 
                     <?php endif; ?>
 
-                    <a href="/logout">Logout</a>
-
                     <?php
                     if (($_SESSION['role'] ?? 0) === 2) {
                         echo '<a href="/manage_capital_share" class="nav-link">Share Capital</a>';
@@ -148,6 +146,8 @@ $active_page = $nav_pages[$current_page] ?? '';
                         echo '<a href="/capital_share" class="nav-link">My Share Capital</a>';
                     }
                     ?>
+
+                    <a href="/logout">Logout</a>
                 </div>
 
             </div>
