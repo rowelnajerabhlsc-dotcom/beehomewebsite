@@ -201,6 +201,47 @@ nav{
     transform: translateY(1px);
 }
 
+.account-dropdown,
+.account-area{
+    position:relative;
+}
+
+.account-menu{
+    display:none;
+    position:absolute;
+    top:calc(100% + 10px);
+    right:0;
+    min-width:220px;
+    background:#fff;
+    border-radius:12px;
+    padding:10px 0;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+    z-index:1000;
+    flex-direction:column;
+}
+
+.account-menu.show{
+    display:flex;
+}
+
+.account-menu a{
+    color:#096D2B;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    white-space:nowrap;
+}
+
+.account-menu a:hover{
+    background:#e7f5ea;
+}
+
+.account-menu .logout-btn{
+    margin:8px 18px 4px;
+    width:calc(100% - 36px);
+}
+
 /* ================= HAMBURGER ================= */
 
 .menu-toggle{
