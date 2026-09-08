@@ -155,18 +155,19 @@ nav{
 
 .logout-btn{
     width:100%;
-    background:#c0392b;
+    background:#096D2B;
     color:#fff;
     border:none;
-    padding:10px 15px;
+    padding:8px 12px;
     border-radius:20px;
     font-weight:bold;
     text-align:left;
     cursor:pointer;
+    font-size:13px;
 }
 
 .logout-btn:hover{
-    background:#a93226;
+    background:#085d22;
 }
 
 /* Account avatar & name */
@@ -174,9 +175,28 @@ nav{
     width:32px;
     height:32px;
     border-radius:50%;
-    object-fit:cover;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
     margin-right:8px;
     border:2px solid #fff;
+}
+
+.account-initials{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
 }
 
 .account-name{

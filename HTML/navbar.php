@@ -117,11 +117,16 @@ $active_page = $nav_pages[$current_page] ?? '';
 
             <div class="account-dropdown">
 
-                <a href="#" class="account-link" id="accountToggle">
-                    <img src="/IMAGES/avatar.png" alt="Profile" class="account-avatar">
-                    <span class="account-name"><?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
-                    <span class="account-arrow">▼</span>
-                </a>
+                <?php
+// Profile initials for avatar fallback
+$username = $_SESSION['username'] ?? 'User';
+$initials = htmlspecialchars(substr($username, 0, 1));
+?>
+<a href="#" class="account-link" id="accountToggle">
+    <span class="account-avatar"><?= $initials; ?></span>
+    <span class="account-name"><?= $_SESSION['username']; ?></span>
+    <span class="account-arrow">▼</span>
+</a>
 
                 <div class="account-menu" id="accountMenu">
 
