@@ -865,3 +865,297 @@ body:has(.pv-shell) {
 .pv-avatar-edit-btn:hover {
     transform: scale(1.08);
 }
+/* =====================================================================
+   PROFILE VIEW — DESIGN A (sidebar layout)
+   New pv2-* classes, scoped to profile.php only. Does not touch pv-*
+   classes still used by edit_profile.php / change_password.php etc.
+   ===================================================================== */
+
+.pv2-shell {
+    max-width: 1180px;
+    margin: 32px auto 60px;
+    padding: 0 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+body:has(.pv2-shell) {
+    background: #f4f7f5;
+}
+
+/* ----- Sidebar ----- */
+.pv2-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: #e7f5ea;
+    border: 1px solid #cdeed8;
+    border-radius: 16px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    position: sticky;
+    top: 24px;
+}
+
+.pv2-sidebar-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: #d8ecdd;
+    color: #096D2B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 3px solid #ffffff;
+}
+
+.pv2-sidebar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pv2-sidebar-name {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e2b22;
+}
+
+.pv2-sidebar-role {
+    font-size: 12.5px;
+    color: #5a6b5f;
+    margin-bottom: 16px;
+}
+
+.pv2-sidebar-meta {
+    width: 100%;
+    font-size: 12.5px;
+    color: #1e2b22;
+    text-align: left;
+    border-top: 1px solid #cdeed8;
+    padding-top: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pv2-sidebar-meta span {
+    font-weight: 700;
+    color: #096D2B;
+    margin-right: 4px;
+}
+
+.pv2-sidebar-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pv2-btn {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.pv2-btn-primary {
+    background: #F5C233;
+    color: #1e2b22;
+}
+
+.pv2-btn-primary:hover {
+    background: #e6b322;
+    transform: translateY(-1px);
+}
+
+.pv2-btn-dark {
+    background: #096D2B;
+    color: #ffffff;
+}
+
+.pv2-btn-dark:hover {
+    background: #075423;
+    transform: translateY(-1px);
+}
+
+/* ----- Main content ----- */
+.pv2-main {
+    flex: 1;
+    min-width: 0;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8e4;
+    box-shadow: 0 10px 30px rgba(9, 109, 43, 0.08);
+}
+
+.pv2-main-header {
+    background: linear-gradient(135deg, #096D2B, #0b7a34 55%, #26a753);
+    padding: 22px 28px;
+}
+
+.pv2-main-header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.pv2-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 24px 28px 30px;
+    align-items: start;
+}
+
+.pv2-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ----- Cards inside main ----- */
+.pv2-card {
+    background: #f6f9f7;
+    border: 1px solid #e2e8e4;
+    border-radius: 12px;
+    padding: 18px 18px 20px;
+}
+
+.pv2-card-title {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #096D2B;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pv2-field-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pv2-field label {
+    display: block;
+    font-size: 11.5px;
+    color: #5a6b5f;
+    margin-bottom: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+.pv2-value {
+    background: #ffffff;
+    border: 1px solid #e2e8e4;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e2b22;
+    min-height: 18px;
+    word-break: break-word;
+}
+
+.pv2-field-inline .pv2-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pv2-badge {
+    background: #F5C233;
+    color: #1e2b22;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* ----- Emergency card (gold accent, matches design mock) ----- */
+.pv2-card-emergency {
+    background: #F5C233;
+    border-color: #e6b322;
+}
+
+.pv2-card-emergency .pv2-card-title {
+    color: #1e2b22;
+}
+
+.pv2-emergency-icon {
+    font-size: 13px;
+}
+
+.pv2-card-emergency .pv2-field label {
+    color: #6b5b1e;
+}
+
+.pv2-card-emergency .pv2-value {
+    background: #fffdf6;
+    border-color: #e6b322;
+}
+
+/* ----- Education table nested in pv2-card ----- */
+.pv2-card .education-table {
+    border: 1px solid #e2e8e4;
+}
+
+.pv2-card .education-row > div {
+    font-size: 12.5px;
+    padding: 8px 10px;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 1024px) {
+    .pv2-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pv2-col:nth-child(3) {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .pv2-shell {
+        flex-direction: column;
+    }
+
+    .pv2-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .pv2-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .pv2-col:nth-child(3) {
+        grid-column: span 1;
+    }
+}
