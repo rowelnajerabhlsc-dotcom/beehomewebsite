@@ -1,74 +1,3 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Get current page
-$current_page = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$current_page = rtrim($current_page, '/') ?: '/';
-
-// Map URLs to nav items - handle both pretty URLs and direct file paths
-$nav_pages = [
-    '/' => 'home',
-    '/home' => 'home',
-    '/home.php' => 'home',
-    '/HTML/home.php' => 'home',
-    '/index.php' => 'home',
-    '/about' => 'about',
-    '/HTML/about.php' => 'about',
-    '/products' => 'products',
-    '/HTML/products.php' => 'products',
-    '/manpower_request' => 'manpower',
-    '/manpower-request' => 'manpower',
-    '/HTML/manpower_request.php' => 'manpower',
-    '/HTML/manpower-request.php' => 'manpower',
-    '/membership' => 'membership',
-    '/HTML/membership.php' => 'membership',
-    '/bee-home-cares' => 'cares',
-    '/HTML/bee-home-cares.php' => 'cares',
-    '/contact' => 'contact',
-    '/HTML/contact.php' => 'contact',
-    '/profile' => 'profile',
-    '/HTML/profile.php' => 'profile',
-    '/change_password' => 'profile',
-    '/HTML/change_password.php' => 'profile',
-    '/records' => 'profile',
-    '/HTML/records.php' => 'profile',
-    '/manpower-request-logs' => 'profile',
-    '/HTML/manpower-request-logs.php' => 'profile',
-    '/helpdesk_dashboard' => 'profile',
-    '/HTML/helpdesk_dashboard.php' => 'profile',
-    '/dashboard' => 'profile',
-    '/HTML/dashboard.php' => 'profile',
-    '/transport-dashboard' => 'profile',
-    '/HTML/transport-dashboard.php' => 'profile',
-];
-
-$active_page = $nav_pages[$current_page] ?? '';
-$user_id = $_SESSION['user_id'] ?? 0;
-$username = $_SESSION['username'] ?? 'User';
-$user_role = $_SESSION['role'] ?? 0;
-$initials = htmlspecialchars(substr($username, 0, 1));
-$has_photo = false;
-if ($user_id > 0) {
-    $has_photo = true;
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bee Home</title>
-<link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
-<link rel="stylesheet" href="/CSS/lenis.css">
-<script defer src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
-<script defer src="/JS/lenis.js"></script>
-<script type="module" src="/JS/lenis-snap.js"></script>
-<link rel="stylesheet" href="/CSS/scroll-animate.css">
-</head>
-<body>
-
 <nav>
     <!-- LOGO -->
     <div class="logo">
@@ -87,7 +16,6 @@ if ($user_id > 0) {
                 <li><a href="/about#history">History</a></li>
                 <li><a href="/about#mission">Mission, Vision & Core Values</a></li>
                 <li><a href="/about#awards">Awards & Recognition</a></li>
-                <li><a href="/about#officers">Officers & Committees</a></li>
                 <li><a href="/about#community">Community</a></li>
             </ul>
         </li>
@@ -128,7 +56,7 @@ if ($user_id > 0) {
             <a href="#" class="account-link" id="accountToggle">
                 <span class="account-avatar">
                     <?php if ($has_photo): ?>
-                        <img src="/serve_profile_photo?user_id=<?= $user_id ?>" alt="Profile photo" 
+                        <img src="/serve_profile_photo?user_id=<?= $user_id ?>" alt="Profile photo"
                              onerror="this.style.display='none';"
                              class="avatar-photo">
                     <?php else: ?>
@@ -151,10 +79,6 @@ if ($user_id > 0) {
                 <?php endif; ?>
 
                 <?php if ($user_role === 2): ?>
-                    <a href="/manage_capital_share" class="nav-link">Share Capital</a>
-                <?php endif; ?>
-
-                <?php if ($user_role >= 3): ?>
                     <a href="/manage_capital_share" class="nav-link">Share Capital</a>
                 <?php endif; ?>
 
@@ -200,6 +124,3 @@ if ($user_id > 0) {
         });
     }
 </script>
-
-</body>
-</html>
