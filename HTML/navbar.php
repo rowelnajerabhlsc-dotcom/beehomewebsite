@@ -117,7 +117,7 @@ if (isset($_SESSION['user_id'])) {
                     <a href="/dashboard">Dashboard</a>
                 <?php endif; ?>
 
-                <?php if ($user_role === 2): ?>
+                <?php if ($user_role >= 2): ?>
                     <a href="/manage_capital_share" class="nav-link">Share Capital</a>
                 <?php endif; ?>
 
