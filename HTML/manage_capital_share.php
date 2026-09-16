@@ -72,8 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             // contribution for the month is shares x amount.
             $month_total_amount = (float) $month_shares * (float) $month_amount;
 
-            $new_shares = $old_shares + (float) $month_shares;
-            $new_amount = $old_amount + $month_total_amount;
+            if ($confirmed && !empty($existing)) {
+                // ---- Correction: REPLACE this period's prior contribution ----
+                // Back out whatever was previously logged for this period, then
+                // apply the newly entered shares/amount as the period's new total.
+                $existing_shares_total = array_sum(array_column($existing, 'delta_shares'));
+                $existing_amount_total = array_sum(array_column($existing, 'delta_amount'));
+
+                $new_shares = $old_shares - $existing_shares_total + (float) $month_shares;
+                $new_amount = $old_amount - $existing_amount_total + $month_total_amount;
+            } else {
+                $new_shares = $old_shares + (float) $month_shares;
+                $new_amount = $old_amount + $month_total_amount;
+            }
 
             if ($found) {
                 $updateStmt = $conn->prepare("UPDATE capital_shares SET total_shares = ?, total_amount = ?, updated_by = ? WHERE user_id = ?");
@@ -88,8 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             }
 
             // Log this entry — remarks carries the period tag (+ optional note).
-            // A correction (confirmed duplicate) is just another entry for the
-            // same period; nothing here ever overwrites a prior log row.
+            // A correction (confirmed duplicate) nets out the period's prior
+            // total against the new one above; the log row itself is still an
+            // append-only entry (old_shares/old_amount here are the running
+            // totals just before this correction, not the prior period entry).
             $log_note = $confirmed && !empty($existing) ? ($staff_note !== '' ? $staff_note : 'Correction') : $staff_note;
             $log_remarks = scr_build_remarks($period, $log_note);
 
@@ -577,7 +590,7 @@ foreach ($balances as $b) {
                     <span>
                         <?= htmlspecialchars($full_name) ?> —
                         <strong><?= htmlspecialchars($period_display) ?></strong>
-                        <br><span class="csm-list-sub">+<?= htmlspecialchars(number_format($delta_shares, 2)) ?> shares, +₱<?= htmlspecialchars(number_format($delta_amount, 2)) ?><?= ($parsed && $parsed[1]) ? ' (' . htmlspecialchars($parsed[1]) . ')' : '' ?></span>
+                        <br><span class="csm-list-sub"><?= $delta_shares >= 0 ? '+' : '' ?><?= htmlspecialchars(number_format($delta_shares, 2)) ?> shares, <?= $delta_amount >= 0 ? '+' : '' ?>₱<?= htmlspecialchars(number_format($delta_amount, 2)) ?><?= ($parsed && $parsed[1]) ? ' (' . htmlspecialchars($parsed[1]) . ')' : '' ?></span>
                     </span>
                 </div>
                 <div class="csm-list-sub">By <?= htmlspecialchars($l['changed_by_username'] ?? '—') ?></div>
