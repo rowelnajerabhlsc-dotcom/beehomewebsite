@@ -68,8 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             $old_shares = (float) $old_shares;
             $old_amount = (float) $old_amount;
 
+            // "Amount" is entered as the PRICE PER SHARE — the actual peso
+            // contribution for the month is shares x amount.
+            $month_total_amount = (float) $month_shares * (float) $month_amount;
+
             $new_shares = $old_shares + (float) $month_shares;
-            $new_amount = $old_amount + (float) $month_amount;
+            $new_amount = $old_amount + $month_total_amount;
 
             if ($found) {
                 $updateStmt = $conn->prepare("UPDATE capital_shares SET total_shares = ?, total_amount = ?, updated_by = ? WHERE user_id = ?");
@@ -423,7 +427,7 @@ foreach ($balances as $b) {
                     <input type="number" step="0.01" name="month_shares" placeholder="10" required>
                 </div>
                 <div class="csm-field">
-                    <label>Amount ₱</label>
+                    <label>Amount ₱ / Share</label>
                     <input type="number" step="0.01" name="month_amount" placeholder="0.00" required>
                 </div>
                 <div class="csm-field" style="flex:0 0 auto;">
