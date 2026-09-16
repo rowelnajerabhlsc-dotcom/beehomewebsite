@@ -1,3 +1,37 @@
+<?php
+if (isset($_SESSION['user_id'])) {
+    $user_id   = $_SESSION['user_id'];
+    $user_role = isset($_SESSION['role']) ? (int) $_SESSION['role'] : 1;
+
+    $username  = null;
+    $has_photo = false;
+    $initials  = null;
+
+    // Only queries if $conn is open (some pages, e.g. dashboard.php, close
+    // it before including navbar.php — in that case we degrade gracefully
+    // to initials-only rather than fatal-erroring).
+    if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
+        $stmt = $conn->prepare("
+            SELECT u.username, p.fname, p.lname, p.profile_photo_public_id
+            FROM users u
+            LEFT JOIN user_profiles p ON u.id = p.user_id
+            WHERE u.id = ?
+        ");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $stmt->bind_result($db_username, $db_fname, $db_lname, $db_public_id);
+        if ($stmt->fetch()) {
+            $username  = $db_username;
+            $has_photo = !empty($db_public_id);
+            $initials  = strtoupper(substr((string) $db_fname, 0, 1) . substr((string) $db_lname, 0, 1));
+        }
+        $stmt->close();
+    }
+
+    $username = $username ?? ($_SESSION['username'] ?? 'User');
+    $initials = $initials ?? strtoupper(substr($username, 0, 1));
+}
+?>
 <nav>
     <!-- LOGO -->
     <div class="logo">
