@@ -291,6 +291,12 @@ foreach ($balances as $b) {
         break;
     }
 }
+
+// Legacy/untagged balance: log rows without a PERIOD: tag predate monthly
+// encoding, so scr_build_ledger_grid() can't place them in the grid — but
+// they're still part of the member's real total. Surface the gap instead
+// of letting the grid total look like it disagrees with the real total.
+$ledger_legacy_amount = $ledger_member_amount - $ledger_period_amount_total;
 ?>
 <!DOCTYPE html>
 <html>
@@ -519,9 +525,15 @@ foreach ($balances as $b) {
                     <div class="csm-ledger-side">
                         <h3>Summary</h3>
                         <div class="csm-summary-row">
-                            <div class="csm-summary-label">Amount (₱)</div>
+                            <div class="csm-summary-label">Amount (₱) — encoded months</div>
                             <div class="csm-summary-value">₱<?= number_format($ledger_period_amount_total, 2) ?></div>
                         </div>
+                        <?php if (abs($ledger_legacy_amount) >= 0.01): ?>
+                        <div class="csm-summary-row">
+                            <div class="csm-summary-label">Legacy / untagged balance</div>
+                            <div class="csm-summary-value">₱<?= number_format($ledger_legacy_amount, 2) ?></div>
+                        </div>
+                        <?php endif; ?>
                         <div class="csm-summary-row">
                             <div class="csm-summary-label">Shares</div>
                             <div class="csm-summary-value"><?= number_format($ledger_member_shares, 2) ?></div>
