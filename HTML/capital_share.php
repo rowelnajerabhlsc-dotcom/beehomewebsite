@@ -3,6 +3,11 @@ session_start();
 include "config.php";
 include "share_capital_helpers.php";
 
+// Fixed par value: shares are always displayed as amount / PAR_VALUE_PER_SHARE,
+// never from a stored share count, so this page always agrees with the
+// manage-side pages that derive shares the same way.
+define('PAR_VALUE_PER_SHARE', 200);
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: /login");
     exit();
@@ -82,7 +87,7 @@ $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06
         <div class="pv-field-grid">
             <div class="pv-field">
                 <label>Total Shares</label>
-                <div class="pv-value"><?= $has_record ? htmlspecialchars(number_format((float) $total_shares, 2)) : 'N/A' ?></div>
+                <div class="pv-value"><?= $has_record ? htmlspecialchars(number_format((float) $total_amount / PAR_VALUE_PER_SHARE, 2)) : 'N/A' ?></div>
             </div>
             <div class="pv-field">
                 <label>Total Amount</label>

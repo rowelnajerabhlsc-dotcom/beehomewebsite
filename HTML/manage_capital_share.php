@@ -4,6 +4,11 @@ include "config.php";
 include "cloudinary_helpers.php";
 include "share_capital_helpers.php";
 
+// Fixed par value: every share is worth this many pesos. Shares are always
+// derived from the peso amount encoded (amount / PAR_VALUE_PER_SHARE) —
+// staff never type a share count directly.
+define('PAR_VALUE_PER_SHARE', 200);
+
 // ---- Access control: department staff and above only ----
 // Assumption: encoding capital share is a Staff-level (role 2+) task.
 // Bump this to 3 if your Finance/Accounting encoding should be Manager-only.
@@ -22,16 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
 
     $target_user_id = (int) ($_POST['user_id'] ?? 0);
     $period_input   = trim($_POST['period'] ?? '');
-    $month_shares   = trim($_POST['month_shares'] ?? '');
     $month_amount   = trim($_POST['month_amount'] ?? '');
     $staff_note     = trim($_POST['remarks'] ?? '');
     $confirmed      = ($_POST['confirm_correction'] ?? '') === '1';
 
     $parsed_period = scr_parse_period_input($period_input);
 
-    if ($target_user_id <= 0 || !$parsed_period || $month_shares === '' || $month_amount === '' || !is_numeric($month_shares) || !is_numeric($month_amount)) {
-        $errors[] = "Please select a member, a valid month/year (MM-YYYY), and numeric shares/amount.";
+    if ($target_user_id <= 0 || !$parsed_period || $month_amount === '' || !is_numeric($month_amount)) {
+        $errors[] = "Please select a member, a valid month/year (MM-YYYY), and a numeric amount.";
     } else {
+        // Shares are always derived from the peso amount at the fixed par value.
+        $month_shares = (float) $month_amount / PAR_VALUE_PER_SHARE;
         $period = scr_format_period($parsed_period[0], $parsed_period[1]);
 
         // ---- Duplicate-period check: warn instead of silently stacking ----
@@ -50,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
                 'resubmit' => [
                     'user_id' => $target_user_id,
                     'period' => $period_input,
-                    'month_shares' => $month_shares,
                     'month_amount' => $month_amount,
                     'remarks' => $staff_note,
                 ],
@@ -68,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             $old_shares = (float) $old_shares;
             $old_amount = (float) $old_amount;
 
-            // "Amount" is entered as the PRICE PER SHARE — the actual peso
-            // contribution for the month is shares x amount.
-            $month_total_amount = (float) $month_shares * (float) $month_amount;
+            // "Amount" is the peso contribution itself; shares were already
+            // derived from it above at the fixed par value.
+            $month_total_amount = (float) $month_amount;
 
             if ($confirmed && !empty($existing)) {
                 // ---- Correction: REPLACE this period's prior contribution ----
@@ -265,9 +270,11 @@ if ($ledger_member_id > 0) {
 $month_labels = ['01'=>'Jan','02'=>'Feb','03'=>'Mar','04'=>'Apr','05'=>'May','06'=>'Jun','07'=>'Jul','08'=>'Aug','09'=>'Sep','10'=>'Oct','11'=>'Nov','12'=>'Dec'];
 
 // ---- Display-only derived totals for the summary header / ledger panel ----
-// (Pure aggregation of data already fetched above — no new queries, no logic changes.)
-$grand_total_shares = array_sum(array_column($balances, 'total_shares'));
+// Shares are always DERIVED from amount / par value for display, never read
+// from the stored total_shares column — this keeps every page's shares
+// figure in agreement even where old rows predate the par-value fix.
 $grand_total_amount = array_sum(array_column($balances, 'total_amount'));
+$grand_total_shares = $grand_total_amount / PAR_VALUE_PER_SHARE;
 
 $ledger_period_amount_total = 0;
 foreach ($ledger_grid as $ledger_year_row) {
@@ -279,8 +286,8 @@ $ledger_member_shares = 0;
 $ledger_member_amount = 0;
 foreach ($balances as $b) {
     if ((int) $b['user_id'] === $ledger_member_id) {
-        $ledger_member_shares = (float) $b['total_shares'];
         $ledger_member_amount = (float) $b['total_amount'];
+        $ledger_member_shares = $ledger_member_amount / PAR_VALUE_PER_SHARE;
         break;
     }
 }
@@ -404,7 +411,6 @@ foreach ($balances as $b) {
             <input type="hidden" name="confirm_correction" value="1">
             <input type="hidden" name="user_id" value="<?= (int) $duplicate_warning['resubmit']['user_id'] ?>">
             <input type="hidden" name="period" value="<?= htmlspecialchars($duplicate_warning['resubmit']['period']) ?>">
-            <input type="hidden" name="month_shares" value="<?= htmlspecialchars($duplicate_warning['resubmit']['month_shares']) ?>">
             <input type="hidden" name="month_amount" value="<?= htmlspecialchars($duplicate_warning['resubmit']['month_amount']) ?>">
             <input type="hidden" name="remarks" value="<?= htmlspecialchars($duplicate_warning['resubmit']['remarks']) ?>">
             <button type="submit" class="csm-btn-green">Confirm &amp; Save as Correction</button>
@@ -436,12 +442,9 @@ foreach ($balances as $b) {
                     <input type="text" name="period" data-mask="2-4" inputmode="numeric" maxlength="7" placeholder="MM-YYYY" required>
                 </div>
                 <div class="csm-field">
-                    <label>Shares</label>
-                    <input type="number" step="0.01" name="month_shares" placeholder="10" required>
-                </div>
-                <div class="csm-field">
-                    <label>Amount ₱ / Share</label>
+                    <label>Amount ₱</label>
                     <input type="number" step="0.01" name="month_amount" placeholder="0.00" required>
+                    <span class="csm-field-hint">Shares = amount ÷ ₱<?= PAR_VALUE_PER_SHARE ?> par value</span>
                 </div>
                 <div class="csm-field" style="flex:0 0 auto;">
                     <label>&nbsp;</label>
@@ -552,7 +555,7 @@ foreach ($balances as $b) {
                 <?php foreach ($balances as $b): ?>
                 <tr>
                     <td><?= htmlspecialchars(trim($b['fname'] . ' ' . $b['lname'])) ?></td>
-                    <td><?= htmlspecialchars(number_format((float) $b['total_shares'], 2)) ?></td>
+                    <td><?= htmlspecialchars(number_format((float) $b['total_amount'] / PAR_VALUE_PER_SHARE, 2)) ?></td>
                     <td>₱<?= htmlspecialchars(number_format((float) $b['total_amount'], 2)) ?></td>
                 </tr>
                 <?php endforeach; ?>
